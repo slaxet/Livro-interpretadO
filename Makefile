@@ -31,4 +31,9 @@ $(TARGET): src/*.cs
 	 src/MidiFileException.cs \
 	 src/MidiOptions.cs \
 	 src/MidiFileReader.cs \
-	
+	 src/MusicSymbol.cs \
+	 src/RestSymbol.cs \
+	 src/SheetMusic.cs \
+	 src/Staff.cs \
+	 src/Stem.cs \
+	 src/SymbolWi
