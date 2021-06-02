@@ -12,4 +12,8 @@ $(TARGET): src/*.cs
 	 -res:img/four.png,MidiSheetMusic.four.png \
 	 -res:img/six.png,MidiSheetMusic.six.png \
 	 -res:img/eight.png,MidiSheetMusic.eight.png \
-	 -res:img/nine.png,MidiSh
+	 -res:img/nine.png,MidiSheetMusic.nine.png \
+	 -res:img/twelve.png,MidiSheetMusic.twelve.png \
+	 -target:exe \
+	 -out:$(TARGET) \
+	 -reference:Syste
