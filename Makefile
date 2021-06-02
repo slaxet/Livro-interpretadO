@@ -16,4 +16,8 @@ $(TARGET): src/*.cs
 	 -res:img/twelve.png,MidiSheetMusic.twelve.png \
 	 -target:exe \
 	 -out:$(TARGET) \
-	 -reference:Syste
+	 -reference:System.Drawing \
+	 src/AccidSymbol.cs \
+	 src/BarSymbol.cs \
+	 src/BlankSymbol.cs \
+	 src/ChordSymbol.cs
