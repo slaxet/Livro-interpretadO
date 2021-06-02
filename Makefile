@@ -36,4 +36,9 @@ $(TARGET): src/*.cs
 	 src/SheetMusic.cs \
 	 src/Staff.cs \
 	 src/Stem.cs \
-	 src/SymbolWi
+	 src/SymbolWidths.cs \
+	 src/TimeSignature.cs \
+	 src/WhiteNote.cs \
+	 src/TimeSigSymbol.cs \
+	 src/LyricSymbol.cs \
+	 src/
