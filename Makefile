@@ -20,4 +20,10 @@ $(TARGET): src/*.cs
 	 src/AccidSymbol.cs \
 	 src/BarSymbol.cs \
 	 src/BlankSymbol.cs \
-	 src/ChordSymbol.cs
+	 src/ChordSymbol.cs \
+	 src/ClefMeasures.cs \
+	 src/ClefSymbol.cs \
+	 src/KeySignature.cs \
+	 src/MidiNote.cs \
+	 src/MidiEvent.cs \
+	 src/Mi
