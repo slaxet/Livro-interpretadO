@@ -26,4 +26,9 @@ $(TARGET): src/*.cs
 	 src/KeySignature.cs \
 	 src/MidiNote.cs \
 	 src/MidiEvent.cs \
-	 src/Mi
+	 src/MidiTrack.cs \
+	 src/MidiFile.cs \
+	 src/MidiFileException.cs \
+	 src/MidiOptions.cs \
+	 src/MidiFileReader.cs \
+	
