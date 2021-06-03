@@ -41,4 +41,7 @@ $(TARGET): src/*.cs
 	 src/WhiteNote.cs \
 	 src/TimeSigSymbol.cs \
 	 src/LyricSymbol.cs \
-	 src/
+	 src/Main.cs
+
+clean:
+	rm $(TARGET)
