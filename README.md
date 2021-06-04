@@ -4,4 +4,6 @@ MidiToSheetMusic is a very simple tool used for conversion from MIDI file to she
 
 ## Download
 
-[Source code](https://github.com/BYV
+[Source code](https://github.com/BYVoid/MidiToSheetMusic/archive/master.zip)
+
+[Binary version](http://www.byvoid.com/upload/projects/MidiToSheetM
