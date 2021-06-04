@@ -10,4 +10,8 @@ MidiToSheetMusic is a very simple tool used for conversion from MIDI file to she
 
 ## Usage
 
-Run ``sheet.exe`` (or ``mono sheet.exe``) in command line on your operating system (Mono
+Run ``sheet.exe`` (or ``mono sheet.exe``) in command line on your operating system (Mono is needed on Linux or Mac), then you will see:
+
+    Usage: sheet input.mid output_prefix(_[page_number].png)
+
+F
