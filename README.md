@@ -6,4 +6,8 @@ MidiToSheetMusic is a very simple tool used for conversion from MIDI file to she
 
 [Source code](https://github.com/BYVoid/MidiToSheetMusic/archive/master.zip)
 
-[Binary version](http://www.byvoid.com/upload/projects/MidiToSheetM
+[Binary version](http://www.byvoid.com/upload/projects/MidiToSheetMusic/sheet.exe) (for all platforms)
+
+## Usage
+
+Run ``sheet.exe`` (or ``mono sheet.exe``) in command line on your operating system (Mono
