@@ -14,4 +14,6 @@ Run ``sheet.exe`` (or ``mono sheet.exe``) in command line on your operating syst
 
     Usage: sheet input.mid output_prefix(_[page_number].png)
 
-F
+For example I would like to convert songs/sample.mid to sheet music, simply run:
+
+    sheet.exe songs/sample.
