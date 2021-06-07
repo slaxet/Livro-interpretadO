@@ -16,4 +16,10 @@ Run ``sheet.exe`` (or ``mono sheet.exe``) in command line on your operating syst
 
 For example I would like to convert songs/sample.mid to sheet music, simply run:
 
-    sheet.exe songs/sample.
+    sheet.exe songs/sample.mid sample
+
+Then you will find ``sample_1.png`` generated.
+
+## Build
+
+Have Mono SDK (or VS) installed, th
