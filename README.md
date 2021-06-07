@@ -22,4 +22,12 @@ Then you will find ``sample_1.png`` generated.
 
 ## Build
 
-Have Mono SDK (or VS) installed, th
+Have Mono SDK (or VS) installed, then run ``make``.
+
+### Install mono compiler on Ubuntu
+
+    sudo apt-get install mono-gmcs
+
+## Screenshot
+
+![Tchaikovsky](ht
