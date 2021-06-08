@@ -30,4 +30,8 @@ Have Mono SDK (or VS) installed, then run ``make``.
 
 ## Screenshot
 
-![Tchaikovsky](ht
+![Tchaikovsky](http://www.byvoid.com/upload/projects/MidiToSheetMusic/Tchaikovsky.png)
+
+## License
+
+GNU GENERAL PUBLIC LICENSE Version 2
