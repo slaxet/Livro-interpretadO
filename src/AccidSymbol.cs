@@ -27,4 +27,7 @@ public enum Accid {
 
 /** @class AccidSymbol
  * An accidental (accid) symbol represents a sharp, flat, or natural
- * accidental that is displayed at 
+ * accidental that is displayed at a specific position (note and clef).
+ */
+public class AccidSymbol : MusicSymbol {
+    private Accid accid;         
