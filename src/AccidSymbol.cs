@@ -17,4 +17,13 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace 
+namespace MidiSheetMusic {
+
+
+/** Accidentals */
+public enum Accid {
+    None, Sharp, Flat, Natural
+}
+
+/** @class AccidSymbol
+ * An
