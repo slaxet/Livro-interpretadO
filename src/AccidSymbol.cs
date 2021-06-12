@@ -26,4 +26,5 @@ public enum Accid {
 }
 
 /** @class AccidSymbol
- * An
+ * An accidental (accid) symbol represents a sharp, flat, or natural
+ * accidental that is displayed at 
