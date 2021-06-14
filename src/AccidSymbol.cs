@@ -30,4 +30,5 @@ public enum Accid {
  * accidental that is displayed at a specific position (note and clef).
  */
 public class AccidSymbol : MusicSymbol {
-    private Accid accid;         
+    private Accid accid;          /** The accidental (sharp, flat, natural) */
+    private WhiteNote whitenote;  /** The white note where the symbol occurs 
