@@ -37,4 +37,6 @@ public class AccidSymbol : MusicSymbol {
 
     /** 
      * Create a new AccidSymbol with the given accidental, that is
-     * displ
+     * displayed at the given note in the given clef.
+     */
+    public AccidSymbol(Accid accid, WhiteNote note, Cl
