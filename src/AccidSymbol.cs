@@ -43,4 +43,8 @@ public class AccidSymbol : MusicSymbol {
         this.accid = accid;
         this.whitenote = note;
         this.clef = clef;
-        width = MinWid
+        width = MinWidth;
+    }
+
+    /** Return the white note this accidental is displayed at */
+    public WhiteNote Note
