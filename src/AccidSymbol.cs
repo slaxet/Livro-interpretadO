@@ -47,4 +47,9 @@ public class AccidSymbol : MusicSymbol {
     }
 
     /** Return the white note this accidental is displayed at */
-    public WhiteNote Note
+    public WhiteNote Note  {
+        get { return whitenote; }
+    }
+
+    /** Get the time (in pulses) this symbol occurs at.
+     * Not used.  Instead, the Start
