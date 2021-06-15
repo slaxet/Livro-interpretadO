@@ -56,4 +56,8 @@ public class AccidSymbol : MusicSymbol {
      * AccidSymbol is used.
      */
     public override int StartTime { 
-        get 
+        get { return -1; }  
+    }
+
+    /** Get the minimum width (in pixels) needed to draw this symbol */
+    public override 
