@@ -60,4 +60,8 @@ public class AccidSymbol : MusicSymbol {
     }
 
     /** Get the minimum width (in pixels) needed to draw this symbol */
-    public override 
+    public override int MinWidth { 
+        get { return 3*SheetMusic.NoteHeight/2; }
+    }
+
+    /** Get/Set the width (in pixels) of this sy
