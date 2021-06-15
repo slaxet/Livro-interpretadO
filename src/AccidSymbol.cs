@@ -39,4 +39,8 @@ public class AccidSymbol : MusicSymbol {
      * Create a new AccidSymbol with the given accidental, that is
      * displayed at the given note in the given clef.
      */
-    public AccidSymbol(Accid accid, WhiteNote note, Cl
+    public AccidSymbol(Accid accid, WhiteNote note, Clef clef) {
+        this.accid = accid;
+        this.whitenote = note;
+        this.clef = clef;
+        width = MinWid
