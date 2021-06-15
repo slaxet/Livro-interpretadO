@@ -52,4 +52,8 @@ public class AccidSymbol : MusicSymbol {
     }
 
     /** Get the time (in pulses) this symbol occurs at.
-     * Not used.  Instead, the Start
+     * Not used.  Instead, the StartTime of the ChordSymbol containing this
+     * AccidSymbol is used.
+     */
+    public override int StartTime { 
+        get 
