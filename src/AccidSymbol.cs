@@ -64,4 +64,5 @@ public class AccidSymbol : MusicSymbol {
         get { return 3*SheetMusic.NoteHeight/2; }
     }
 
-    /** Get/Set the width (in pixels) of this sy
+    /** Get/Set the width (in pixels) of this symbol. The width is set
+     * in SheetMusic.AlignSymbols() to vertically align symbols.
