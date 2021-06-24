@@ -72,4 +72,5 @@ public class AccidSymbol : MusicSymbol {
         set { width = value; }
     }
 
-    
+    /** Get the number of pixels this symbol extends above the staff. Used
+     *  to determine the minimum height needed for
