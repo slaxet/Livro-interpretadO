@@ -79,4 +79,6 @@ public class AccidSymbol : MusicSymbol {
         get { return GetAboveStaff(); }
     }
 
-    in
+    int GetAboveStaff() {
+        int dist = WhiteNote.Top(clef).Dist(whitenote) * 
+                   Sh
