@@ -81,4 +81,6 @@ public class AccidSymbol : MusicSymbol {
 
     int GetAboveStaff() {
         int dist = WhiteNote.Top(clef).Dist(whitenote) * 
-                   Sh
+                   SheetMusic.NoteHeight/2;
+        if (accid == Accid.Sharp || accid == Accid.Natural)
+            dist -= SheetMusic.NoteHei
