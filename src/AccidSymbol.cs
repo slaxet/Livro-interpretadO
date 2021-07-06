@@ -101,4 +101,6 @@ public class AccidSymbol : MusicSymbol {
     }
 
     private int GetBelowStaff() {
-        int dist = WhiteNote.Bottom(cl
+        int dist = WhiteNote.Bottom(clef).Dist(whitenote) * 
+                   SheetMusic.NoteHeight/2 + 
+                   SheetMusic.NoteHeig
