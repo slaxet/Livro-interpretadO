@@ -96,4 +96,9 @@ public class AccidSymbol : MusicSymbol {
     /** Get the number of pixels this symbol extends below the staff. Used
      *  to determine the minimum height needed for the staff (Staff.FindBounds).
      */
-    public override int BelowS
+    public override int BelowStaff {
+        get { return GetBelowStaff(); }
+    }
+
+    private int GetBelowStaff() {
+        int dist = WhiteNote.Bottom(cl
