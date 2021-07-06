@@ -88,4 +88,9 @@ public class AccidSymbol : MusicSymbol {
             dist -= 3*SheetMusic.NoteHeight/2;
 
         if (dist < 0)
-      
+            return -dist;
+        else
+            return 0;
+    }
+
+    /** Get the number of pixels this symbol extends below the staff.
