@@ -107,4 +107,11 @@ public class AccidSymbol : MusicSymbol {
         if (accid == Accid.Sharp || accid == Accid.Natural) 
             dist += SheetMusic.NoteHeight;
 
-        if (d
+        if (dist > 0)
+            return dist;
+        else 
+            return 0;
+    }
+
+    /** Draw the symbol.
+     * @param ytop Th
