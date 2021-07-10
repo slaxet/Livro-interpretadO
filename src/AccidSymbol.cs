@@ -114,4 +114,6 @@ public class AccidSymbol : MusicSymbol {
     }
 
     /** Draw the symbol.
-     * @param ytop Th
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    public overri
