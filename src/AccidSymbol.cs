@@ -118,4 +118,7 @@ public class AccidSymbol : MusicSymbol {
      */
     public override void Draw(Graphics g, Pen pen, int ytop) {
         /* Align the symbol to the right */
-        g.Transl
+        g.TranslateTransform(Width - MinWidth, 0);
+
+        /* Store the y-pixel value of the top of the whitenote in ynote. */
+        i
