@@ -116,4 +116,6 @@ public class AccidSymbol : MusicSymbol {
     /** Draw the symbol.
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
-    public overri
+    public override void Draw(Graphics g, Pen pen, int ytop) {
+        /* Align the symbol to the right */
+        g.Transl
