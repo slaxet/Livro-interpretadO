@@ -124,4 +124,7 @@ public class AccidSymbol : MusicSymbol {
         int ynote = ytop + WhiteNote.Top(clef).Dist(whitenote) * 
                     SheetMusic.NoteHeight/2;
 
-   
+        if (accid == Accid.Sharp)
+            DrawSharp(g, pen, ynote);
+        else if (accid == Accid.Flat)
+ 
