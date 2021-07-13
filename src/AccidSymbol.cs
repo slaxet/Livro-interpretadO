@@ -127,4 +127,8 @@ public class AccidSymbol : MusicSymbol {
         if (accid == Accid.Sharp)
             DrawSharp(g, pen, ynote);
         else if (accid == Accid.Flat)
- 
+            DrawFlat(g, pen, ynote);
+        else if (accid == Accid.Natural)
+            DrawNatural(g, pen, ynote);
+
+        g
