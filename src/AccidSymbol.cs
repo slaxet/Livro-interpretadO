@@ -131,4 +131,8 @@ public class AccidSymbol : MusicSymbol {
         else if (accid == Accid.Natural)
             DrawNatural(g, pen, ynote);
 
-        g
+        g.TranslateTransform(-(Width - MinWidth), 0);
+    }
+
+    /** Draw a sharp symbol. 
+     * @param ynote The pixe
