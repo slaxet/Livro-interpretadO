@@ -135,4 +135,6 @@ public class AccidSymbol : MusicSymbol {
     }
 
     /** Draw a sharp symbol. 
-     * @param ynote The pixe
+     * @param ynote The pixel location of the top of the accidental's note. 
+     */
+    public void DrawSharp(Graphics g, Pen pen, int ynote) {
