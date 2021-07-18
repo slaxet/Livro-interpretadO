@@ -141,4 +141,7 @@ public class AccidSymbol : MusicSymbol {
 
         /* Draw the two vertical lines */
         int ystart = ynote - SheetMusic.NoteHeight;
-        int yend = ynote
+        int yend = ynote + 2*SheetMusic.NoteHeight;
+        int x = SheetMusic.NoteHeight/2;
+        pen.Width = 1;
+        g.DrawLine(pen, x, yst
