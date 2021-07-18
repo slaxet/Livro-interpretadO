@@ -138,3 +138,7 @@ public class AccidSymbol : MusicSymbol {
      * @param ynote The pixel location of the top of the accidental's note. 
      */
     public void DrawSharp(Graphics g, Pen pen, int ynote) {
+
+        /* Draw the two vertical lines */
+        int ystart = ynote - SheetMusic.NoteHeight;
+        int yend = ynote
