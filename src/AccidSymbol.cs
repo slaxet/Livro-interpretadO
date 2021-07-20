@@ -144,4 +144,8 @@ public class AccidSymbol : MusicSymbol {
         int yend = ynote + 2*SheetMusic.NoteHeight;
         int x = SheetMusic.NoteHeight/2;
         pen.Width = 1;
-        g.DrawLine(pen, x, yst
+        g.DrawLine(pen, x, ystart + 2, x, yend);
+        x += SheetMusic.NoteHeight/2;
+        g.DrawLine(pen, x, ystart, x, yend - 2);
+
+        /
