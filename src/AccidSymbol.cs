@@ -148,4 +148,5 @@ public class AccidSymbol : MusicSymbol {
         x += SheetMusic.NoteHeight/2;
         g.DrawLine(pen, x, ystart, x, yend - 2);
 
-        /
+        /* Draw the slightly upwards horizontal lines */
+        int xstart = SheetMusic.NoteHeight/2 - She
