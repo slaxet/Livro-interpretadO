@@ -153,4 +153,6 @@ public class AccidSymbol : MusicSymbol {
         int xend = SheetMusic.NoteHeight + SheetMusic.NoteHeight/4;
         ystart = ynote + SheetMusic.LineWidth;
         yend = ystart - SheetMusic.LineWidth - SheetMusic.LineSpace/4;
-        pen.Width 
+        pen.Width = SheetMusic.LineSpace/2;
+        g.DrawLine(pen, xstart, ystart, xend, yend);
+        ystart += Sheet
