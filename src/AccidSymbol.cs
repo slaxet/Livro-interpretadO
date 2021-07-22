@@ -158,4 +158,8 @@ public class AccidSymbol : MusicSymbol {
         ystart += SheetMusic.LineSpace;
         yend += SheetMusic.LineSpace;
         g.DrawLine(pen, xstart, ystart, xend, yend);
-        pen.Width =
+        pen.Width = 1;
+    }
+
+    /** Draw a flat symbol.
+     * @param ynote The pixel location of the top of the accidental's note.
