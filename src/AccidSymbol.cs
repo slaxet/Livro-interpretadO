@@ -176,4 +176,7 @@ public class AccidSymbol : MusicSymbol {
          * All 3 curves start and stop at the same points.
          * Each subsequent curve bulges more and more towards 
          * the topright corner, making the curve look thicker
-         * towards the top-righ
+         * towards the top-right.
+         */
+        g.DrawBezier(pen, x, ynote + SheetMusic.LineSpace/4,
+            x + SheetMusic.LineSpace/2, ynote - SheetMusic.Li
