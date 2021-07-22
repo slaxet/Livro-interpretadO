@@ -172,4 +172,6 @@ public class AccidSymbol : MusicSymbol {
         g.DrawLine(pen, x, ynote - SheetMusic.NoteHeight - SheetMusic.NoteHeight/2,
                         x, ynote + SheetMusic.NoteHeight);
 
-        /* D
+        /* Draw 3 bezier curves.
+         * All 3 curves start and stop at the same points.
+         * Each subseque
