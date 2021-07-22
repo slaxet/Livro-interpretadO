@@ -169,4 +169,7 @@ public class AccidSymbol : MusicSymbol {
 
         /* Draw the vertical line */
         pen.Width = 1;
-        g.DrawLine(pen, x, ynote - S
+        g.DrawLine(pen, x, ynote - SheetMusic.NoteHeight - SheetMusic.NoteHeight/2,
+                        x, ynote + SheetMusic.NoteHeight);
+
+        /* D
