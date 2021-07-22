@@ -155,4 +155,7 @@ public class AccidSymbol : MusicSymbol {
         yend = ystart - SheetMusic.LineWidth - SheetMusic.LineSpace/4;
         pen.Width = SheetMusic.LineSpace/2;
         g.DrawLine(pen, xstart, ystart, xend, yend);
-        ystart += Sheet
+        ystart += SheetMusic.LineSpace;
+        yend += SheetMusic.LineSpace;
+        g.DrawLine(pen, xstart, ystart, xend, yend);
+        pen.Width =
