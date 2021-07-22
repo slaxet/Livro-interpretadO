@@ -174,4 +174,6 @@ public class AccidSymbol : MusicSymbol {
 
         /* Draw 3 bezier curves.
          * All 3 curves start and stop at the same points.
-         * Each subseque
+         * Each subsequent curve bulges more and more towards 
+         * the topright corner, making the curve look thicker
+         * towards the top-righ
