@@ -179,4 +179,6 @@ public class AccidSymbol : MusicSymbol {
          * towards the top-right.
          */
         g.DrawBezier(pen, x, ynote + SheetMusic.LineSpace/4,
-            x + SheetMusic.LineSpace/2, ynote - SheetMusic.Li
+            x + SheetMusic.LineSpace/2, ynote - SheetMusic.LineSpace/2,
+            x + SheetMusic.LineSpace, ynote + SheetMusic.LineSpace/3,
+            x, ynote + SheetMu
