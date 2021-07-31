@@ -197,4 +197,7 @@ public class AccidSymbol : MusicSymbol {
             x, ynote + SheetMusic.LineSpace + SheetMusic.LineWidth + 1);
 
 
-   
+    }
+
+    /** Draw a natural symbol.
+     * @param ynote The pixel location of the top of the accidenta
