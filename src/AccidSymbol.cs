@@ -200,4 +200,8 @@ public class AccidSymbol : MusicSymbol {
     }
 
     /** Draw a natural symbol.
-     * @param ynote The pixel location of the top of the accidenta
+     * @param ynote The pixel location of the top of the accidental's note.
+     */
+    public void DrawNatural(Graphics g, Pen pen, int ynote) {
+
+        /* Draw
