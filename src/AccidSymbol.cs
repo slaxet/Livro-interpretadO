@@ -206,4 +206,7 @@ public class AccidSymbol : MusicSymbol {
 
         /* Draw the two vertical lines */
         int ystart = ynote - SheetMusic.LineSpace - SheetMusic.LineWidth;
-        int yend = ynote + S
+        int yend = ynote + SheetMusic.LineSpace + SheetMusic.LineWidth;
+        int x = SheetMusic.LineSpace/2;
+        pen.Width = 1;
+        g.D
