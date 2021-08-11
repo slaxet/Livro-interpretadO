@@ -211,4 +211,6 @@ public class AccidSymbol : MusicSymbol {
         pen.Width = 1;
         g.DrawLine(pen, x, ystart, x, yend);
         x += SheetMusic.LineSpace - SheetMusic.LineSpace/4;
-        y
+        ystart = ynote - SheetMusic.LineSpace/4;
+        yend = ynote + 2*SheetMusic.LineSpace + SheetMusic.LineWidth - 
+    
