@@ -213,4 +213,7 @@ public class AccidSymbol : MusicSymbol {
         x += SheetMusic.LineSpace - SheetMusic.LineSpace/4;
         ystart = ynote - SheetMusic.LineSpace/4;
         yend = ynote + 2*SheetMusic.LineSpace + SheetMusic.LineWidth - 
-    
+                 SheetMusic.LineSpace/4;
+        g.DrawLine(pen, x, ystart, x, yend);
+
+        /* Draw the slightly upwards h
