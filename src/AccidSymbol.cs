@@ -216,4 +216,6 @@ public class AccidSymbol : MusicSymbol {
                  SheetMusic.LineSpace/4;
         g.DrawLine(pen, x, ystart, x, yend);
 
-        /* Draw the slightly upwards h
+        /* Draw the slightly upwards horizontal lines */
+        int xstart = SheetMusic.LineSpace/2;
+        int xend = xstart + SheetMusic.LineSp
