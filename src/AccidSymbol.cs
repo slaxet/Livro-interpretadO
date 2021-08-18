@@ -232,4 +232,11 @@ public class AccidSymbol : MusicSymbol {
     public override string ToString() {
         return string.Format(
           "AccidSymbol accid={0} whitenote={1} clef={2} width={3}",
-          accid,
+          accid, whitenote, clef, width);
+    }
+
+}
+
+}
+
+
