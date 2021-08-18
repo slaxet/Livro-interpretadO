@@ -225,4 +225,9 @@ public class AccidSymbol : MusicSymbol {
         g.DrawLine(pen, xstart, ystart, xend, yend);
         ystart += SheetMusic.LineSpace;
         yend += SheetMusic.LineSpace;
-        g.DrawLine
+        g.DrawLine(pen, xstart, ystart, xend, yend);
+        pen.Width = 1;
+    }
+
+    public override string ToString() {
+       
