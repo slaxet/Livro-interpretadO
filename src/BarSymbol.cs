@@ -15,4 +15,10 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
-u
+using System.Drawing.Drawing2D;
+
+namespace MidiSheetMusic {
+
+
+/** @class BarSymbol
+ * The BarSymbol represents the
