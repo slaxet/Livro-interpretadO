@@ -21,4 +21,8 @@ namespace MidiSheetMusic {
 
 
 /** @class BarSymbol
- * The BarSymbol represents the
+ * The BarSymbol represents the vertical bars which delimit measures.
+ * The starttime of the symbol is the beginning of the new
+ * measure.
+ */
+public class BarSymbo
