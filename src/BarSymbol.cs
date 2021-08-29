@@ -25,4 +25,8 @@ namespace MidiSheetMusic {
  * The starttime of the symbol is the beginning of the new
  * measure.
  */
-public class BarSymbo
+public class BarSymbol : MusicSymbol {
+    private int starttime;
+    private int width;
+
+    /** Create a BarSymbol
