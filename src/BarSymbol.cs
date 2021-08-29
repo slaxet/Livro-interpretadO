@@ -31,4 +31,9 @@ public class BarSymbol : MusicSymbol {
 
     /** Create a BarSymbol. The starttime should be the beginning of a measure. */
     public BarSymbol(int starttime) {
-        this.star
+        this.starttime = starttime;
+        width = MinWidth;
+    }
+
+    /** Get the time (in pulses) this symbol occurs at.
+  
