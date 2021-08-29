@@ -29,4 +29,6 @@ public class BarSymbol : MusicSymbol {
     private int starttime;
     private int width;
 
-    /** Create a BarSymbol
+    /** Create a BarSymbol. The starttime should be the beginning of a measure. */
+    public BarSymbol(int starttime) {
+        this.star
