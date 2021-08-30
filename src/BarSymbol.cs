@@ -36,4 +36,7 @@ public class BarSymbol : MusicSymbol {
     }
 
     /** Get the time (in pulses) this symbol occurs at.
-  
+     * This is used to determine the measure this symbol belongs to.
+     */
+    public override int StartTime {
+        
