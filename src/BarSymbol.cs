@@ -47,4 +47,5 @@ public class BarSymbol : MusicSymbol {
         get { return 2 * SheetMusic.LineSpace; }
     }
 
-    /
+    /** Get/Set the width (in pixels) of this symbol. The width is set
+     * in SheetMusic.AlignSymbols() to 
