@@ -58,4 +58,8 @@ public class BarSymbol : MusicSymbol {
     /** Get the number of pixels this symbol extends above the staff. Used
      *  to determine the minimum height needed for the staff (Staff.FindBounds).
      */
-    public override int AboveSt
+    public override int AboveStaff { 
+        get { return 0; } 
+    }
+
+    /** Get the number of pixels this symbol extends below the staff. Used
