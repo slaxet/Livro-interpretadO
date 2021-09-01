@@ -39,4 +39,8 @@ public class BarSymbol : MusicSymbol {
      * This is used to determine the measure this symbol belongs to.
      */
     public override int StartTime {
-        
+        get { return starttime; }
+    }
+
+    /** Get the minimum width (in pixels) needed to draw this symbol */
+ 
