@@ -43,4 +43,8 @@ public class BarSymbol : MusicSymbol {
     }
 
     /** Get the minimum width (in pixels) needed to draw this symbol */
- 
+    public override int MinWidth { 
+        get { return 2 * SheetMusic.LineSpace; }
+    }
+
+    /
