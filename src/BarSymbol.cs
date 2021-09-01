@@ -52,4 +52,8 @@ public class BarSymbol : MusicSymbol {
      */
     public override int Width {
         get { return width; }
-        set { w
+        set { width = value; }
+    }
+
+    /** Get the number of pixels this symbol extends above the staff. Used
+     *  to determ
