@@ -70,4 +70,7 @@ public class BarSymbol : MusicSymbol {
     }
 
     /** Draw a vertical bar.
-  
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    public override 
+    v
