@@ -73,4 +73,6 @@ public class BarSymbol : MusicSymbol {
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
     public override 
-    v
+    void Draw(Graphics g, Pen pen, int ytop) {
+        int y = ytop;
+        int yend = y + SheetMusic.LineSpace*4 + SheetM
