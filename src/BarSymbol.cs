@@ -78,3 +78,9 @@ public class BarSymbol : MusicSymbol {
         int yend = y + SheetMusic.LineSpace*4 + SheetMusic.LineWidth*4;
         pen.Width = 1;
         g.DrawLine(pen, SheetMusic.NoteWidth/2, y, 
+                        SheetMusic.NoteWidth/2, yend);
+
+    }
+
+    public override string ToString() {
+   
