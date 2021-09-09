@@ -83,4 +83,5 @@ public class BarSymbol : MusicSymbol {
     }
 
     public override string ToString() {
-   
+        return string.Format("BarSymbol starttime={0} width={1}", 
+                             starttime, width
