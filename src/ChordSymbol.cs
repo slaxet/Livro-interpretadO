@@ -803,3 +803,110 @@ public class ChordSymbol : MusicSymbol {
             /* chord must start on quarter note */
             int beat = time.Quarter;
             if (time.Numerator == 12 && time.Denominator == 8) {
+                /* In 12/8 time, chord must start on 3*8th beat */
+                beat = time.Quarter/2 * 3;
+            }
+            if ((chords[0].StartTime % beat) > time.Quarter/6) {
+                return false;
+            }
+        }
+
+        else if (numChords == 2) {
+            if (startQuarter) {
+                int beat = time.Quarter;
+                if ((chords[0].StartTime % beat) > time.Quarter/6) {
+                    return false;
+                }
+            }
+        }
+
+        foreach (ChordSymbol chord in chords) {
+            if ((chord.StartTime / time.Measure) != measure)
+                return false;
+            if (chord.Stem == null)
+                return false;
+            if (chord.Stem.Duration != dur && !dotted8_to_16)
+                return false;
+            if (chord.Stem.isBeam)
+                return false;
+        }
+
+        /* Check that all stems can point in same direction */
+        bool hasTwoStems = false;
+        int direction = Stem.Up; 
+        foreach (ChordSymbol chord in chords) {
+            if (chord.HasTwoStems) {
+                if (hasTwoStems && chord.Stem.Direction != direction) {
+                    return false;
+                }
+                hasTwoStems = true;
+                direction = chord.Stem.Direction;
+            }
+        }
+
+        /* Get the final stem direction */
+        if (!hasTwoStems) {
+            WhiteNote note1;
+            WhiteNote note2;
+            note1 = (firstStem.Direction == Stem.Up ? firstStem.Top : firstStem.Bottom);
+            note2 = (lastStem.Direction == Stem.Up ? lastStem.Top : lastStem.Bottom);
+            direction = StemDirection(note1, note2, chords[0].Clef);
+        }
+
+        /* If the notes are too far apart, don't use a beam */
+        if (direction == Stem.Up) {
+            if (Math.Abs(firstStem.Top.Dist(lastStem.Top)) >= 11) {
+                return false;
+            }
+        }
+        else {
+            if (Math.Abs(firstStem.Bottom.Dist(lastStem.Bottom)) >= 11) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /** Connect the chords using a horizontal beam. 
+     *
+     * spacing is the horizontal distance (in pixels) between the right side 
+     * of the first chord, and the right side of the last chord.
+     *
+     * To make the beam:
+     * - Change the stem directions for each chord, so they match.
+     * - In the first chord, pass the stem location of the last chord, and
+     *   the horizontal spacing to that last stem.
+     * - Mark all chords (except the first) as "receiver" pairs, so that 
+     *   they don't draw a curvy stem.
+     */
+    public static 
+    void CreateBeam(ChordSymbol[] chords, int spacing) {
+        Stem firstStem = chords[0].Stem;
+        Stem lastStem = chords[chords.Length-1].Stem;
+
+        /* Calculate the new stem direction */
+        int newdirection = -1;
+        foreach (ChordSymbol chord in chords) {
+            if (chord.HasTwoStems) {
+                newdirection = chord.Stem.Direction;
+                break;
+            }
+        }
+
+        if (newdirection == -1) {
+            WhiteNote note1;
+            WhiteNote note2;
+            note1 = (firstStem.Direction == Stem.Up ? firstStem.Top : firstStem.Bottom);
+            note2 = (lastStem.Direction == Stem.Up ? lastStem.Top : lastStem.Bottom);
+            newdirection = StemDirection(note1, note2, chords[0].Clef);
+        }
+        foreach (ChordSymbol chord in chords) {
+            chord.Stem.Direction = newdirection;
+        }
+
+        if (chords.Length == 2) {
+            BringStemsCloser(chords);
+        }
+        else {
+            LineUpStemEnds(chords);
