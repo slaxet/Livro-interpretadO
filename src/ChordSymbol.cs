@@ -682,3 +682,124 @@ public class ChordSymbol : MusicSymbol {
             /* Get the x,y position to draw the note */
             int ynote = ytop + topstaff.Dist(note.whitenote) * 
                         SheetMusic.NoteHeight/2;
+
+            /* Draw the letter to the right side of the note */
+            int xnote = SheetMusic.NoteWidth + SheetMusic.LineSpace/4;
+
+            if (note.duration == NoteDuration.DottedHalf ||
+                note.duration == NoteDuration.DottedQuarter ||
+                note.duration == NoteDuration.DottedEighth || overlap) {
+
+                xnote += SheetMusic.NoteWidth/2;
+            } 
+            g.DrawString(NoteName(note.number, note.whitenote),
+                         SheetMusic.LetterFont, 
+                         Brushes.Black,
+                         xnote,
+                         ynote - SheetMusic.NoteHeight/2);
+        }
+    }
+
+
+    /** Return true if the chords can be connected, where their stems are
+     * joined by a horizontal beam. In order to create the beam:
+     *
+     * - The chords must be in the same measure.
+     * - The chord stems should not be a dotted duration.
+     * - The chord stems must be the same duration, with one exception
+     *   (Dotted Eighth to Sixteenth).
+     * - The stems must all point in the same direction (up or down).
+     * - The chord cannot already be part of a beam.
+     *
+     * - 6-chord beams must be 8th notes in 3/4, 6/8, or 6/4 time
+     * - 3-chord beams must be either triplets, or 8th notes (12/8 time signature)
+     * - 4-chord beams are ok for 2/2, 2/4 or 4/4 time, any duration
+     * - 4-chord beams are ok for other times if the duration is 16th
+     * - 2-chord beams are ok for any duration
+     *
+     * If startQuarter is true, the first note should start on a quarter note
+     * (only applies to 2-chord beams).
+     */
+    public static 
+    bool CanCreateBeam(ChordSymbol[] chords, TimeSignature time, bool startQuarter) {
+        int numChords = chords.Length;
+        Stem firstStem = chords[0].Stem;
+        Stem lastStem = chords[chords.Length-1].Stem;
+        if (firstStem == null || lastStem == null) {
+            return false;
+        }
+        int measure = chords[0].StartTime / time.Measure;
+        NoteDuration dur = firstStem.Duration;
+        NoteDuration dur2 = lastStem.Duration;
+
+        bool dotted8_to_16 = false;
+        if (chords.Length == 2 && dur == NoteDuration.DottedEighth &&
+            dur2 == NoteDuration.Sixteenth) {
+            dotted8_to_16 = true;
+        } 
+
+        if (dur == NoteDuration.Whole || dur == NoteDuration.Half ||
+            dur == NoteDuration.DottedHalf || dur == NoteDuration.Quarter ||
+            dur == NoteDuration.DottedQuarter ||
+            (dur == NoteDuration.DottedEighth && !dotted8_to_16)) {
+
+            return false;
+        }
+
+        if (numChords == 6) {
+            if (dur != NoteDuration.Eighth) {
+                return false;
+            }
+            bool correctTime = 
+               ((time.Numerator == 3 && time.Denominator == 4) ||
+                (time.Numerator == 6 && time.Denominator == 8) ||
+                (time.Numerator == 6 && time.Denominator == 4) );
+
+            if (!correctTime) {
+                return false;
+            }
+
+            if (time.Numerator == 6 && time.Denominator == 4) {
+                /* first chord must start at 1st or 4th quarter note */
+                int beat = time.Quarter * 3;
+                if ((chords[0].StartTime % beat) > time.Quarter/6) {
+                    return false;
+                } 
+            }
+        }
+        else if (numChords == 4) {
+            if (time.Numerator == 3 && time.Denominator == 8) {
+                return false;
+            }
+            bool correctTime = 
+              (time.Numerator == 2 || time.Numerator == 4 || time.Numerator == 8);
+            if (!correctTime && dur != NoteDuration.Sixteenth) {
+                return false;
+            }
+
+            /* chord must start on quarter note */
+            int beat = time.Quarter;
+            if (dur == NoteDuration.Eighth) {
+                /* 8th note chord must start on 1st or 3rd quarter note */
+                beat = time.Quarter * 2;
+            }
+            else if (dur == NoteDuration.ThirtySecond) {
+                /* 32nd note must start on an 8th beat */
+                beat = time.Quarter / 2;
+            }
+
+            if ((chords[0].StartTime % beat) > time.Quarter/6) {
+                return false;
+            }
+        }
+        else if (numChords == 3) {
+            bool valid = (dur == NoteDuration.Triplet) || 
+                          (dur == NoteDuration.Eighth &&
+                           time.Numerator == 12 && time.Denominator == 8);
+            if (!valid) {
+                return false;
+            }
+
+            /* chord must start on quarter note */
+            int beat = time.Quarter;
+            if (time.Numerator == 12 && time.Denominator == 8) {
