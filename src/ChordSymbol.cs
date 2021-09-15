@@ -227,3 +227,114 @@ public class ChordSymbol : MusicSymbol {
             middle = new WhiteNote(WhiteNote.B, 5);
         else
             middle = new WhiteNote(WhiteNote.D, 3);
+
+        int dist = middle.Dist(bottom) + middle.Dist(top);
+        if (dist >= 0)
+            return Stem.Up;
+        else 
+            return Stem.Down;
+    }
+
+    /** Return whether any of the notes in notedata (between start and
+     * end indexes) overlap.  This is needed by the Stem class to
+     * determine the position of the stem (left or right of notes).
+     */
+    private static bool NotesOverlap(NoteData[] notedata, int start, int end) {
+        for (int i = start; i < end; i++) {
+            if (!notedata[i].leftside) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Get the time (in pulses) this symbol occurs at.
+     * This is used to determine the measure this symbol belongs to.
+     */
+    public override int StartTime { 
+        get { return starttime; }
+    }
+
+    /** Get the end time (in pulses) of the longest note in the chord.
+     * Used to determine whether two adjacent chords can be joined
+     * by a stem.
+     */
+    public int EndTime { 
+        get { return endtime; }
+    }
+
+    /** Return the clef this chord is drawn in. */
+    public Clef Clef { 
+        get { return clef; }
+    }
+
+    /** Return true if this chord has two stems */
+    public bool HasTwoStems {
+        get { return hastwostems; }
+    }
+
+    /* Return the stem will the smallest duration.  This property
+     * is used when making chord pairs (chords joined by a horizontal
+     * beam stem). The stem durations must match in order to make
+     * a chord pair.  If a chord has two stems, we always return
+     * the one with a smaller duration, because it has a better 
+     * chance of making a pair.
+     */
+    public Stem Stem {
+        get { 
+            if (stem1 == null) { return stem2; }
+            else if (stem2 == null) { return stem1; }
+            else if (stem1.Duration < stem2.Duration) { return stem1; }
+            else { return stem2; }
+        }
+    }
+
+    /** Get/Set the width (in pixels) of this symbol. The width is set
+     * in SheetMusic.AlignSymbols() to vertically align symbols.
+     */
+    public override int Width {
+        get { return width; }
+        set { width = value; }
+    }
+
+    /** Get the minimum width (in pixels) needed to draw this symbol */
+    public override int MinWidth {
+        get { return GetMinWidth(); }
+    }
+
+    /* Return the minimum width needed to display this chord.
+     *
+     * The accidental symbols can be drawn above one another as long
+     * as they don't overlap (they must be at least 6 notes apart).
+     * If two accidental symbols do overlap, the accidental symbol
+     * on top must be shifted to the right.  So the width needed for
+     * accidental symbols depends on whether they overlap or not.
+     *
+     * If we are also displaying the letters, include extra width.
+     */
+    int GetMinWidth() {
+        /* The width needed for the note circles */
+        int result = 2*SheetMusic.NoteHeight + SheetMusic.NoteHeight*3/4;
+
+        if (accidsymbols.Length > 0) {
+            result += accidsymbols[0].MinWidth;
+            for (int i = 1; i < accidsymbols.Length; i++) {
+                AccidSymbol accid = accidsymbols[i];
+                AccidSymbol prev = accidsymbols[i-1];
+                if (accid.Note.Dist(prev.Note) < 6) {
+                    result += accid.MinWidth;
+                }
+            }
+        }
+        if (sheetmusic != null && sheetmusic.ShowNoteLetters != MidiOptions.NoteNameNone) {
+            result += 8;
+        }
+        return result;
+    }
+
+
+    /** Get the number of pixels this symbol extends above the staff. Used
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+    public override int AboveStaff {
+        get { return GetAboveStaff(); }
