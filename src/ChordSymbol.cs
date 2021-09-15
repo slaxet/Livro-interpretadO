@@ -131,3 +131,99 @@ public class ChordSymbol : MusicSymbol {
                              dur1, 
                              direction,
                              NotesOverlap(notedata, 0, notedata.Length)
+                            );
+            stem2 = null;
+        }
+
+        /* For whole notes, no stem is drawn. */
+        if (dur1 == NoteDuration.Whole)
+            stem1 = null;
+        if (dur2 == NoteDuration.Whole)
+            stem2 = null;
+
+        width = MinWidth;
+    }
+
+
+    /** Given the raw midi notes (the note number and duration in pulses),
+     * calculate the following note data:
+     * - The white key
+     * - The accidental (if any)
+     * - The note duration (half, quarter, eighth, etc)
+     * - The side it should be drawn (left or side)
+     * By default, notes are drawn on the left side.  However, if two notes
+     * overlap (like A and B) you cannot draw the next note directly above it.
+     * Instead you must shift one of the notes to the right.
+     *
+     * The KeySignature is used to determine the white key and accidental.
+     * The TimeSignature is used to determine the duration.
+     */
+ 
+    private static NoteData[] 
+    CreateNoteData(List<MidiNote> midinotes, KeySignature key,
+                              TimeSignature time) {
+
+        int len = midinotes.Count;
+        NoteData[] notedata = new NoteData[len];
+
+        for (int i = 0; i < len; i++) {
+            MidiNote midi = midinotes[i];
+            notedata[i] = new NoteData();
+            notedata[i].number = midi.Number;
+            notedata[i].leftside = true;
+            notedata[i].whitenote = key.GetWhiteNote(midi.Number);
+            notedata[i].duration = time.GetNoteDuration(midi.EndTime - midi.StartTime);
+            notedata[i].accid = key.GetAccidental(midi.Number, midi.StartTime / time.Measure);
+            
+            if (i > 0 && (notedata[i].whitenote.Dist(notedata[i-1].whitenote) == 1)) {
+                /* This note (notedata[i]) overlaps with the previous note.
+                 * Change the side of this note.
+                 */
+
+                if (notedata[i-1].leftside) {
+                    notedata[i].leftside = false;
+                } else {
+                    notedata[i].leftside = true;
+                }
+            } else {
+                notedata[i].leftside = true;
+            }
+        }
+        return notedata;
+    }
+
+
+    /** Given the note data (the white keys and accidentals), create 
+     * the Accidental Symbols and return them.
+     */
+    private static AccidSymbol[] 
+    CreateAccidSymbols(NoteData[] notedata, Clef clef) {
+        int count = 0;
+        foreach (NoteData n in notedata) {
+            if (n.accid != Accid.None) {
+                count++;
+            }
+        }
+        AccidSymbol[] symbols = new AccidSymbol[count];
+        int i = 0;
+        foreach (NoteData n in notedata) {
+            if (n.accid != Accid.None) {
+                symbols[i] = new AccidSymbol(n.accid, n.whitenote, clef);
+                i++;
+            }
+        }
+        return symbols;
+    }
+
+    /** Calculate the stem direction (Up or down) based on the top and
+     * bottom note in the chord.  If the average of the notes is above
+     * the middle of the staff, the direction is down.  Else, the
+     * direction is up.
+     */
+    private static int 
+    StemDirection(WhiteNote bottom, WhiteNote top, Clef clef) {
+        WhiteNote middle;
+        if (clef == Clef.Treble)
+            middle = new WhiteNote(WhiteNote.B, 5);
+        else
+            middle = new WhiteNote(WhiteNote.D, 3);
