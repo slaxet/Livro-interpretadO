@@ -448,3 +448,121 @@ public class ChordSymbol : MusicSymbol {
         }
         else {
             return "";
+        }
+    }
+
+    /** Get the letter (A, A#, Bb) representing this note */
+    private string Letter(int notenumber, WhiteNote whitenote) {
+        int notescale = NoteScale.FromNumber(notenumber);
+        switch(notescale) {
+            case NoteScale.A: return "A";
+            case NoteScale.B: return "B";
+            case NoteScale.C: return "C";
+            case NoteScale.D: return "D";
+            case NoteScale.E: return "E";
+            case NoteScale.F: return "F";
+            case NoteScale.G: return "G";
+            case NoteScale.Asharp:
+                if (whitenote.Letter == WhiteNote.A)
+                    return "A#";
+                else
+                    return "Bb";
+            case NoteScale.Csharp:
+                if (whitenote.Letter == WhiteNote.C)
+                    return "C#";
+                else
+                    return "Db";
+            case NoteScale.Dsharp:
+                if (whitenote.Letter == WhiteNote.D)
+                    return "D#";
+                else
+                    return "Eb";
+            case NoteScale.Fsharp:
+                if (whitenote.Letter == WhiteNote.F)
+                    return "F#";
+                else
+                    return "Gb";
+            case NoteScale.Gsharp:
+                if (whitenote.Letter == WhiteNote.G)
+                    return "G#";
+                else
+                    return "Ab";
+            default:
+                return "";
+        }
+    }
+
+    /** Draw the Chord Symbol:
+     * - Draw the accidental symbols.
+     * - Draw the black circle notes.
+     * - Draw the stems.
+      @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    public override void Draw(Graphics g, Pen pen, int ytop) {
+        /* Align the chord to the right */
+        g.TranslateTransform(Width - MinWidth, 0);
+
+        /* Draw the accidentals. */
+        WhiteNote topstaff = WhiteNote.Top(clef);
+        int xpos = DrawAccid(g, pen, ytop);
+
+        /* Draw the notes */
+        g.TranslateTransform(xpos, 0);
+        DrawNotes(g, pen, ytop, topstaff);
+        if (sheetmusic != null && sheetmusic.ShowNoteLetters != 0) {
+            DrawNoteLetters(g, pen, ytop, topstaff);
+        }
+
+        /* Draw the stems */
+        if (stem1 != null)
+            stem1.Draw(g, pen, ytop, topstaff);
+        if (stem2 != null)
+            stem2.Draw(g, pen, ytop, topstaff);
+
+        g.TranslateTransform(-xpos, 0);
+        g.TranslateTransform(-(Width - MinWidth), 0);
+    }
+
+    /* Draw the accidental symbols.  If two symbols overlap (if they
+     * are less than 6 notes apart), we cannot draw the symbol directly
+     * above the previous one.  Instead, we must shift it to the right.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     * @return The x pixel width used by all the accidentals.
+     */
+    public int DrawAccid(Graphics g, Pen pen, int ytop) {
+        int xpos = 0;
+
+        AccidSymbol prev = null;
+        foreach (AccidSymbol symbol in accidsymbols) {
+            if (prev != null && symbol.Note.Dist(prev.Note) < 6) {
+                xpos += symbol.Width;
+            }
+            g.TranslateTransform(xpos, 0);
+            symbol.Draw(g, pen, ytop);
+            g.TranslateTransform(-xpos, 0);
+            prev = symbol;
+        }
+        if (prev != null) {
+            xpos += prev.Width;
+        }
+        return xpos;
+    }
+
+    /** Draw the black circle notes.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     * @param topstaff The white note of the top of the staff.
+     */
+    public void DrawNotes(Graphics g, Pen pen, int ytop, WhiteNote topstaff) {
+        pen.Width = 1;
+        foreach (NoteData note in notedata) {
+            /* Get the x,y position to draw the note */
+            int ynote = ytop + topstaff.Dist(note.whitenote) * 
+                        SheetMusic.NoteHeight/2;
+
+            int xnote = SheetMusic.LineSpace/4;
+            if (!note.leftside)
+                xnote += SheetMusic.NoteWidth;
+
+            /* Draw rotated ellipse.  You must first translate (0,0)
+             * to the center of the ellipse.
+             */
