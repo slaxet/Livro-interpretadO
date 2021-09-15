@@ -566,3 +566,119 @@ public class ChordSymbol : MusicSymbol {
             /* Draw rotated ellipse.  You must first translate (0,0)
              * to the center of the ellipse.
              */
+            g.TranslateTransform(xnote + SheetMusic.NoteWidth/2 + 1, 
+                                 ynote - SheetMusic.LineWidth + 
+                                 SheetMusic.NoteHeight/2);
+            g.RotateTransform(-45);
+
+            if (sheetmusic != null) {
+                pen.Color = sheetmusic.NoteColor(note.number);
+            }
+            else {
+                pen.Color = Color.Black;
+            }
+
+            if (note.duration == NoteDuration.Whole || 
+                note.duration == NoteDuration.Half ||
+                note.duration == NoteDuration.DottedHalf) {
+
+                g.DrawEllipse(pen, -SheetMusic.NoteWidth/2, 
+                              -SheetMusic.NoteHeight/2,
+                              SheetMusic.NoteWidth,
+                              SheetMusic.NoteHeight-1);
+
+                g.DrawEllipse(pen, -SheetMusic.NoteWidth/2, 
+                              -SheetMusic.NoteHeight/2 + 1,
+                              SheetMusic.NoteWidth,
+                              SheetMusic.NoteHeight-2);
+
+                g.DrawEllipse(pen, -SheetMusic.NoteWidth/2, 
+                              -SheetMusic.NoteHeight/2 + 1,
+                              SheetMusic.NoteWidth,
+                              SheetMusic.NoteHeight-3);
+
+            }
+            else {
+                Brush brush = Brushes.Black;
+                if (pen.Color != Color.Black) {
+                    brush = new SolidBrush(pen.Color);
+                }
+                g.FillEllipse(brush, -SheetMusic.NoteWidth/2, 
+                              -SheetMusic.NoteHeight/2,
+                              SheetMusic.NoteWidth,
+                              SheetMusic.NoteHeight-1);
+                if (pen.Color != Color.Black) {
+                    brush.Dispose();
+                }
+            }
+
+            pen.Color = Color.Black;
+            g.DrawEllipse(pen, -SheetMusic.NoteWidth/2, 
+                          -SheetMusic.NoteHeight/2,
+                           SheetMusic.NoteWidth,
+                           SheetMusic.NoteHeight-1);
+
+            g.RotateTransform(45);
+            g.TranslateTransform( - (xnote + SheetMusic.NoteWidth/2 + 1), 
+                                  - (ynote - SheetMusic.LineWidth + 
+                                     SheetMusic.NoteHeight/2));
+
+            /* Draw a dot if this is a dotted duration. */
+            if (note.duration == NoteDuration.DottedHalf ||
+                note.duration == NoteDuration.DottedQuarter ||
+                note.duration == NoteDuration.DottedEighth) {
+
+                g.FillEllipse(Brushes.Black, 
+                              xnote + SheetMusic.NoteWidth + 
+                              SheetMusic.LineSpace/3,
+                              ynote + SheetMusic.LineSpace/3, 4, 4);
+
+            }
+
+            /* Draw horizontal lines if note is above/below the staff */
+            WhiteNote top = topstaff.Add(1);
+            int dist = note.whitenote.Dist(top);
+            int y = ytop - SheetMusic.LineWidth;
+
+            if (dist >= 2) {
+                for (int i = 2; i <= dist; i += 2) {
+                    y -= SheetMusic.NoteHeight;
+                    g.DrawLine(pen, xnote - SheetMusic.LineSpace/4, y, 
+                                    xnote + SheetMusic.NoteWidth + 
+                                    SheetMusic.LineSpace/4, y);
+                }
+            }
+
+            WhiteNote bottom = top.Add(-8);
+            y = ytop + (SheetMusic.LineSpace + SheetMusic.LineWidth) * 4 - 1;
+            dist = bottom.Dist(note.whitenote);
+            if (dist >= 2) {
+                for (int i = 2; i <= dist; i+= 2) {
+                    y += SheetMusic.NoteHeight;
+                    g.DrawLine(pen, xnote - SheetMusic.LineSpace/4, y, 
+                                    xnote + SheetMusic.NoteWidth + 
+                                    SheetMusic.LineSpace/4, y);
+                }
+            }
+            /* End drawing horizontal lines */
+
+        }
+    }
+
+    /** Draw the note letters (A, A#, Bb, etc) next to the note circles.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     * @param topstaff The white note of the top of the staff.
+     */
+    public void DrawNoteLetters(Graphics g, Pen pen, int ytop, WhiteNote topstaff) {
+        bool overlap = NotesOverlap(notedata, 0, notedata.Length);
+        pen.Width = 1;
+
+        foreach (NoteData note in notedata) {
+            if (!note.leftside) {
+                /* There's not enought pixel room to show the letter */
+                continue;
+            }
+
+            /* Get the x,y position to draw the note */
+            int ynote = ytop + topstaff.Dist(note.whitenote) * 
+                        SheetMusic.NoteHeight/2;
