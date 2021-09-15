@@ -338,3 +338,113 @@ public class ChordSymbol : MusicSymbol {
      */
     public override int AboveStaff {
         get { return GetAboveStaff(); }
+    }
+
+    private int GetAboveStaff() {
+        /* Find the topmost note in the chord */
+        WhiteNote topnote = notedata[ notedata.Length-1 ].whitenote;
+
+        /* The stem.End is the note position where the stem ends.
+         * Check if the stem end is higher than the top note.
+         */
+        if (stem1 != null)
+            topnote = WhiteNote.Max(topnote, stem1.End);
+        if (stem2 != null)
+            topnote = WhiteNote.Max(topnote, stem2.End);
+
+        int dist = topnote.Dist(WhiteNote.Top(clef)) * SheetMusic.NoteHeight/2;
+        int result = 0;
+        if (dist > 0)
+            result = dist;
+
+        /* Check if any accidental symbols extend above the staff */
+        foreach (AccidSymbol symbol in accidsymbols) {
+            if (symbol.AboveStaff > result) {
+                result = symbol.AboveStaff;
+            }
+        }
+        return result;
+    }
+
+    /** Get the number of pixels this symbol extends below the staff. Used
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+    public override int BelowStaff {
+        get { return GetBelowStaff(); }
+    }
+
+    private int GetBelowStaff() {
+        /* Find the bottom note in the chord */
+        WhiteNote bottomnote = notedata[0].whitenote;
+
+        /* The stem.End is the note position where the stem ends.
+         * Check if the stem end is lower than the bottom note.
+         */
+        if (stem1 != null)
+            bottomnote = WhiteNote.Min(bottomnote, stem1.End);
+        if (stem2 != null)
+            bottomnote = WhiteNote.Min(bottomnote, stem2.End);
+
+        int dist = WhiteNote.Bottom(clef).Dist(bottomnote) *
+                   SheetMusic.NoteHeight/2;
+
+        int result = 0;
+        if (dist > 0)
+            result = dist;
+
+        /* Check if any accidental symbols extend below the staff */ 
+        foreach (AccidSymbol symbol in accidsymbols) {
+            if (symbol.BelowStaff > result) {
+                result = symbol.BelowStaff;
+            }
+        }
+        return result;
+    }
+
+    /** Get the name for this note */
+    private string NoteName(int notenumber, WhiteNote whitenote) {
+        if (sheetmusic.ShowNoteLetters == MidiOptions.NoteNameLetter) {
+            return Letter(notenumber, whitenote);
+        }
+        else if (sheetmusic.ShowNoteLetters == MidiOptions.NoteNameFixedDoReMi) {
+            string[] fixedDoReMi = {
+                "La", "Li", "Ti", "Do", "Di", "Re", "Ri", "Mi", "Fa", "Fi", "So", "Si" 
+            };
+            int notescale = NoteScale.FromNumber(notenumber);
+            return fixedDoReMi[notescale];
+        }
+        else if (sheetmusic.ShowNoteLetters == MidiOptions.NoteNameMovableDoReMi) {
+            string[] fixedDoReMi = {
+                "La", "Li", "Ti", "Do", "Di", "Re", "Ri", "Mi", "Fa", "Fi", "So", "Si" 
+            };
+            int mainscale = sheetmusic.MainKey.Notescale();
+            int diff = NoteScale.C - mainscale;
+            notenumber += diff;
+            if (notenumber < 0) {
+                notenumber += 12;
+            }
+            int notescale = NoteScale.FromNumber(notenumber);
+            return fixedDoReMi[notescale];
+        }
+        else if (sheetmusic.ShowNoteLetters == MidiOptions.NoteNameFixedNumber) {
+            string[] num = {
+                "10", "11", "12", "1", "2", "3", "4", "5", "6", "7", "8", "9" 
+            };
+            int notescale = NoteScale.FromNumber(notenumber);
+            return num[notescale];
+        }
+        else if (sheetmusic.ShowNoteLetters == MidiOptions.NoteNameMovableNumber) {
+            string[] num = {
+                "10", "11", "12", "1", "2", "3", "4", "5", "6", "7", "8", "9" 
+            };
+            int mainscale = sheetmusic.MainKey.Notescale();
+            int diff = NoteScale.C - mainscale;
+            notenumber += diff;
+            if (notenumber < 0) {
+                notenumber += 12;
+            }
+            int notescale = NoteScale.FromNumber(notenumber);
+            return num[notescale];
+        }
+        else {
+            return "";
