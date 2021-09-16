@@ -910,3 +910,103 @@ public class ChordSymbol : MusicSymbol {
         }
         else {
             LineUpStemEnds(chords);
+        }
+
+        firstStem.SetPair(lastStem, spacing);
+        for (int i = 1; i < chords.Length; i++) {
+            chords[i].Stem.Receiver = true;
+        }
+    }
+
+    /** We're connecting the stems of two chords using a horizontal beam.
+     *  Adjust the vertical endpoint of the stems, so that they're closer
+     *  together.  For a dotted 8th to 16th beam, increase the stem of the
+     *  dotted eighth, so that it's as long as a 16th stem.
+     */
+    static void
+    BringStemsCloser(ChordSymbol[] chords) {
+        Stem firstStem = chords[0].Stem;
+        Stem lastStem = chords[1].Stem;
+
+        /* If we're connecting a dotted 8th to a 16th, increase
+         * the stem end of the dotted eighth.
+         */
+        if (firstStem.Duration == NoteDuration.DottedEighth &&
+            lastStem.Duration == NoteDuration.Sixteenth) {
+            if (firstStem.Direction == Stem.Up) {
+                firstStem.End = firstStem.End.Add(2);
+            }
+            else {
+                firstStem.End = firstStem.End.Add(-2);
+            }
+        }
+
+        /* Bring the stem ends closer together */
+        int distance = Math.Abs(firstStem.End.Dist(lastStem.End));
+        if (firstStem.Direction == Stem.Up) {
+            if (WhiteNote.Max(firstStem.End, lastStem.End) == firstStem.End)
+                lastStem.End = lastStem.End.Add(distance/2);
+            else
+                firstStem.End = firstStem.End.Add(distance/2);
+        }
+        else {
+            if (WhiteNote.Min(firstStem.End, lastStem.End) == firstStem.End)
+                lastStem.End = lastStem.End.Add(-distance/2);
+            else
+                firstStem.End = firstStem.End.Add(-distance/2);
+        }
+    }
+
+    /** We're connecting the stems of three or more chords using a horizontal beam.
+     *  Adjust the vertical endpoint of the stems, so that the middle chord stems
+     *  are vertically in between the first and last stem.
+     */
+    static void
+    LineUpStemEnds(ChordSymbol[] chords) {
+        Stem firstStem = chords[0].Stem;
+        Stem lastStem = chords[chords.Length-1].Stem;
+        Stem middleStem = chords[1].Stem;
+
+        if (firstStem.Direction == Stem.Up) {
+            /* Find the highest stem. The beam will either:
+             * - Slant downwards (first stem is highest)
+             * - Slant upwards (last stem is highest)
+             * - Be straight (middle stem is highest)
+             */
+            WhiteNote top = firstStem.End;
+            foreach (ChordSymbol chord in chords) {
+                top = WhiteNote.Max(top, chord.Stem.End);
+            }
+            if (top == firstStem.End && top.Dist(lastStem.End) >= 2) {
+                firstStem.End = top;
+                middleStem.End = top.Add(-1);
+                lastStem.End = top.Add(-2);
+            }
+            else if (top == lastStem.End && top.Dist(firstStem.End) >= 2) {
+                firstStem.End = top.Add(-2);
+                middleStem.End = top.Add(-1);
+                lastStem.End = top;
+            }
+            else {
+                firstStem.End = top;
+                middleStem.End = top;
+                lastStem.End = top;
+            }
+        }
+        else {
+            /* Find the bottommost stem. The beam will either:
+             * - Slant upwards (first stem is lowest)
+             * - Slant downwards (last stem is lowest)
+             * - Be straight (middle stem is highest)
+             */
+            WhiteNote bottom = firstStem.End;
+            foreach (ChordSymbol chord in chords) {
+                bottom = WhiteNote.Min(bottom, chord.Stem.End);
+            }
+
+            if (bottom == firstStem.End && lastStem.End.Dist(bottom) >= 2) {
+                middleStem.End = bottom.Add(1);
+                lastStem.End = bottom.Add(2);
+            }
+            else if (bottom == lastStem.End && firstStem.End.Dist(bottom) >= 2) {
+                middleStem.End = bottom.Add(1);
