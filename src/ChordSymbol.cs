@@ -1010,3 +1010,43 @@ public class ChordSymbol : MusicSymbol {
             }
             else if (bottom == lastStem.End && firstStem.End.Dist(bottom) >= 2) {
                 middleStem.End = bottom.Add(1);
+                firstStem.End = bottom.Add(2);
+            }
+            else {
+                firstStem.End = bottom;
+                middleStem.End = bottom;
+                lastStem.End = bottom;
+            }
+        }
+
+        /* All middle stems have the same end */
+        for (int i = 1; i < chords.Length-1; i++) {
+            Stem stem = chords[i].Stem;
+            stem.End = middleStem.End;
+        }
+    }
+
+    public override string ToString() {
+        string result = string.Format("ChordSymbol clef={0} start={1} end={2} width={3} hastwostems={4} ", 
+                                      clef, StartTime, EndTime, Width, hastwostems);
+        foreach (AccidSymbol symbol in accidsymbols) {
+            result += symbol.ToString() + " ";
+        }
+        foreach (NoteData note in notedata) {
+            result += string.Format("Note whitenote={0} duration={1} leftside={2} ",
+                                    note.whitenote, note.duration, note.leftside);
+        }
+        if (stem1 != null) {
+            result += stem1.ToString() + " ";
+        }
+        if (stem2 != null) {
+            result += stem2.ToString() + " ";
+        }
+        return result; 
+    }
+
+}
+
+
+}
+
