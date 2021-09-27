@@ -11,4 +11,9 @@
  */
 
 using System;
-using System
+using System.Collections.Generic;
+
+namespace MidiSheetMusic {
+
+/** @class ClefMeasures
+ * The ClefMeasures class is used to rep
