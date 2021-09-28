@@ -16,4 +16,8 @@ using System.Collections.Generic;
 namespace MidiSheetMusic {
 
 /** @class ClefMeasures
- * The ClefMeasures class is used to rep
+ * The ClefMeasures class is used to report what Clef (Treble or Bass) a
+ * given measure uses.
+ */
+public class ClefMeasures {
+    private List<Cl
