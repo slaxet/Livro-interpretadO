@@ -20,4 +20,5 @@ namespace MidiSheetMusic {
  * given measure uses.
  */
 public class ClefMeasures {
-    private List<Cl
+    private List<Clef> clefs;  /** The clefs used for each measure (for a single track) */
+    private int measure;       /** The length o
