@@ -25,4 +25,6 @@ public class ClefMeasures {
 
  
     /** Given the notes in a track, calculate the appropriate Clef to use
-     * f
+     * for each measure.  Store the result in the clefs list.
+     * @param notes  The midi notes
+     * @param 
