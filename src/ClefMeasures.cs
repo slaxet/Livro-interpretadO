@@ -21,4 +21,8 @@ namespace MidiSheetMusic {
  */
 public class ClefMeasures {
     private List<Clef> clefs;  /** The clefs used for each measure (for a single track) */
-    private int measure;       /** The length o
+    private int measure;       /** The length of a measure, in pulses */
+
+ 
+    /** Given the notes in a track, calculate the appropriate Clef to use
+     * f
