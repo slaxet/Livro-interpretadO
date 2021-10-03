@@ -30,3 +30,7 @@ public class ClefMeasures {
      * @param measurelen The length of a measure, in pulses
      */
     public ClefMeasures(List<MidiNote> notes, int measurelen) {
+        measure = measurelen;
+        Clef mainclef = MainClef(notes);
+        int nextmeasure = measurelen;
+        int p
