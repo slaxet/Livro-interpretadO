@@ -27,4 +27,6 @@ public class ClefMeasures {
     /** Given the notes in a track, calculate the appropriate Clef to use
      * for each measure.  Store the result in the clefs list.
      * @param notes  The midi notes
-     * @param 
+     * @param measurelen The length of a measure, in pulses
+     */
+    public ClefMeasures(List<MidiNote> notes, int measurelen) {
