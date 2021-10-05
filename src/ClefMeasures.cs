@@ -33,4 +33,9 @@ public class ClefMeasures {
         measure = measurelen;
         Clef mainclef = MainClef(notes);
         int nextmeasure = measurelen;
-        int p
+        int pos = 0;
+        Clef clef = mainclef;
+
+        clefs = new List<Clef>();
+
+        while (pos < notes.Count) {
