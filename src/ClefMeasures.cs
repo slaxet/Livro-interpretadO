@@ -39,3 +39,6 @@ public class ClefMeasures {
         clefs = new List<Clef>();
 
         while (pos < notes.Count) {
+            /* Sum all the notes in the current measure */
+            int sumnotes = 0;
+            int notecou
