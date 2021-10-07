@@ -41,4 +41,6 @@ public class ClefMeasures {
         while (pos < notes.Count) {
             /* Sum all the notes in the current measure */
             int sumnotes = 0;
-            int notecou
+            int notecount = 0;
+            while (pos < notes.Count && notes[pos].StartTime < nextmeasure) {
+                sumn
