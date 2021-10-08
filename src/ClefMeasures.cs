@@ -47,4 +47,7 @@ public class ClefMeasures {
                 notecount++;
                 pos++;
             }
-  
+            if (notecount == 0)
+                notecount = 1;
+
+            /* Calculate the "average" note in t
