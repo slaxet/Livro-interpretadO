@@ -50,4 +50,7 @@ public class ClefMeasures {
             if (notecount == 0)
                 notecount = 1;
 
-            /* Calculate the "average" note in t
+            /* Calculate the "average" note in the measure */
+            int avgnote = sumnotes / notecount;
+            if (avgnote == 0) {
+                /* This measure doesn't contain any note
