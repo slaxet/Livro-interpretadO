@@ -53,4 +53,8 @@ public class ClefMeasures {
             /* Calculate the "average" note in the measure */
             int avgnote = sumnotes / notecount;
             if (avgnote == 0) {
-                /* This measure doesn't contain any note
+                /* This measure doesn't contain any notes.
+                 * Keep the previous clef.
+                 */
+            }
+            else if (avgnote >= Whit
