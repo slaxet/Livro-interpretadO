@@ -60,4 +60,8 @@ public class ClefMeasures {
             else if (avgnote >= WhiteNote.BottomTreble.Number()) {
                 clef = Clef.Treble;
             }
-            else if (avgnote <= WhiteNote.Top
+            else if (avgnote <= WhiteNote.TopBass.Number()) {
+                clef = Clef.Bass;
+            }
+            else {
+                /* 
