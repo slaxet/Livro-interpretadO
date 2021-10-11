@@ -57,4 +57,7 @@ public class ClefMeasures {
                  * Keep the previous clef.
                  */
             }
-            else if (avgnote >= Whit
+            else if (avgnote >= WhiteNote.BottomTreble.Number()) {
+                clef = Clef.Treble;
+            }
+            else if (avgnote <= WhiteNote.Top
