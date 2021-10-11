@@ -64,4 +64,5 @@ public class ClefMeasures {
                 clef = Clef.Bass;
             }
             else {
-                /* 
+                /* The average note is between G3 and F4. We can use either
+                 * the treble or bass clef.  Use
