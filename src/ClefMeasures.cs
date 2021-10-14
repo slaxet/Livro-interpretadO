@@ -74,4 +74,8 @@ public class ClefMeasures {
             clefs.Add(clef);
             nextmeasure += measurelen;
         }
-        cl
+        clefs.Add(clef);
+    }
+
+    /** Given a time (in pulses), return the clef used for that measure. */
+    public Cl
