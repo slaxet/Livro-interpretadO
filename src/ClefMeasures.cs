@@ -94,4 +94,8 @@ public class ClefMeasures {
      * clef.
      */
     private static Clef MainClef(List<MidiNote> notes) {
-        int middleC = WhiteNote.MiddleC.
+        int middleC = WhiteNote.MiddleC.Number();
+        int total = 0;
+        foreach (MidiNote m in notes) {
+            total += m.Number;
+        }
