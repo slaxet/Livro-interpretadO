@@ -78,4 +78,7 @@ public class ClefMeasures {
     }
 
     /** Given a time (in pulses), return the clef used for that measure. */
-    public Cl
+    public Clef GetClef(int starttime) {
+
+        /* If the time exceeds the last measure, return the last measure */
+        if (start
