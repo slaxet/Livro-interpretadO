@@ -99,3 +99,7 @@ public class ClefMeasures {
         foreach (MidiNote m in notes) {
             total += m.Number;
         }
+        if (notes.Count == 0) {
+            return Clef.Treble;
+        }
+        else if (total/notes.Count >= middleC) {
