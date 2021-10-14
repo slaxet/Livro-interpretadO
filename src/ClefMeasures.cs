@@ -81,4 +81,7 @@ public class ClefMeasures {
     public Clef GetClef(int starttime) {
 
         /* If the time exceeds the last measure, return the last measure */
-        if (start
+        if (starttime / measure >= clefs.Count) {
+            return clefs[ clefs.Count-1 ];
+        }
+        else
