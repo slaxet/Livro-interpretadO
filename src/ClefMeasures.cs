@@ -84,4 +84,9 @@ public class ClefMeasures {
         if (starttime / measure >= clefs.Count) {
             return clefs[ clefs.Count-1 ];
         }
-        else
+        else {
+            return clefs[ starttime / measure ];
+        }
+    }
+
+    /** Calculate the best clef 
