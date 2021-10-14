@@ -89,4 +89,6 @@ public class ClefMeasures {
         }
     }
 
-    /** Calculate the best clef 
+    /** Calculate the best clef to use for the given notes.  If the
+     * average note is below Middle C, use a bass clef.  Else, use a treble
+     * clef.
