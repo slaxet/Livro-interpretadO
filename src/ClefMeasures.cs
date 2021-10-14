@@ -68,4 +68,10 @@ public class ClefMeasures {
                  * the treble or bass clef.  Use the "main" clef, the clef
                  * that appears most for this track.
                  */
-                clef = m
+                clef = mainclef;
+            }
+
+            clefs.Add(clef);
+            nextmeasure += measurelen;
+        }
+        cl
