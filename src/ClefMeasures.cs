@@ -103,3 +103,14 @@ public class ClefMeasures {
             return Clef.Treble;
         }
         else if (total/notes.Count >= middleC) {
+            return Clef.Treble;
+        }
+        else {
+            return Clef.Bass;
+        }
+    }
+}
+
+
+}
+
