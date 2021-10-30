@@ -14,4 +14,10 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawi
+using System.Drawing;
+using System.Drawing.Drawing2D;
+
+namespace MidiSheetMusic {
+
+/** The possible clefs, Treble or Bass */
+public e
