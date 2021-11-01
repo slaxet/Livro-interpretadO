@@ -29,4 +29,6 @@ public enum Clef { Treble, Bass };
  * small symbols are used to show clef changes within a staff.
  */
 
-public class ClefSymbol : MusicSym
+public class ClefSymbol : MusicSymbol {
+    private static Image treble;  /** The treble clef image */
+    private static Image bass;    /** The bass clef ima
