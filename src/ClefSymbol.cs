@@ -24,4 +24,5 @@ public enum Clef { Treble, Bass };
 
 /** @class ClefSymbol 
  * A ClefSymbol represents either a Treble or Bass Clef image.
- * T
+ * The clef can be either normal or small size.  Normal size is
+ * used at the beginning of a new staff, on the left
