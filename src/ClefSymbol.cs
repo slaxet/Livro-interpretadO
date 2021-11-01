@@ -31,4 +31,7 @@ public enum Clef { Treble, Bass };
 
 public class ClefSymbol : MusicSymbol {
     private static Image treble;  /** The treble clef image */
-    private static Image bass;    /** The bass clef ima
+    private static Image bass;    /** The bass clef image */
+
+    private int starttime;        /** Start time of the symbol */
+    private bool smallsize; 
