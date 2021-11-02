@@ -34,4 +34,5 @@ public class ClefSymbol : MusicSymbol {
     private static Image bass;    /** The bass clef image */
 
     private int starttime;        /** Start time of the symbol */
-    private bool smallsize; 
+    private bool smallsize;       /** True if this is a small clef, false otherwise */
+    private Clef clef;            /** Th
