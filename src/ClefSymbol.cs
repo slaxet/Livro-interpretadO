@@ -53,4 +53,8 @@ public class ClefSymbol : MusicSymbol {
             treble = new Bitmap(typeof(ClefSymbol), "treble.png");
 
         if (bass == null)
-            
+            bass = new Bitmap(typeof(ClefSymbol), "bass.png");
+
+    }
+
+    /** Get the time (in pulses) this symbol occurs at
