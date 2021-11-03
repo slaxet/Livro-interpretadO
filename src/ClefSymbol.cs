@@ -49,4 +49,8 @@ public class ClefSymbol : MusicSymbol {
 
     /** Load the Treble/Bass clef images into memory. */
     private static void LoadImages() {
-        if (tre
+        if (treble == null)
+            treble = new Bitmap(typeof(ClefSymbol), "treble.png");
+
+        if (bass == null)
+            
