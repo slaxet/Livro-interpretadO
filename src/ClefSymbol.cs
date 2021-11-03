@@ -38,4 +38,7 @@ public class ClefSymbol : MusicSymbol {
     private Clef clef;            /** The clef, Treble or Bass */
     private int width;
 
-    /** Create a new ClefSymbol, with the given clef, starttime, and
+    /** Create a new ClefSymbol, with the given clef, starttime, and size */
+    public ClefSymbol(Clef clef, int starttime, bool small) {
+        this.clef = clef;
+    
