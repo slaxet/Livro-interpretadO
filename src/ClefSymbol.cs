@@ -35,4 +35,7 @@ public class ClefSymbol : MusicSymbol {
 
     private int starttime;        /** Start time of the symbol */
     private bool smallsize;       /** True if this is a small clef, false otherwise */
-    private Clef clef;            /** Th
+    private Clef clef;            /** The clef, Treble or Bass */
+    private int width;
+
+    /** Create a new ClefSymbol, with the given clef, starttime, and
