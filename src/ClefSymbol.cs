@@ -41,4 +41,10 @@ public class ClefSymbol : MusicSymbol {
     /** Create a new ClefSymbol, with the given clef, starttime, and size */
     public ClefSymbol(Clef clef, int starttime, bool small) {
         this.clef = clef;
-    
+        this.starttime = starttime;
+        smallsize = small;
+        LoadImages();
+        width = MinWidth;
+    }
+
+    /
