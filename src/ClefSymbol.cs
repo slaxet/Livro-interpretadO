@@ -47,4 +47,6 @@ public class ClefSymbol : MusicSymbol {
         width = MinWidth;
     }
 
-    /
+    /** Load the Treble/Bass clef images into memory. */
+    private static void LoadImages() {
+        if (tre
