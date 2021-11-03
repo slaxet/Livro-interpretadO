@@ -65,4 +65,7 @@ public class ClefSymbol : MusicSymbol {
     }
 
     /** Get the minimum width (in pixels) needed to draw this symbol */
-    publ
+    public override int MinWidth {
+        get { 
+            if (smallsize)
+                return SheetMusic.NoteW
