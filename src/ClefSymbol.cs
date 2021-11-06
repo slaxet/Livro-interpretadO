@@ -68,4 +68,10 @@ public class ClefSymbol : MusicSymbol {
     public override int MinWidth {
         get { 
             if (smallsize)
-                return SheetMusic.NoteW
+                return SheetMusic.NoteWidth * 2;
+            else
+                return SheetMusic.NoteWidth * 3;
+        }
+    }
+
+    /** Get/Set the width 
