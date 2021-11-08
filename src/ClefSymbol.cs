@@ -82,4 +82,5 @@ public class ClefSymbol : MusicSymbol {
        set { width = value; }
     }
 
-    /** G
+    /** Get the number of pixels this symbol extends above the staff. Used
+     *  to determine the minim
