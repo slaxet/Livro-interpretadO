@@ -86,4 +86,6 @@ public class ClefSymbol : MusicSymbol {
      *  to determine the minimum height needed for the staff (Staff.FindBounds).
      */
     public override int AboveStaff { 
-        get {
+        get { 
+            if (clef == Clef.Treble && !smallsize)
+                return SheetMusic.NoteHeight * 
