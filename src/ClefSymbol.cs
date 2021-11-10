@@ -94,4 +94,7 @@ public class ClefSymbol : MusicSymbol {
         }
     }
 
-    /** Get the number of pixels this symbol ex
+    /** Get the number of pixels this symbol extends below the staff. Used
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+  
