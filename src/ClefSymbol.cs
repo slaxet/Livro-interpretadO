@@ -88,4 +88,10 @@ public class ClefSymbol : MusicSymbol {
     public override int AboveStaff { 
         get { 
             if (clef == Clef.Treble && !smallsize)
-                return SheetMusic.NoteHeight * 
+                return SheetMusic.NoteHeight * 2;
+            else
+                return 0;
+        }
+    }
+
+    /** Get the number of pixels this symbol ex
