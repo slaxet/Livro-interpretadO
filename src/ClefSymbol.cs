@@ -114,4 +114,8 @@ public class ClefSymbol : MusicSymbol {
     public override 
     void Draw(Graphics g, Pen pen, int ytop) {
         g.TranslateTransform(Width - MinWidth, 0);
-      
+        int y = ytop;
+        Image image;
+        int height;
+
+        /* Get the image, height, and top y pixel,
