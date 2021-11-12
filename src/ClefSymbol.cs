@@ -122,4 +122,7 @@ public class ClefSymbol : MusicSymbol {
          * and the image size.
          */
         if (clef == Clef.Treble) {
-            imag
+            image = treble;
+            if (smallsize) {
+                height = SheetMusic.StaffHeight + SheetMusic.StaffHeight/4;
+  
