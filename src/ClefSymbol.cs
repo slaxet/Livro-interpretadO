@@ -102,4 +102,10 @@ public class ClefSymbol : MusicSymbol {
             if (clef == Clef.Treble && !smallsize)
                 return SheetMusic.NoteHeight * 2;
             else if (clef == Clef.Treble && smallsize)
-       
+                return SheetMusic.NoteHeight;
+            else
+                return 0;
+        }
+    }
+
+    /** D
