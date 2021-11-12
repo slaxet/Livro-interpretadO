@@ -111,3 +111,7 @@ public class ClefSymbol : MusicSymbol {
     /** Draw the symbol.
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
+    public override 
+    void Draw(Graphics g, Pen pen, int ytop) {
+        g.TranslateTransform(Width - MinWidth, 0);
+      
