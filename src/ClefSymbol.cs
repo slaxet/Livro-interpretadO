@@ -118,4 +118,8 @@ public class ClefSymbol : MusicSymbol {
         Image image;
         int height;
 
-        /* Get the image, height, and top y pixel,
+        /* Get the image, height, and top y pixel, depending on the clef
+         * and the image size.
+         */
+        if (clef == Clef.Treble) {
+            imag
