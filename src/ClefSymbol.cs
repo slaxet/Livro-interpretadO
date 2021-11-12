@@ -108,4 +108,6 @@ public class ClefSymbol : MusicSymbol {
         }
     }
 
-    /** D
+    /** Draw the symbol.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
