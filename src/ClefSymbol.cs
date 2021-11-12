@@ -99,4 +99,7 @@ public class ClefSymbol : MusicSymbol {
      */
     public override int BelowStaff {
         get {
-            if (clef == Clef.Treble && !smallsize
+            if (clef == Clef.Treble && !smallsize)
+                return SheetMusic.NoteHeight * 2;
+            else if (clef == Clef.Treble && smallsize)
+       
