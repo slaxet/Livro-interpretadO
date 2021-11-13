@@ -127,4 +127,9 @@ public class ClefSymbol : MusicSymbol {
                 height = SheetMusic.StaffHeight + SheetMusic.StaffHeight/4;
             } else {
                 height = 3 * SheetMusic.StaffHeight/2 + SheetMusic.NoteHeight/2;
-        
+                y = ytop - SheetMusic.NoteHeight;
+            }
+        }
+        else {
+            image = bass;
+         
