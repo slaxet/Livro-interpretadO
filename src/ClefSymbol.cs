@@ -132,4 +132,6 @@ public class ClefSymbol : MusicSymbol {
         }
         else {
             image = bass;
-         
+            if (smallsize) {
+                height = SheetMusic.StaffHeight - 3*SheetMusic.NoteHeight/2;
+          
