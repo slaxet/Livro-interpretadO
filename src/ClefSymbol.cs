@@ -139,4 +139,6 @@ public class ClefSymbol : MusicSymbol {
             }
         }
 
-       
+        /* Scale the image width to match the height */
+        int imgwidth = image.Width * height / image.Height;
+        g.
