@@ -145,4 +145,6 @@ public class ClefSymbol : MusicSymbol {
         g.TranslateTransform(-(Width - MinWidth), 0);
     }
 
+    public override string ToString() {
+        return string.Format("ClefSymbol clef={0} small={1} width={2}",
     
