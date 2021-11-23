@@ -147,4 +147,10 @@ public class ClefSymbol : MusicSymbol {
 
     public override string ToString() {
         return string.Format("ClefSymbol clef={0} small={1} width={2}",
-    
+                             clef, smallsize, width);
+    }
+}
+
+
+}
+
