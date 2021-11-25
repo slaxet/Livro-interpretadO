@@ -36,3 +36,114 @@ namespace MidiSheetMusic {
 
 public class KeySignature {
     /** The number of sharps in each key signature */
+    public const int C = 0;
+    public const int G = 1;
+    public const int D = 2;
+    public const int A = 3;
+    public const int E = 4;
+    public const int B = 5;
+
+    /** The number of flats in each key signature */
+    public const int F = 1;
+    public const int Bflat = 2;
+    public const int Eflat = 3;
+    public const int Aflat = 4;
+    public const int Dflat = 5;
+    public const int Gflat = 6;
+
+    /** The two arrays below are key maps.  They take a major key
+     * (like G major, B-flat major) and a note in the scale, and
+     * return the Accidental required to display that note in the
+     * given key.  In a nutshel, the map is
+     *
+     *   map[Key][NoteScale] -> Accidental
+     */
+    private static Accid[][] sharpkeys;
+    private static Accid[][] flatkeys;
+
+    private int num_flats;   /** The number of sharps in the key, 0 thru 6 */
+    private int num_sharps;  /** The number of flats in the key, 0 thru 6 */
+
+    /** The accidental symbols that denote this key, in a treble clef */
+    private AccidSymbol[] treble;
+
+    /** The accidental symbols that denote this key, in a bass clef */
+    private AccidSymbol[] bass;
+
+    /** The key map for this key signature:
+     *   keymap[notenumber] -> Accidental
+     */
+    private Accid[] keymap;
+
+    /** The measure used in the previous call to GetAccidental() */
+    private int prevmeasure; 
+
+
+    /** Create new key signature, with the given number of
+     * sharps and flats.  One of the two must be 0, you can't
+     * have both sharps and flats in the key signature.
+     */
+    public KeySignature(int num_sharps, int num_flats) {
+        if (!(num_sharps == 0 || num_flats == 0)) {
+            throw new System.ArgumentException("Bad KeySigature args");
+        }
+        this.num_sharps = num_sharps;
+        this.num_flats = num_flats;
+
+        CreateAccidentalMaps();
+        keymap = new Accid[129];
+        ResetKeyMap();
+        CreateSymbols();
+    }
+
+    /** Create new key signature, with the given notescale.  */
+    public KeySignature(int notescale) {
+        num_sharps = num_flats = 0;
+        switch (notescale) {
+            case NoteScale.A:     num_sharps = 3; break;
+            case NoteScale.Bflat: num_flats = 2;  break;
+            case NoteScale.B:     num_sharps = 5; break;
+            case NoteScale.C:     break;
+            case NoteScale.Dflat: num_flats = 5;  break;
+            case NoteScale.D:     num_sharps = 2; break;
+            case NoteScale.Eflat: num_flats = 3;  break;
+            case NoteScale.E:     num_sharps = 4; break;
+            case NoteScale.F:     num_flats = 1;  break;
+            case NoteScale.Gflat: num_flats = 6;  break;
+            case NoteScale.G:     num_sharps = 1; break;
+            case NoteScale.Aflat: num_flats = 4;  break;
+            default:              break;
+        }
+
+        CreateAccidentalMaps();
+        keymap = new Accid[129];
+        ResetKeyMap();
+        CreateSymbols();
+    }
+
+
+    /** Iniitalize the sharpkeys and flatkeys maps */
+    private static void CreateAccidentalMaps() {
+        if (sharpkeys != null)
+            return; 
+
+        Accid[] map;
+        sharpkeys = new Accid[8][];
+        flatkeys = new Accid[8][];
+
+        for (int i = 0; i < 8; i++) {
+            sharpkeys[i] = new Accid[12];
+            flatkeys[i] = new Accid[12];
+        }
+
+        map = sharpkeys[C];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Asharp ] = Accid.Flat;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Csharp ] = Accid.Sharp;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Dsharp ] = Accid.Sharp;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Fsharp ] = Accid.Sharp;
