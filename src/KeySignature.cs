@@ -250,3 +250,109 @@ public class KeySignature {
         map[ NoteScale.Aflat ]  = Accid.Flat;
 
         map = flatkeys[Bflat];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Bflat ]  = Accid.None;
+        map[ NoteScale.B ]      = Accid.Natural;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Csharp ] = Accid.Sharp;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Eflat ]  = Accid.None;
+        map[ NoteScale.E ]      = Accid.Natural;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Fsharp ] = Accid.Sharp;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Aflat ]  = Accid.Flat;
+
+        map = flatkeys[Eflat];
+        map[ NoteScale.A ]      = Accid.Natural;
+        map[ NoteScale.Bflat ]  = Accid.None;
+        map[ NoteScale.B ]      = Accid.Natural;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Dflat ]  = Accid.Flat;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Eflat ]  = Accid.None;
+        map[ NoteScale.E ]      = Accid.Natural;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Fsharp ] = Accid.Sharp;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Aflat ]  = Accid.None;
+
+        map = flatkeys[Aflat];
+        map[ NoteScale.A ]      = Accid.Natural;
+        map[ NoteScale.Bflat ]  = Accid.None;
+        map[ NoteScale.B ]      = Accid.Natural;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Dflat ]  = Accid.None;
+        map[ NoteScale.D ]      = Accid.Natural;
+        map[ NoteScale.Eflat ]  = Accid.None;
+        map[ NoteScale.E ]      = Accid.Natural;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Fsharp ] = Accid.Sharp;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Aflat ]  = Accid.None;
+
+        map = flatkeys[Dflat];
+        map[ NoteScale.A ]      = Accid.Natural;
+        map[ NoteScale.Bflat ]  = Accid.None;
+        map[ NoteScale.B ]      = Accid.Natural;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Dflat ]  = Accid.None;
+        map[ NoteScale.D ]      = Accid.Natural;
+        map[ NoteScale.Eflat ]  = Accid.None;
+        map[ NoteScale.E ]      = Accid.Natural;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Gflat ]  = Accid.None;
+        map[ NoteScale.G ]      = Accid.Natural;
+        map[ NoteScale.Aflat ]  = Accid.None;
+
+        map = flatkeys[Gflat];
+        map[ NoteScale.A ]      = Accid.Natural;
+        map[ NoteScale.Bflat ]  = Accid.None;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.Natural;
+        map[ NoteScale.Dflat ]  = Accid.None;
+        map[ NoteScale.D ]      = Accid.Natural;
+        map[ NoteScale.Eflat ]  = Accid.None;
+        map[ NoteScale.E ]      = Accid.Natural;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Gflat ]  = Accid.None;
+        map[ NoteScale.G ]      = Accid.Natural;
+        map[ NoteScale.Aflat ]  = Accid.None;
+
+
+    }
+
+    /** The keymap tells what accidental symbol is needed for each
+     *  note in the scale.  Reset the keymap to the values of the
+     *  key signature.
+     */
+    private void ResetKeyMap()
+    {
+        Accid[] key;
+        if (num_flats > 0)
+            key = flatkeys[num_flats];
+        else
+            key = sharpkeys[num_sharps];
+
+        for (int notenumber = 0; notenumber < 128; notenumber++) {
+            keymap[notenumber] = key[NoteScale.FromNumber(notenumber)];
+        }
+    }
+
+
+    /** Create the Accidental symbols for this key, for
+     * the treble and bass clefs.
+     */
+    private void CreateSymbols() {
+        int count = Math.Max(num_sharps, num_flats);
+        treble = new AccidSymbol[count];
+        bass = new AccidSymbol[count];
+
+        if (count == 0) {
+            return;
+        }
+
+        WhiteNote[] treblenotes = null;
+        WhiteNote[] bassnotes = null;
+
+        if (num_sharps > 0)  {
