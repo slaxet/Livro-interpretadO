@@ -147,3 +147,106 @@ public class KeySignature {
         map[ NoteScale.E ]      = Accid.None;
         map[ NoteScale.F ]      = Accid.None;
         map[ NoteScale.Fsharp ] = Accid.Sharp;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Gsharp ] = Accid.Sharp;
+
+        map = sharpkeys[G];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Asharp ] = Accid.Flat;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Csharp ] = Accid.Sharp;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Dsharp ] = Accid.Sharp;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.Natural;
+        map[ NoteScale.Fsharp ] = Accid.None;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Gsharp ] = Accid.Sharp;
+
+        map = sharpkeys[D];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Asharp ] = Accid.Flat;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.Natural;
+        map[ NoteScale.Csharp ] = Accid.None;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Dsharp ] = Accid.Sharp;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.Natural;
+        map[ NoteScale.Fsharp ] = Accid.None;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Gsharp ] = Accid.Sharp;
+
+        map = sharpkeys[A];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Asharp ] = Accid.Flat;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.Natural;
+        map[ NoteScale.Csharp ] = Accid.None;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Dsharp ] = Accid.Sharp;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.Natural;
+        map[ NoteScale.Fsharp ] = Accid.None;
+        map[ NoteScale.G ]      = Accid.Natural;
+        map[ NoteScale.Gsharp ] = Accid.None;
+
+        map = sharpkeys[E];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Asharp ] = Accid.Flat;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.Natural;
+        map[ NoteScale.Csharp ] = Accid.None;
+        map[ NoteScale.D ]      = Accid.Natural;
+        map[ NoteScale.Dsharp ] = Accid.None;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.Natural;
+        map[ NoteScale.Fsharp ] = Accid.None;
+        map[ NoteScale.G ]      = Accid.Natural;
+        map[ NoteScale.Gsharp ] = Accid.None;
+
+        map = sharpkeys[B];
+        map[ NoteScale.A ]      = Accid.Natural;
+        map[ NoteScale.Asharp ] = Accid.None;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.Natural;
+        map[ NoteScale.Csharp ] = Accid.None;
+        map[ NoteScale.D ]      = Accid.Natural;
+        map[ NoteScale.Dsharp ] = Accid.None;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.Natural;
+        map[ NoteScale.Fsharp ] = Accid.None;
+        map[ NoteScale.G ]      = Accid.Natural;
+        map[ NoteScale.Gsharp ] = Accid.None;
+
+        /* Flat keys */
+        map = flatkeys[C];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Asharp ] = Accid.Flat;
+        map[ NoteScale.B ]      = Accid.None;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Csharp ] = Accid.Sharp;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Dsharp ] = Accid.Sharp;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Fsharp ] = Accid.Sharp;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Gsharp ] = Accid.Sharp;
+
+        map = flatkeys[F];
+        map[ NoteScale.A ]      = Accid.None;
+        map[ NoteScale.Bflat ]  = Accid.None;
+        map[ NoteScale.B ]      = Accid.Natural;
+        map[ NoteScale.C ]      = Accid.None;
+        map[ NoteScale.Csharp ] = Accid.Sharp;
+        map[ NoteScale.D ]      = Accid.None;
+        map[ NoteScale.Eflat ]  = Accid.Flat;
+        map[ NoteScale.E ]      = Accid.None;
+        map[ NoteScale.F ]      = Accid.None;
+        map[ NoteScale.Fsharp ] = Accid.Sharp;
+        map[ NoteScale.G ]      = Accid.None;
+        map[ NoteScale.Aflat ]  = Accid.Flat;
+
+        map = flatkeys[Bflat];
