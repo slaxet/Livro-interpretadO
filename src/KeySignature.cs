@@ -356,3 +356,127 @@ public class KeySignature {
         WhiteNote[] bassnotes = null;
 
         if (num_sharps > 0)  {
+            treblenotes = new WhiteNote[] {
+                new WhiteNote(WhiteNote.F, 5),
+                new WhiteNote(WhiteNote.C, 5),
+                new WhiteNote(WhiteNote.G, 5),
+                new WhiteNote(WhiteNote.D, 5),
+                new WhiteNote(WhiteNote.A, 6),
+                new WhiteNote(WhiteNote.E, 5)
+            };
+            bassnotes = new WhiteNote[] {
+                new WhiteNote(WhiteNote.F, 3),
+                new WhiteNote(WhiteNote.C, 3),
+                new WhiteNote(WhiteNote.G, 3),
+                new WhiteNote(WhiteNote.D, 3),
+                new WhiteNote(WhiteNote.A, 4),
+                new WhiteNote(WhiteNote.E, 3)
+            };
+        }
+        else if (num_flats > 0) {
+            treblenotes = new WhiteNote[] {
+                new WhiteNote(WhiteNote.B, 5),
+                new WhiteNote(WhiteNote.E, 5),
+                new WhiteNote(WhiteNote.A, 5),
+                new WhiteNote(WhiteNote.D, 5),
+                new WhiteNote(WhiteNote.G, 4),
+                new WhiteNote(WhiteNote.C, 5)
+            };
+            bassnotes = new WhiteNote[] {
+                new WhiteNote(WhiteNote.B, 3),
+                new WhiteNote(WhiteNote.E, 3),
+                new WhiteNote(WhiteNote.A, 3),
+                new WhiteNote(WhiteNote.D, 3),
+                new WhiteNote(WhiteNote.G, 2),
+                new WhiteNote(WhiteNote.C, 3)
+            };
+        }
+
+        Accid a = Accid.None;
+        if (num_sharps > 0)
+            a = Accid.Sharp;
+        else
+            a = Accid.Flat;
+
+        for (int i = 0; i < count; i++) {
+            treble[i] = new AccidSymbol(a, treblenotes[i], Clef.Treble);
+            bass[i] = new AccidSymbol(a, bassnotes[i], Clef.Bass);
+        }
+    }
+
+    /** Return the Accidental symbols for displaying this key signature
+     * for the given clef.
+     */
+    public AccidSymbol[] GetSymbols(Clef clef) {
+        if (clef == Clef.Treble)
+            return treble;
+        else
+            return bass;
+    }
+
+    /** Given a midi note number, return the accidental (if any) 
+     * that should be used when displaying the note in this key signature.
+     *
+     * The current measure is also required.  Once we return an
+     * accidental for a measure, the accidental remains for the
+     * rest of the measure. So we must update the current keymap
+     * with any new accidentals that we return.  When we move to another
+     * measure, we reset the keymap back to the key signature.
+     */
+    public Accid GetAccidental(int notenumber, int measure) {
+        if (measure != prevmeasure) {
+            ResetKeyMap();
+            prevmeasure = measure;
+        }
+
+        Accid result = keymap[notenumber];
+        if (result == Accid.Sharp) {
+            keymap[notenumber] = Accid.None;
+            keymap[notenumber-1] = Accid.Natural;
+        }
+        else if (result == Accid.Flat) {
+            keymap[notenumber] = Accid.None;
+            keymap[notenumber+1] = Accid.Natural;
+        }
+        else if (result == Accid.Natural) {
+            keymap[notenumber] = Accid.None;
+            int nextkey = NoteScale.FromNumber(notenumber+1);
+            int prevkey = NoteScale.FromNumber(notenumber-1);
+
+            /* If we insert a natural, then either:
+             * - the next key must go back to sharp,
+             * - the previous key must go back to flat.
+             */
+            if (keymap[notenumber-1] == Accid.None && keymap[notenumber+1] == Accid.None &&
+                NoteScale.IsBlackKey(nextkey) && NoteScale.IsBlackKey(prevkey) ) {
+
+                if (num_flats == 0) {
+                    keymap[notenumber+1] = Accid.Sharp;
+                }
+                else {
+                    keymap[notenumber-1] = Accid.Flat;
+                }
+            }
+            else if (keymap[notenumber-1] == Accid.None && NoteScale.IsBlackKey(prevkey)) {
+                keymap[notenumber-1] = Accid.Flat;
+            }
+            else if (keymap[notenumber+1] == Accid.None && NoteScale.IsBlackKey(nextkey)) {
+                keymap[notenumber+1] = Accid.Sharp;
+            }
+            else {
+                /* Shouldn't get here */
+            }
+        }
+        return result;
+    }
+
+
+    /** Given a midi note number, return the white note (the
+     * non-sharp/non-flat note) that should be used when displaying
+     * this note in this key signature.  This should be called
+     * before calling GetAccidental().
+     */
+    public WhiteNote GetWhiteNote(int notenumber) {
+        int notescale = NoteScale.FromNumber(notenumber);
+        int octave = (notenumber + 3) / 12 - 1;
+        int letter = 0;
