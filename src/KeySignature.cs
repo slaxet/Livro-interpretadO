@@ -480,3 +480,102 @@ public class KeySignature {
         int notescale = NoteScale.FromNumber(notenumber);
         int octave = (notenumber + 3) / 12 - 1;
         int letter = 0;
+
+        int[] whole_sharps = { 
+            WhiteNote.A, WhiteNote.A, 
+            WhiteNote.B, 
+            WhiteNote.C, WhiteNote.C,
+            WhiteNote.D, WhiteNote.D,
+            WhiteNote.E,
+            WhiteNote.F, WhiteNote.F,
+            WhiteNote.G, WhiteNote.G
+        };
+
+        int[] whole_flats = {
+            WhiteNote.A, 
+            WhiteNote.B, WhiteNote.B,
+            WhiteNote.C,
+            WhiteNote.D, WhiteNote.D,
+            WhiteNote.E, WhiteNote.E,
+            WhiteNote.F,
+            WhiteNote.G, WhiteNote.G,
+            WhiteNote.A
+        };
+
+        Accid accid = keymap[notenumber];
+        if (accid == Accid.Flat) {
+            letter = whole_flats[notescale];
+        }
+        else if (accid == Accid.Sharp) {
+            letter = whole_sharps[notescale];
+        }
+        else if (accid == Accid.Natural) {
+            letter = whole_sharps[notescale];
+        }
+        else if (accid == Accid.None) {
+            letter = whole_sharps[notescale];
+
+            /* If the note number is a sharp/flat, and there's no accidental,
+             * determine the white note by seeing whether the previous or next note
+             * is a natural.
+             */
+            if (NoteScale.IsBlackKey(notescale)) {
+                if (keymap[notenumber-1] == Accid.Natural && 
+                    keymap[notenumber+1] == Accid.Natural) {
+
+                    if (num_flats > 0) {
+                        letter = whole_flats[notescale];
+                    }
+                    else {
+                        letter = whole_sharps[notescale];
+                    }
+                }
+                else if (keymap[notenumber-1] == Accid.Natural) {
+                    letter = whole_sharps[notescale];
+                }
+                else if (keymap[notenumber+1] == Accid.Natural) {
+                    letter = whole_flats[notescale];
+                }
+            }
+        }
+
+        /* The above algorithm doesn't quite work for G-flat major.
+         * Handle it here.
+         */
+        if (num_flats == Gflat && notescale == NoteScale.B) {
+            letter = WhiteNote.C;
+        }
+        if (num_flats == Gflat && notescale == NoteScale.Bflat) {
+            letter = WhiteNote.B;
+        }
+
+        if (num_flats > 0 && notescale == NoteScale.Aflat) {
+            octave++;
+        }
+
+        return new WhiteNote(letter, octave);
+    }
+
+
+    /** Guess the key signature, given the midi note numbers used in
+     * the song.
+     */
+    public static KeySignature Guess(List<int> notes) {
+        CreateAccidentalMaps();
+
+        /* Get the frequency count of each note in the 12-note scale */
+        int[] notecount = new int[12];
+        for (int i = 0; i < notes.Count; i++) {
+            int notenumber = notes[i];
+            int notescale = (notenumber + 3) % 12;
+            notecount[notescale] += 1;
+        }
+
+        /* For each key signature, count the total number of accidentals
+         * needed to display all the notes.  Choose the key signature
+         * with the fewest accidentals.
+         */
+        int bestkey = 0;
+        bool is_best_sharp = true;
+        int smallest_accid_count = notes.Count;
+        int key;
