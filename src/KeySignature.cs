@@ -579,3 +579,95 @@ public class KeySignature {
         bool is_best_sharp = true;
         int smallest_accid_count = notes.Count;
         int key;
+
+        for (key = 0; key < 6; key++) {
+            int accid_count = 0;
+            for (int n = 0; n < 12; n++) {
+                if (sharpkeys[key][n] != Accid.None) {
+                    accid_count += notecount[n];
+                }
+            }
+            if (accid_count < smallest_accid_count) {
+                smallest_accid_count = accid_count;
+                bestkey = key;
+                is_best_sharp = true;
+            }
+        }
+
+        for (key = 0; key < 7; key++) {
+            int accid_count = 0;
+            for (int n = 0; n < 12; n++) {
+                if (flatkeys[key][n] != Accid.None) {
+                    accid_count += notecount[n];
+                }
+            }
+            if (accid_count < smallest_accid_count) {
+                smallest_accid_count = accid_count;
+                bestkey = key;
+                is_best_sharp = false;
+            }
+        }
+        if (is_best_sharp) {
+            return new KeySignature(bestkey, 0);
+        }
+        else {
+            return new KeySignature(0, bestkey);
+        }
+    }
+
+    /** Return true if this key signature is equal to key signature k */
+    public bool Equals(KeySignature k) {
+        if (k.num_sharps == num_sharps && k.num_flats == num_flats)
+            return true;
+        else
+            return false;
+    }
+
+    /* Return the Major Key of this Key Signature */
+    public int Notescale() {
+        int[] flatmajor = {
+            NoteScale.C, NoteScale.F, NoteScale.Bflat, NoteScale.Eflat,
+            NoteScale.Aflat, NoteScale.Dflat, NoteScale.Gflat, NoteScale.B 
+        };
+
+        int[] sharpmajor = {
+            NoteScale.C, NoteScale.G, NoteScale.D, NoteScale.A, NoteScale.E,
+            NoteScale.B, NoteScale.Fsharp, NoteScale.Csharp, NoteScale.Gsharp,
+            NoteScale.Dsharp
+        };
+        if (num_flats > 0)
+            return flatmajor[num_flats];
+        else 
+            return sharpmajor[num_sharps];
+    }
+
+    /* Convert a Major Key into a string */
+    public static string KeyToString(int notescale) {
+        switch (notescale) {
+            case NoteScale.A:     return "A major, F# minor" ;
+            case NoteScale.Bflat: return "B-flat major, G minor";
+            case NoteScale.B:     return "B major, A-flat minor";
+            case NoteScale.C:     return "C major, A minor";
+            case NoteScale.Dflat: return "D-flat major, B-flat minor";
+            case NoteScale.D:     return "D major, B minor";
+            case NoteScale.Eflat: return "E-flat major, C minor";
+            case NoteScale.E:     return "E major, C# minor";
+            case NoteScale.F:     return "F major, D minor";
+            case NoteScale.Gflat: return "G-flat major, E-flat minor";
+            case NoteScale.G:     return "G major, E minor";
+            case NoteScale.Aflat: return "A-flat major, F minor";
+            default:              return "";
+        }
+    }
+
+    /* Return a string representation of this key signature.
+     * We only return the major key signature, not the minor one.
+     */
+    public override string ToString() {
+        return KeyToString( Notescale() );
+    }
+
+
+}
+
+}
