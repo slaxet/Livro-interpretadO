@@ -12,3 +12,11 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Text;
+
+
+namespace MidiSheetMusic {
+
+/** @class LyricSymbol
+ *  A lyric contai
