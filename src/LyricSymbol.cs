@@ -19,4 +19,7 @@ using System.Text;
 namespace MidiSheetMusic {
 
 /** @class LyricSymbol
- *  A lyric contai
+ *  A lyric contains the lyric to display, the start time the lyric occurs at,
+ *  the the x-coordinate where it will be displayed.
+ */
+publi
