@@ -22,4 +22,6 @@ namespace MidiSheetMusic {
  *  A lyric contains the lyric to display, the start time the lyric occurs at,
  *  the the x-coordinate where it will be displayed.
  */
-publi
+public class LyricSymbol {
+    private int starttime;   /** The start time, in pulses */
+    private string text;     /** Th
