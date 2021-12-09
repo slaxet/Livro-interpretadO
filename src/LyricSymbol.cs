@@ -24,4 +24,7 @@ namespace MidiSheetMusic {
  */
 public class LyricSymbol {
     private int starttime;   /** The start time, in pulses */
-    private string text;     /** Th
+    private string text;     /** The lyric text */
+    private int x;           /** The x (horizontal) position within the staff */
+
+    public LyricSym
