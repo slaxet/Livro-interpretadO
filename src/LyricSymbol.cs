@@ -27,4 +27,9 @@ public class LyricSymbol {
     private string text;     /** The lyric text */
     private int x;           /** The x (horizontal) position within the staff */
 
-    public LyricSym
+    public LyricSymbol(int starttime, string text) {
+        this.starttime = starttime; 
+        this.text = text;
+    }
+     
+    pub
