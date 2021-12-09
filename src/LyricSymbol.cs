@@ -32,4 +32,10 @@ public class LyricSymbol {
         this.text = text;
     }
      
-    pub
+    public int StartTime {
+        get { return starttime; }
+        set { starttime = value; }
+    }
+
+    public string Text {
+  
