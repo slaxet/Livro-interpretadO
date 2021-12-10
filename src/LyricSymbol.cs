@@ -38,4 +38,11 @@ public class LyricSymbol {
     }
 
     public string Text {
-  
+        get { return text; }
+        set { text = value; }
+    }
+
+    public int X {
+        get { return x; }
+        set { x = value; }
+    }
