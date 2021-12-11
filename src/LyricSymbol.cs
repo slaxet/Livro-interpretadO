@@ -51,4 +51,8 @@ public class LyricSymbol {
         get { return minWidth(); }
     }
 
-    /* Return the minimum width in pixels needed to di
+    /* Return the minimum width in pixels needed to display this lyric.
+     * This is an estimation, not exact.
+     */
+    private int minWidth() { 
+        float widthPerCha
