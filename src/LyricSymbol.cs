@@ -46,3 +46,9 @@ public class LyricSymbol {
         get { return x; }
         set { x = value; }
     }
+
+    public int MinWidth {
+        get { return minWidth(); }
+    }
+
+    /* Return the minimum width in pixels needed to di
