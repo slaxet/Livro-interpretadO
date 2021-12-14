@@ -61,4 +61,7 @@ public class LyricSymbol {
             width -= widthPerChar/2.0f;
         }
         if (text.IndexOf("j") >= 0) {
-      
+            width -= widthPerChar/2.0f;
+        }
+        if (text.IndexOf("l") >= 0) {
+            width -= widthPerChar/2
