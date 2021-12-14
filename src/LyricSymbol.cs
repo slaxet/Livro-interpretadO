@@ -55,4 +55,6 @@ public class LyricSymbol {
      * This is an estimation, not exact.
      */
     private int minWidth() { 
-        float widthPerCha
+        float widthPerChar = SheetMusic.LetterFont.GetHeight() * 2.0f/3.0f;
+        float width = text.Length * widthPerChar;
+        if (text.IndexOf("i
