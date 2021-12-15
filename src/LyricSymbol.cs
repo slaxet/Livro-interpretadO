@@ -71,4 +71,11 @@ public class LyricSymbol {
 
     public override 
     string ToString() {
-        return string.Format("Lyri
+        return string.Format("Lyric start={0} x={1} text={2}",
+                             starttime, x, text);
+    }
+
+}
+
+
+}
