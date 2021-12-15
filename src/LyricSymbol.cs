@@ -64,4 +64,11 @@ public class LyricSymbol {
             width -= widthPerChar/2.0f;
         }
         if (text.IndexOf("l") >= 0) {
-            width -= widthPerChar/2
+            width -= widthPerChar/2.0f;
+        }
+        return (int)width;
+    }
+
+    public override 
+    string ToString() {
+        return string.Format("Lyri
