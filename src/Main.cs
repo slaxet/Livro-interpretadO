@@ -12,4 +12,10 @@
 
 using System;
 using System.Drawing;
-using Mid
+using MidiSheetMusic;
+
+public class MainClass {
+
+    [STAThread]
+    public static void Main(string[] argv) {
+     
