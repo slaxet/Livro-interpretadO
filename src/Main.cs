@@ -25,3 +25,6 @@ public class MainClass {
         string filename = argv[0];
         SheetMusic sheet = new SheetMusic(filename, null);
 		
+		int numpages = sheet.GetTotalPages();
+		string image_filename = argv[1];
+        for (int page = 1; page <= nu
