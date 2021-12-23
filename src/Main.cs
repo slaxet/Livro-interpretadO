@@ -27,4 +27,6 @@ public class MainClass {
 		
 		int numpages = sheet.GetTotalPages();
 		string image_filename = argv[1];
-        for (int page = 1; page <= nu
+        for (int page = 1; page <= numpages; page++) {
+            Bitmap bitmap = new Bitmap(SheetMusic.PageWidth+40,
+                         
