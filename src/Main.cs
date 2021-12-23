@@ -20,4 +20,8 @@ public class MainClass {
     public static void Main(string[] argv) {
         if (argv.Length < 2) {
             Console.WriteLine("Usage: sheet input.mid output_prefix(_[page_number].png)");
-    
+            return;
+        }
+        string filename = argv[0];
+        SheetMusic sheet = new SheetMusic(filename, null);
+		
