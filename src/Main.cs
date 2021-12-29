@@ -33,4 +33,6 @@ public class MainClass {
             Graphics g = Graphics.FromImage(bitmap);
             sheet.DoPrint(g, page);
             bitmap.Save(image_filename + "_" + page + ".png",
-   
+                        System.Drawing.Imaging.ImageFormat.Png);
+            g.Dispose();
+            bitm
