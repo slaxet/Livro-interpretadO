@@ -29,4 +29,5 @@ public class MainClass {
 		string image_filename = argv[1];
         for (int page = 1; page <= numpages; page++) {
             Bitmap bitmap = new Bitmap(SheetMusic.PageWidth+40,
-                         
+                                       SheetMusic.PageHeight+40);
+            Graphics g = Graphics.FromImage(bitmap);
