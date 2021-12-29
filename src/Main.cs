@@ -31,3 +31,6 @@ public class MainClass {
             Bitmap bitmap = new Bitmap(SheetMusic.PageWidth+40,
                                        SheetMusic.PageHeight+40);
             Graphics g = Graphics.FromImage(bitmap);
+            sheet.DoPrint(g, page);
+            bitmap.Save(image_filename + "_" + page + ".png",
+   
