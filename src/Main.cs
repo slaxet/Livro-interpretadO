@@ -35,4 +35,7 @@ public class MainClass {
             bitmap.Save(image_filename + "_" + page + ".png",
                         System.Drawing.Imaging.ImageFormat.Png);
             g.Dispose();
-            bitm
+            bitmap.Dispose();
+        }
+    }
+}
