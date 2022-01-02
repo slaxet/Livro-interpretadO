@@ -16,4 +16,8 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace MidiShe
+namespace MidiSheetMusic {
+
+/** @class MidiEvent
+ * A MidiEvent represents a single event (such as EventNoteOn) in the
+ * M
