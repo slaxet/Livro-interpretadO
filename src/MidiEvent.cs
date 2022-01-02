@@ -20,4 +20,8 @@ namespace MidiSheetMusic {
 
 /** @class MidiEvent
  * A MidiEvent represents a single event (such as EventNoteOn) in the
- * M
+ * Midi file. It includes the delta time of the event.
+ */
+public class MidiEvent : IComparer<MidiEvent> {
+
+    public int  
