@@ -24,4 +24,5 @@ namespace MidiSheetMusic {
  */
 public class MidiEvent : IComparer<MidiEvent> {
 
-    public int  
+    public int    DeltaTime;     /** The time between the previous event and this on */
+    public int    StartTime;     /** The
