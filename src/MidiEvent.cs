@@ -26,4 +26,6 @@ public class MidiEvent : IComparer<MidiEvent> {
 
     public int    DeltaTime;     /** The time between the previous event and this on */
     public int    StartTime;     /** The absolute time this event occurs */
-    public bool   HasEventflag;  /** False if this is using the previous eventflag
+    public bool   HasEventflag;  /** False if this is using the previous eventflag */
+    public byte   EventFlag;     /** NoteOn, NoteOff, etc.  Full list is in class MidiFile */
+    public byte   Channel;  
