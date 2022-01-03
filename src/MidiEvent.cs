@@ -31,3 +31,6 @@ public class MidiEvent : IComparer<MidiEvent> {
     public byte   Channel;       /** The channel this event occurs on */ 
 
     public byte   Notenumber;    /** The note number  */
+    public byte   Velocity;      /** The volume of the note */
+    public byte   Instrument;    /** The instrument */
+    public by
