@@ -35,4 +35,5 @@ public class MidiEvent : IComparer<MidiEvent> {
     public byte   Instrument;    /** The instrument */
     public byte   KeyPressure;   /** The key pressure */
     public byte   ChanPressure;  /** The channel pressure */
- 
+    public byte   ControlNum;    /** The controller number */
+    public byte   ControlValue;  /** The controller va
