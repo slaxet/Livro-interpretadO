@@ -28,4 +28,6 @@ public class MidiEvent : IComparer<MidiEvent> {
     public int    StartTime;     /** The absolute time this event occurs */
     public bool   HasEventflag;  /** False if this is using the previous eventflag */
     public byte   EventFlag;     /** NoteOn, NoteOff, etc.  Full list is in class MidiFile */
-    public byte   Channel;  
+    public byte   Channel;       /** The channel this event occurs on */ 
+
+    public byte   Notenumber;    /** The note number  */
