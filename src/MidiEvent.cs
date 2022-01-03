@@ -33,4 +33,6 @@ public class MidiEvent : IComparer<MidiEvent> {
     public byte   Notenumber;    /** The note number  */
     public byte   Velocity;      /** The volume of the note */
     public byte   Instrument;    /** The instrument */
-    public by
+    public byte   KeyPressure;   /** The key pressure */
+    public byte   ChanPressure;  /** The channel pressure */
+ 
