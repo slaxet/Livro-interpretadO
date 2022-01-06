@@ -39,4 +39,6 @@ public class MidiEvent : IComparer<MidiEvent> {
     public byte   ControlValue;  /** The controller value */
     public ushort PitchBend;     /** The pitch bend value */
     public byte   Numerator;     /** The numerator, for TimeSignature meta events */
-    public byte   Denominator;   /** The denominator, for TimeSigna
+    public byte   Denominator;   /** The denominator, for TimeSignature meta events */
+    public int    Tempo;         /** The tempo, for Tempo meta events */
+    public byte   Metaevent;     /**
