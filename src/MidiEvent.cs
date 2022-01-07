@@ -41,4 +41,5 @@ public class MidiEvent : IComparer<MidiEvent> {
     public byte   Numerator;     /** The numerator, for TimeSignature meta events */
     public byte   Denominator;   /** The denominator, for TimeSignature meta events */
     public int    Tempo;         /** The tempo, for Tempo meta events */
-    public byte   Metaevent;     /**
+    public byte   Metaevent;     /** The metaevent, used if eventflag is MetaEvent */
+    public int    Metalength;    /** The metaevent len
