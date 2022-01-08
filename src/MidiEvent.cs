@@ -46,4 +46,9 @@ public class MidiEvent : IComparer<MidiEvent> {
     public byte[] Value;         /** The raw byte value, for Sysex and meta events */
 
     public MidiEvent() {
- 
+    }
+
+    /** Return a copy of this event */
+    public MidiEvent Clone() {
+        MidiEvent mevent= new MidiEvent();
+     
