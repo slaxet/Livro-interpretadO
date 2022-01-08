@@ -54,4 +54,7 @@ public class MidiEvent : IComparer<MidiEvent> {
         mevent.DeltaTime = DeltaTime;
         mevent.StartTime = StartTime;
         mevent.HasEventflag = HasEventflag;
- 
+        mevent.EventFlag = EventFlag;
+        mevent.Channel = Channel;
+        mevent.Notenumber = Notenumber;
+      
