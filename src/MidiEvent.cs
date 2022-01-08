@@ -60,3 +60,6 @@ public class MidiEvent : IComparer<MidiEvent> {
         mevent.Velocity = Velocity;
         mevent.Instrument = Instrument;
         mevent.KeyPressure = KeyPressure;
+        mevent.ChanPressure = ChanPressure;
+        mevent.ControlNum = ControlNum;
+        mevent.ControlValue = Contr
