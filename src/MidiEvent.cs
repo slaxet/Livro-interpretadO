@@ -57,4 +57,6 @@ public class MidiEvent : IComparer<MidiEvent> {
         mevent.EventFlag = EventFlag;
         mevent.Channel = Channel;
         mevent.Notenumber = Notenumber;
-      
+        mevent.Velocity = Velocity;
+        mevent.Instrument = Instrument;
+        mevent.KeyPressure = KeyPressure;
