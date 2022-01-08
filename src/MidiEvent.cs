@@ -62,4 +62,7 @@ public class MidiEvent : IComparer<MidiEvent> {
         mevent.KeyPressure = KeyPressure;
         mevent.ChanPressure = ChanPressure;
         mevent.ControlNum = ControlNum;
-        mevent.ControlValue = Contr
+        mevent.ControlValue = ControlValue;
+        mevent.PitchBend = PitchBend;
+        mevent.Numerator = Numerator;
+        mevent
