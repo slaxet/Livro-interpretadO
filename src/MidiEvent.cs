@@ -51,4 +51,7 @@ public class MidiEvent : IComparer<MidiEvent> {
     /** Return a copy of this event */
     public MidiEvent Clone() {
         MidiEvent mevent= new MidiEvent();
-     
+        mevent.DeltaTime = DeltaTime;
+        mevent.StartTime = StartTime;
+        mevent.HasEventflag = HasEventflag;
+ 
