@@ -68,4 +68,9 @@ public class MidiEvent : IComparer<MidiEvent> {
         mevent.Denominator = Denominator;
         mevent.Tempo = Tempo;
         mevent.Metaevent = Metaevent;
-        
+        mevent.Metalength = Metalength;
+        mevent.Value = Value;
+        return mevent;
+    }
+
+    /** Compare two Mid
