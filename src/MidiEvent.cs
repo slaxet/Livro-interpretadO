@@ -75,4 +75,6 @@ public class MidiEvent : IComparer<MidiEvent> {
 
     /** Compare two MidiEvents based on their start times. */
     public int Compare(MidiEvent x, MidiEvent y) {
-        if
+        if (x.StartTime == y.StartTime) {
+            if (x.EventFlag == y.EventFlag) {
+                return x.No
