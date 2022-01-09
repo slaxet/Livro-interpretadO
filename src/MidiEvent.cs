@@ -73,4 +73,6 @@ public class MidiEvent : IComparer<MidiEvent> {
         return mevent;
     }
 
-    /** Compare two Mid
+    /** Compare two MidiEvents based on their start times. */
+    public int Compare(MidiEvent x, MidiEvent y) {
+        if
