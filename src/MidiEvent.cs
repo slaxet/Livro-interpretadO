@@ -89,4 +89,5 @@ public class MidiEvent : IComparer<MidiEvent> {
     }
 }
 
-}  /* End na
+}  /* End namespace MidiSheetMusic */
+
