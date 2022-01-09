@@ -81,4 +81,12 @@ public class MidiEvent : IComparer<MidiEvent> {
             }
             else {
                 return x.EventFlag - y.EventFlag;
-    
+            }
+        }
+        else {
+            return x.StartTime - y.StartTime;
+        }
+    }
+}
+
+}  /* End na
