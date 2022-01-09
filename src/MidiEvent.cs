@@ -65,4 +65,7 @@ public class MidiEvent : IComparer<MidiEvent> {
         mevent.ControlValue = ControlValue;
         mevent.PitchBend = PitchBend;
         mevent.Numerator = Numerator;
-        mevent
+        mevent.Denominator = Denominator;
+        mevent.Tempo = Tempo;
+        mevent.Metaevent = Metaevent;
+        
