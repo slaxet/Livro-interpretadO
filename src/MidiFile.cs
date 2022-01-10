@@ -339,3 +339,137 @@ public class MidiFile {
         "FX 8 (sci-fi)",
         "Sitar",
         "Banjo",
+        "Shamisen",
+        "Koto",
+        "Kalimba",
+        "Bag pipe",
+        "Fiddle",
+        "Shanai",
+        "Tinkle Bell",
+        "Agogo",
+        "Steel Drums",
+        "Woodblock",
+        "Taiko Drum",
+        "Melodic Tom",
+        "Synth Drum",
+        "Reverse Cymbal",
+        "Guitar Fret Noise",
+        "Breath Noise",
+        "Seashore",
+        "Bird Tweet",
+        "Telephone Ring",
+        "Helicopter",
+        "Applause",
+        "Gunshot",
+        "Percussion"
+    };
+    /* End Instruments */
+
+    /** Return a string representation of a Midi event */
+    private string EventName(int ev) {
+        if (ev >= EventNoteOff && ev < EventNoteOff + 16)
+            return "NoteOff";
+        else if (ev >= EventNoteOn && ev < EventNoteOn + 16) 
+            return "NoteOn";
+        else if (ev >= EventKeyPressure && ev < EventKeyPressure + 16) 
+            return "KeyPressure";
+        else if (ev >= EventControlChange && ev < EventControlChange + 16) 
+            return "ControlChange";
+        else if (ev >= EventProgramChange && ev < EventProgramChange + 16) 
+            return "ProgramChange";
+        else if (ev >= EventChannelPressure && ev < EventChannelPressure + 16)
+            return "ChannelPressure";
+        else if (ev >= EventPitchBend && ev < EventPitchBend + 16)
+            return "PitchBend";
+        else if (ev == MetaEvent)
+            return "MetaEvent";
+        else if (ev == SysexEvent1 || ev == SysexEvent2)
+            return "SysexEvent";
+        else
+            return "Unknown";
+    }
+
+    /** Return a string representation of a meta-event */
+    private string MetaName(int ev) {
+        if (ev == MetaEventSequence)
+            return "MetaEventSequence";
+        else if (ev == MetaEventText)
+            return "MetaEventText";
+        else if (ev == MetaEventCopyright)
+            return "MetaEventCopyright";
+        else if (ev == MetaEventSequenceName)
+            return "MetaEventSequenceName";
+        else if (ev == MetaEventInstrument)
+            return "MetaEventInstrument";
+        else if (ev == MetaEventLyric)
+            return "MetaEventLyric";
+        else if (ev == MetaEventMarker)
+            return "MetaEventMarker";
+        else if (ev == MetaEventEndOfTrack)
+            return "MetaEventEndOfTrack";
+        else if (ev == MetaEventTempo)
+            return "MetaEventTempo";
+        else if (ev == MetaEventSMPTEOffset)
+            return "MetaEventSMPTEOffset";
+        else if (ev == MetaEventTimeSignature)
+            return "MetaEventTimeSignature";
+        else if (ev == MetaEventKeySignature)
+            return "MetaEventKeySignature";
+        else
+            return "Unknown";
+    }
+
+
+    /** Get the list of tracks */
+    public List<MidiTrack> Tracks {
+        get { return tracks; }
+    }
+
+    /** Get the time signature */
+    public TimeSignature Time {
+        get { return timesig; }
+    }
+
+    /** Get the file name */
+    public string FileName {
+        get { return filename; }
+    }
+
+    /** Get the total length (in pulses) of the song */
+    public int TotalPulses {
+        get { return totalpulses; }
+    }
+
+
+    /** Create a new MidiFile from the file. */
+    public MidiFile(string filename) {
+        MidiFileReader file = new MidiFileReader(filename);
+        parse(file, filename);
+    }
+
+    /** Create a new MidiFile from the byte[]. */
+    public MidiFile(byte[] data, string title) {
+        MidiFileReader file = new MidiFileReader(data);
+        if (title == null)
+            title = "";
+        parse(file, title);
+    }
+
+    /** Parse the given Midi file, and return an instance of this MidiFile
+     * class.  After reading the midi file, this object will contain:
+     * - The raw list of midi events
+     * - The Time Signature of the song
+     * - All the tracks in the song which contain notes. 
+     * - The number, starttime, and duration of each note.
+     */
+    public void parse(MidiFileReader file, string filename) {
+        string id;
+        int len;
+
+        this.filename = filename;
+        tracks = new List<MidiTrack>();
+        trackPerChannel = false;
+
+        id = file.ReadAscii(4);
+        if (id != "MThd") {
+            throw new MidiFileException("Doesn't start with MThd", 0);
