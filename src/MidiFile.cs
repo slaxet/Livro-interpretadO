@@ -92,3 +92,115 @@ namespace MidiSheetMusic {
  * Data:  u1 - The note number, 0-127.  Middle C is 60 (0x3C)
  *        u1 - The note velocity, from 0 (no sound) to 127 (loud).
  *             A value of 0 is equivalent to a Note Off.
+ *
+ * Code:  u1 - 0xA0 thru 0xAF - Key Pressure
+ * Data:  u1 - The note number, 0-127.
+ *        u1 - The pressure.
+ *
+ * Code:  u1 - 0xB0 thru 0xBF - Control Change
+ * Data:  u1 - The controller number
+ *        u1 - The value
+ *
+ * Code:  u1 - 0xC0 thru 0xCF - Program Change
+ * Data:  u1 - The program number.
+ *
+ * Code:  u1 - 0xD0 thru 0xDF - Channel Pressure
+ *        u1 - The pressure.
+ *
+ * Code:  u1 - 0xE0 thru 0xEF - Pitch Bend
+ * Data:  u2 - Some data
+ *
+ * Code:  u1     - 0xFF - Meta Event
+ * Data:  u1     - Metacode
+ *        varlen - Length of meta event
+ *        u1[varlen] - Meta event data.
+ *
+ *
+ * The Meta Event codes are listed below:
+ *
+ * Metacode: u1         - 0x0  Sequence Number
+ *           varlen     - 0 or 2
+ *           u1[varlen] - Sequence number
+ *
+ * Metacode: u1         - 0x1  Text
+ *           varlen     - Length of text
+ *           u1[varlen] - Text
+ *
+ * Metacode: u1         - 0x2  Copyright
+ *           varlen     - Length of text
+ *           u1[varlen] - Text
+ *
+ * Metacode: u1         - 0x3  Track Name
+ *           varlen     - Length of name
+ *           u1[varlen] - Track Name
+ *
+ * Metacode: u1         - 0x58  Time Signature
+ *           varlen     - 4 
+ *           u1         - numerator
+ *           u1         - log2(denominator)
+ *           u1         - clocks in metronome click
+ *           u1         - 32nd notes in quarter note (usually 8)
+ *
+ * Metacode: u1         - 0x59  Key Signature
+ *           varlen     - 2
+ *           u1         - if >= 0, then number of sharps
+ *                        if < 0, then number of flats * -1
+ *           u1         - 0 if major key
+ *                        1 if minor key
+ *
+ * Metacode: u1         - 0x51  Tempo
+ *           varlen     - 3  
+ *           u3         - quarter note length in microseconds
+ */
+
+
+/** @class MidiFile
+ *
+ * The MidiFile class contains the parsed data from the Midi File.
+ * It contains:
+ * - All the tracks in the midi file, including all MidiNotes per track.
+ * - The time signature (e.g. 4/4, 3/4, 6/8)
+ * - The number of pulses per quarter note.
+ * - The tempo (number of microseconds per quarter note).
+ *
+ * The constructor takes a filename as input, and upon returning,
+ * contains the parsed data from the midi file.
+ *
+ * The methods ReadTrack() and ReadMetaEvent() are helper functions called
+ * by the constructor during the parsing.
+ *
+ * After the MidiFile is parsed and created, the user can retrieve the 
+ * tracks and notes by using the property Tracks and Tracks.Notes.
+ *
+ * There are two methods for modifying the midi data based on the menu
+ * options selected:
+ *
+ * - ChangeMidiNotes()
+ *   Apply the menu options to the parsed MidiFile.  This uses the helper functions:
+ *     SplitTrack()
+ *     CombineToTwoTracks()
+ *     ShiftTime()
+ *     Transpose()
+ *     RoundStartTimes()
+ *     RoundDurations()
+ *
+ * - ChangeSound()
+ *   Apply the menu options to the MIDI music data, and save the modified midi data 
+ *   to a file, for playback. 
+ *   
+ */
+
+public class MidiFile {
+    private string filename;          /** The Midi file name */
+    private List<MidiEvent>[] events; /** The raw MidiEvents, one list per track */
+    private List<MidiTrack> tracks ;  /** The tracks of the midifile that have notes */
+    private ushort trackmode;         /** 0 (single track), 1 (simultaneous tracks) 2 (independent tracks) */
+    private TimeSignature timesig;    /** The time signature */
+    private int quarternote;          /** The number of pulses per quarter note */
+    private int totalpulses;          /** The total length of the song, in pulses */
+    private bool trackPerChannel;     /** True if we've split each channel into a track */
+
+    /* The list of Midi Events */
+    public const int EventNoteOff         = 0x80;
+    public const int EventNoteOn          = 0x90;
+    public const int EventKeyPressure     = 0xA0;
