@@ -591,3 +591,113 @@ public class MidiFile {
             else if (eventflag >= EventNoteOff && eventflag < EventNoteOff + 16) {
                 mevent.EventFlag = EventNoteOff;
                 mevent.Channel = (byte)(eventflag - EventNoteOff);
+                mevent.Notenumber = file.ReadByte();
+                mevent.Velocity = file.ReadByte();
+            }
+            else if (eventflag >= EventKeyPressure && 
+                     eventflag < EventKeyPressure + 16) {
+                mevent.EventFlag = EventKeyPressure;
+                mevent.Channel = (byte)(eventflag - EventKeyPressure);
+                mevent.Notenumber = file.ReadByte();
+                mevent.KeyPressure = file.ReadByte();
+            }
+            else if (eventflag >= EventControlChange && 
+                     eventflag < EventControlChange + 16) {
+                mevent.EventFlag = EventControlChange;
+                mevent.Channel = (byte)(eventflag - EventControlChange);
+                mevent.ControlNum = file.ReadByte();
+                mevent.ControlValue = file.ReadByte();
+            }
+            else if (eventflag >= EventProgramChange && 
+                     eventflag < EventProgramChange + 16) {
+                mevent.EventFlag = EventProgramChange;
+                mevent.Channel = (byte)(eventflag - EventProgramChange);
+                mevent.Instrument = file.ReadByte();
+            }
+            else if (eventflag >= EventChannelPressure && 
+                     eventflag < EventChannelPressure + 16) {
+                mevent.EventFlag = EventChannelPressure;
+                mevent.Channel = (byte)(eventflag - EventChannelPressure);
+                mevent.ChanPressure = file.ReadByte();
+            }
+            else if (eventflag >= EventPitchBend && 
+                     eventflag < EventPitchBend + 16) {
+                mevent.EventFlag = EventPitchBend;
+                mevent.Channel = (byte)(eventflag - EventPitchBend);
+                mevent.PitchBend = file.ReadShort();
+            }
+            else if (eventflag == SysexEvent1) {
+                mevent.EventFlag = SysexEvent1;
+                mevent.Metalength = file.ReadVarlen();
+                mevent.Value = file.ReadBytes(mevent.Metalength);
+            }
+            else if (eventflag == SysexEvent2) {
+                mevent.EventFlag = SysexEvent2;
+                mevent.Metalength = file.ReadVarlen();
+                mevent.Value = file.ReadBytes(mevent.Metalength);
+            }
+            else if (eventflag == MetaEvent) {
+                mevent.EventFlag = MetaEvent;
+                mevent.Metaevent = file.ReadByte();
+                mevent.Metalength = file.ReadVarlen();
+                mevent.Value = file.ReadBytes(mevent.Metalength);
+                if (mevent.Metaevent == MetaEventTimeSignature) {
+                    if (mevent.Metalength < 2) {
+                        // throw new MidiFileException(
+                        //  "Meta Event Time Signature len == " + mevent.Metalength  + 
+                        //  " != 4", file.GetOffset());
+                        mevent.Numerator = (byte)0;
+                        mevent.Denominator = (byte)4;
+                    }
+                    else if (mevent.Metalength >= 2 && mevent.Metalength < 4) {
+                        mevent.Numerator = (byte)mevent.Value[0];
+                        mevent.Denominator = (byte)System.Math.Pow(2, mevent.Value[1]);
+                    }
+                    else {
+                        mevent.Numerator = (byte)mevent.Value[0];
+                        mevent.Denominator = (byte)System.Math.Pow(2, mevent.Value[1]);
+                    }
+                }
+                else if (mevent.Metaevent == MetaEventTempo) {
+                    if (mevent.Metalength != 3) {
+                        throw new MidiFileException(
+                          "Meta Event Tempo len == " + mevent.Metalength +
+                          " != 3", file.GetOffset());
+                    }
+                    mevent.Tempo = ( (mevent.Value[0] << 16) | (mevent.Value[1] << 8) | mevent.Value[2]);
+                }
+                else if (mevent.Metaevent == MetaEventEndOfTrack) {
+                    /* break;  */
+                }
+            }
+            else {
+                throw new MidiFileException("Unknown event " + mevent.EventFlag,
+                                             file.GetOffset()-1); 
+            }
+        }
+
+        return result;
+    }
+
+    /** Return true if this track contains multiple channels.
+     * If a MidiFile contains only one track, and it has multiple channels,
+     * then we treat each channel as a separate track.
+     */
+    static bool HasMultipleChannels(MidiTrack track) {
+        int channel = track.Notes[0].Channel;
+        foreach (MidiNote note in track.Notes) {
+            if (note.Channel != channel) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Write a variable length number to the buffer at the given offset.
+     * Return the number of bytes written.
+     */
+    static int VarlenToBytes(int num, byte[] buf, int offset) {
+        byte b1 = (byte) ((num >> 21) & 0x7F);
+        byte b2 = (byte) ((num >> 14) & 0x7F);
+        byte b3 = (byte) ((num >>  7) & 0x7F);
+        byte b4 = (byte) (num & 0x7F);
