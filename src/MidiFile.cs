@@ -701,3 +701,142 @@ public class MidiFile {
         byte b2 = (byte) ((num >> 14) & 0x7F);
         byte b3 = (byte) ((num >>  7) & 0x7F);
         byte b4 = (byte) (num & 0x7F);
+
+        if (b1 > 0) {
+            buf[offset]   = (byte)(b1 | 0x80);
+            buf[offset+1] = (byte)(b2 | 0x80);
+            buf[offset+2] = (byte)(b3 | 0x80);
+            buf[offset+3] = b4;
+            return 4;
+        }
+        else if (b2 > 0) {
+            buf[offset]   = (byte)(b2 | 0x80);
+            buf[offset+1] = (byte)(b3 | 0x80);
+            buf[offset+2] = b4;
+            return 3;
+        }
+        else if (b3 > 0) {
+            buf[offset]   = (byte)(b3 | 0x80);
+            buf[offset+1] = b4;
+            return 2;
+        }
+        else {
+            buf[offset] = b4;
+            return 1;
+        }
+    }
+
+    /** Write a 4-byte integer to data[offset : offset+4] */
+    private static void IntToBytes(int value, byte[] data, int offset) {
+        data[offset] = (byte)( (value >> 24) & 0xFF );
+        data[offset+1] = (byte)( (value >> 16) & 0xFF );
+        data[offset+2] = (byte)( (value >> 8) & 0xFF );
+        data[offset+3] = (byte)( value & 0xFF );
+    }
+
+    /** Calculate the track length (in bytes) given a list of Midi events */
+    private static int GetTrackLength(List<MidiEvent> events) {
+        int len = 0;
+        byte[] buf = new byte[1024];
+        foreach (MidiEvent mevent in events) {
+            len += VarlenToBytes(mevent.DeltaTime, buf, 0);
+            len += 1;  /* for eventflag */
+            switch (mevent.EventFlag) {
+                case EventNoteOn: len += 2; break;
+                case EventNoteOff: len += 2; break;
+                case EventKeyPressure: len += 2; break;
+                case EventControlChange: len += 2; break;
+                case EventProgramChange: len += 1; break;
+                case EventChannelPressure: len += 1; break;
+                case EventPitchBend: len += 2; break;
+
+                case SysexEvent1: 
+                case SysexEvent2:
+                    len += VarlenToBytes(mevent.Metalength, buf, 0); 
+                    len += mevent.Metalength;
+                    break;
+                case MetaEvent: 
+                    len += 1; 
+                    len += VarlenToBytes(mevent.Metalength, buf, 0); 
+                    len += mevent.Metalength;
+                    break;
+                default: break;
+            }
+        }
+        return len;
+    }
+            
+
+    /** Write the given list of Midi events to a stream/file.
+     *  This method is used for sound playback, for creating new Midi files
+     *  with the tempo, transpose, etc changed.
+     *
+     *  Return true on success, and false on error.
+     */
+    private static bool 
+    WriteEvents(Stream file, List<MidiEvent>[] events, int trackmode, int quarter) {
+        try {
+            byte[] buf = new byte[4096];
+
+            /* Write the MThd, len = 6, track mode, number tracks, quarter note */
+            file.Write(ASCIIEncoding.ASCII.GetBytes("MThd"), 0, 4);
+            IntToBytes(6, buf, 0);
+            file.Write(buf, 0, 4);
+            buf[0] = (byte)(trackmode >> 8); 
+            buf[1] = (byte)(trackmode & 0xFF);
+            file.Write(buf, 0, 2);
+            buf[0] = 0; 
+            buf[1] = (byte)events.Length;
+            file.Write(buf, 0, 2);
+            buf[0] = (byte)(quarter >> 8); 
+            buf[1] = (byte)(quarter & 0xFF);
+            file.Write(buf, 0, 2);
+
+            foreach (List<MidiEvent> list in events) {
+                /* Write the MTrk header and track length */
+                file.Write(ASCIIEncoding.ASCII.GetBytes("MTrk"), 0, 4);
+                int len = GetTrackLength(list);
+                IntToBytes(len, buf, 0);
+                file.Write(buf, 0, 4);
+
+                foreach (MidiEvent mevent in list) {
+                    int varlen = VarlenToBytes(mevent.DeltaTime, buf, 0);
+                    file.Write(buf, 0, varlen);
+
+                    if (mevent.EventFlag == SysexEvent1 ||
+                        mevent.EventFlag == SysexEvent2 ||
+                        mevent.EventFlag == MetaEvent) {
+                        buf[0] = mevent.EventFlag;
+                    }
+                    else {
+                        buf[0] = (byte)(mevent.EventFlag + mevent.Channel);
+                    }
+                    file.Write(buf, 0, 1);
+
+                    if (mevent.EventFlag == EventNoteOn) {
+                        buf[0] = mevent.Notenumber;
+                        buf[1] = mevent.Velocity;
+                        file.Write(buf, 0, 2);
+                    }
+                    else if (mevent.EventFlag == EventNoteOff) {
+                        buf[0] = mevent.Notenumber;
+                        buf[1] = mevent.Velocity;
+                        file.Write(buf, 0, 2);
+                    }
+                    else if (mevent.EventFlag == EventKeyPressure) {
+                        buf[0] = mevent.Notenumber;
+                        buf[1] = mevent.KeyPressure;
+                        file.Write(buf, 0, 2);
+                    }
+                    else if (mevent.EventFlag == EventControlChange) {
+                        buf[0] = mevent.ControlNum;
+                        buf[1] = mevent.ControlValue;
+                        file.Write(buf, 0, 2);
+                    }
+                    else if (mevent.EventFlag == EventProgramChange) {
+                        buf[0] = mevent.Instrument;
+                        file.Write(buf, 0, 1);
+                    }
+                    else if (mevent.EventFlag == EventChannelPressure) {
+                        buf[0] = mevent.ChanPressure;
+                        file.Write(buf, 0, 1);
