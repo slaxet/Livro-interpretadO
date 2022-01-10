@@ -840,3 +840,120 @@ public class MidiFile {
                     else if (mevent.EventFlag == EventChannelPressure) {
                         buf[0] = mevent.ChanPressure;
                         file.Write(buf, 0, 1);
+                    }
+                    else if (mevent.EventFlag == EventPitchBend) {
+                        buf[0] = (byte)(mevent.PitchBend >> 8);
+                        buf[1] = (byte)(mevent.PitchBend & 0xFF);
+                        file.Write(buf, 0, 2);
+                    }
+                    else if (mevent.EventFlag == SysexEvent1) {
+                        int offset = VarlenToBytes(mevent.Metalength, buf, 0);
+                        Array.Copy(mevent.Value, 0, buf, offset, mevent.Value.Length);
+                        file.Write(buf, 0, offset + mevent.Value.Length);
+                    }
+                    else if (mevent.EventFlag == SysexEvent2) {
+                        int offset = VarlenToBytes(mevent.Metalength, buf, 0);
+                        Array.Copy(mevent.Value, 0, buf, offset, mevent.Value.Length);
+                        file.Write(buf, 0, offset + mevent.Value.Length);
+                    }
+                    else if (mevent.EventFlag == MetaEvent && mevent.Metaevent == MetaEventTempo) {
+                        buf[0] = mevent.Metaevent;
+                        buf[1] = 3;
+                        buf[2] = (byte)((mevent.Tempo >> 16) & 0xFF);
+                        buf[3] = (byte)((mevent.Tempo >> 8) & 0xFF);
+                        buf[4] = (byte)(mevent.Tempo & 0xFF);
+                        file.Write(buf, 0, 5);
+                    }
+                    else if (mevent.EventFlag == MetaEvent) {
+                        buf[0] = mevent.Metaevent;
+                        int offset = VarlenToBytes(mevent.Metalength, buf, 1) + 1;
+                        Array.Copy(mevent.Value, 0, buf, offset, mevent.Value.Length);
+                        file.Write(buf, 0, offset + mevent.Value.Length);
+                    }
+                }
+            }
+            file.Close();
+            return true;
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
+
+    /** Clone the list of MidiEvents */
+    private static List<MidiEvent>[] CloneMidiEvents(List<MidiEvent>[] origlist) {
+        List<MidiEvent>[] newlist = new List<MidiEvent>[ origlist.Length];
+        for (int tracknum = 0; tracknum < origlist.Length; tracknum++) {
+            List<MidiEvent> origevents = origlist[tracknum];
+            List<MidiEvent> newevents = new List<MidiEvent>(origevents.Count);
+            newlist[tracknum] = newevents;
+            foreach (MidiEvent mevent in origevents) {
+                newevents.Add( mevent.Clone() );
+            }
+        }
+        return newlist;
+    }
+
+    /** Create a new Midi tempo event, with the given tempo  */
+    private static MidiEvent CreateTempoEvent(int tempo) {
+        MidiEvent mevent = new MidiEvent();
+        mevent.DeltaTime = 0;
+        mevent.StartTime = 0;
+        mevent.HasEventflag = true;
+        mevent.EventFlag = MetaEvent;
+        mevent.Metaevent = MetaEventTempo;
+        mevent.Metalength = 3;
+        mevent.Tempo = tempo;
+        return mevent;
+    }
+
+
+    /** Search the events for a ControlChange event with the same
+     *  channel and control number.  If a matching event is found,
+     *   update the control value.  Else, add a new ControlChange event.
+     */ 
+    private static void 
+    UpdateControlChange(List<MidiEvent> newevents, MidiEvent changeEvent) {
+        foreach (MidiEvent mevent in newevents) {
+            if ((mevent.EventFlag == changeEvent.EventFlag) &&
+                (mevent.Channel == changeEvent.Channel) &&
+                (mevent.ControlNum == changeEvent.ControlNum)) {
+
+                mevent.ControlValue = changeEvent.ControlValue;
+                return;
+            }
+        }
+        newevents.Add(changeEvent);
+    }
+
+    /** Start the Midi music at the given pause time (in pulses).
+     *  Remove any NoteOn/NoteOff events that occur before the pause time.
+     *  For other events, change the delta-time to 0 if they occur
+     *  before the pause time.  Return the modified Midi Events.
+     */
+    private static List<MidiEvent>[] 
+    StartAtPauseTime(List<MidiEvent>[] list, int pauseTime) {
+        List<MidiEvent>[] newlist = new List<MidiEvent>[ list.Length];
+        for (int tracknum = 0; tracknum < list.Length; tracknum++) {
+            List<MidiEvent> events = list[tracknum];
+            List<MidiEvent> newevents = new List<MidiEvent>(events.Count);
+            newlist[tracknum] = newevents;
+
+            bool foundEventAfterPause = false;
+            foreach (MidiEvent mevent in events) {
+
+                if (mevent.StartTime < pauseTime) {
+                    if (mevent.EventFlag == EventNoteOn ||
+                        mevent.EventFlag == EventNoteOff) {
+
+                        /* Skip NoteOn/NoteOff event */
+                    }
+                    else if (mevent.EventFlag == EventControlChange) {
+                        mevent.DeltaTime = 0;
+                        UpdateControlChange(newevents, mevent);
+                    }
+                    else {
+                        mevent.DeltaTime = 0;
+                        newevents.Add(mevent);
+                    }
