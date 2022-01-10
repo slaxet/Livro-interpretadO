@@ -473,3 +473,121 @@ public class MidiFile {
         id = file.ReadAscii(4);
         if (id != "MThd") {
             throw new MidiFileException("Doesn't start with MThd", 0);
+        }
+        len = file.ReadInt(); 
+        if (len !=  6) {
+            throw new MidiFileException("Bad MThd header", 4);
+        }
+        trackmode = file.ReadShort();
+        int num_tracks = file.ReadShort();
+        quarternote = file.ReadShort(); 
+
+        events = new List<MidiEvent>[num_tracks];
+        for (int tracknum = 0; tracknum < num_tracks; tracknum++) {
+            events[tracknum] = ReadTrack(file);
+            MidiTrack track = new MidiTrack(events[tracknum], tracknum);
+            if (track.Notes.Count > 0) {
+                tracks.Add(track);
+            }
+        }
+
+        /* Get the length of the song in pulses */
+        foreach (MidiTrack track in tracks) {
+            MidiNote last = track.Notes[track.Notes.Count-1];
+            if (this.totalpulses < last.StartTime + last.Duration) {
+                this.totalpulses = last.StartTime + last.Duration;
+            }
+        }
+
+        /* If we only have one track with multiple channels, then treat
+         * each channel as a separate track.
+         */
+        if (tracks.Count == 1 && HasMultipleChannels(tracks[0])) {
+            tracks = SplitChannels(tracks[0], events[tracks[0].Number]);
+            trackPerChannel = true;
+        }
+
+        CheckStartTimes(tracks);
+
+        /* Determine the time signature */
+        int tempo = 0;
+        int numer = 0;
+        int denom = 0;
+        foreach (List<MidiEvent> list in events) {
+            foreach (MidiEvent mevent in list) {
+                if (mevent.Metaevent == MetaEventTempo && tempo == 0) {
+                    tempo = mevent.Tempo;
+                }
+                if (mevent.Metaevent == MetaEventTimeSignature && numer == 0) {
+                    numer = mevent.Numerator;
+                    denom = mevent.Denominator;
+                }
+            }
+        }
+        if (tempo == 0) {
+            tempo = 500000; /* 500,000 microseconds = 0.05 sec */
+        }
+        if (numer == 0) {
+            numer = 4; denom = 4;
+        }
+        timesig = new TimeSignature(numer, denom, quarternote, tempo);
+    }
+
+    /** Parse a single Midi track into a list of MidiEvents.
+     * Entering this function, the file offset should be at the start of
+     * the MTrk header.  Upon exiting, the file offset should be at the
+     * start of the next MTrk header.
+     */
+    private List<MidiEvent> ReadTrack(MidiFileReader file) {
+        List<MidiEvent> result = new List<MidiEvent>(20);
+        int starttime = 0;
+        string id = file.ReadAscii(4);
+
+        if (id != "MTrk") {
+            throw new MidiFileException("Bad MTrk header", file.GetOffset() - 4);
+        }
+        int tracklen = file.ReadInt();
+        int trackend = tracklen + file.GetOffset();
+
+        int eventflag = 0;
+
+        while (file.GetOffset() < trackend) {
+
+            // If the midi file is truncated here, we can still recover.
+            // Just return what we've parsed so far.
+
+            int startoffset, deltatime;
+            byte peekevent;
+            try {
+                startoffset = file.GetOffset();
+                deltatime = file.ReadVarlen();
+                starttime += deltatime;
+                peekevent = file.Peek();
+            }
+            catch (MidiFileException e) {
+                return result;
+            }
+
+            MidiEvent mevent = new MidiEvent();
+            result.Add(mevent);
+            mevent.DeltaTime = deltatime;
+            mevent.StartTime = starttime;
+
+            if (peekevent >= EventNoteOff) { 
+                mevent.HasEventflag = true; 
+                eventflag = file.ReadByte();
+            }
+
+            // Console.WriteLine("offset {0}: event {1} {2} start {3} delta {4}", 
+            //                   startoffset, eventflag, EventName(eventflag), 
+            //                   starttime, mevent.DeltaTime);
+
+            if (eventflag >= EventNoteOn && eventflag < EventNoteOn + 16) {
+                mevent.EventFlag = EventNoteOn;
+                mevent.Channel = (byte)(eventflag - EventNoteOn);
+                mevent.Notenumber = file.ReadByte();
+                mevent.Velocity = file.ReadByte();
+            }
+            else if (eventflag >= EventNoteOff && eventflag < EventNoteOff + 16) {
+                mevent.EventFlag = EventNoteOff;
+                mevent.Channel = (byte)(eventflag - EventNoteOff);
