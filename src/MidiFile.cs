@@ -1068,3 +1068,101 @@ public class MidiFile {
                 mevent.Tempo = options.tempo;
             }
         }
+
+        if (options.pauseTime != 0) {
+            newevents = StartAtPauseTime(newevents, options.pauseTime);
+        }
+
+        /* Change the tracks to include */
+        int count = 0;
+        for (int tracknum = 0; tracknum < keeptracks.Length; tracknum++) {
+            if (keeptracks[tracknum]) {
+                count++;
+            }
+        }
+        List<MidiEvent>[] result = new List<MidiEvent>[count];
+        i = 0;
+        for (int tracknum = 0; tracknum < keeptracks.Length; tracknum++) {
+            if (keeptracks[tracknum]) {
+                result[i] = newevents[tracknum];
+                i++;
+            }
+        }
+        return result;
+    }
+
+    /* Apply the following sound options to the midi events:
+     * - The tempo (the microseconds per pulse)
+     * - The instruments per track
+     * - The note number (transpose value)
+     * - The tracks to include
+     * Return the modified list of midi events.
+     *
+     * This Midi file only has one actual track, but we've split that
+     * into multiple fake tracks, one per channel, and displayed that
+     * to the end-user.  So changing the instrument, and tracks to
+     * include, is implemented differently than ApplyOptionsToEvents().
+     *
+     * - We change the instrument based on the channel, not the track.
+     * - We include/exclude channels, not tracks.
+     * - We exclude a channel by setting the note volume/velocity to 0.
+     */
+    private List<MidiEvent>[]
+    ApplyOptionsPerChannel(MidiOptions options) {
+        /* Determine which channels to include/exclude.
+         * Also, determine the instruments for each channel.
+         */
+        int[] instruments = new int[16];
+        bool[] keepchannel = new bool[16];
+        for (int i = 0; i < 16; i++) {
+            instruments[i] = 0;
+            keepchannel[i] = true;
+        }
+        for (int tracknum = 0; tracknum < tracks.Count; tracknum++) {
+            MidiTrack track = tracks[tracknum];
+            int channel = track.Notes[0].Channel;
+            instruments[channel] = options.instruments[tracknum];
+            if (options.tracks[tracknum] == false ||
+                options.mute[tracknum] == true) {
+
+                keepchannel[channel] = false;
+            }
+        }
+        
+        List<MidiEvent>[] newevents = CloneMidiEvents(events);
+
+        /* Set the tempo at the beginning of each track */
+        for (int tracknum = 0; tracknum < newevents.Length; tracknum++) {
+            MidiEvent mevent = CreateTempoEvent(options.tempo);
+            newevents[tracknum].Insert(0, mevent);
+        }
+
+        /* Change the note number (transpose), instrument, and tempo */
+        for (int tracknum = 0; tracknum < newevents.Length; tracknum++) {
+            foreach (MidiEvent mevent in newevents[tracknum]) {
+                int num = mevent.Notenumber + options.transpose;
+                if (num < 0)
+                    num = 0;
+                if (num > 127)
+                    num = 127;
+                mevent.Notenumber = (byte)num;
+                if (!keepchannel[mevent.Channel]) {
+                    mevent.Velocity = 0;
+                }
+                if (!options.useDefaultInstruments) {
+                    mevent.Instrument = (byte)instruments[mevent.Channel];
+                }
+                mevent.Tempo = options.tempo;
+            }
+        }
+        if (options.pauseTime != 0) {
+            newevents = StartAtPauseTime(newevents, options.pauseTime);
+        }
+        return newevents;
+    }
+
+
+    /** Apply the given sheet music options to the MidiNotes.
+     *  Return the midi tracks with the changes applied.
+     */
+    public List<MidiTrack> ChangeMidiNotes(MidiOptions options) {
