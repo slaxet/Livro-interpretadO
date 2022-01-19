@@ -957,3 +957,114 @@ public class MidiFile {
                         mevent.DeltaTime = 0;
                         newevents.Add(mevent);
                     }
+                }
+                else if (!foundEventAfterPause) {
+                    mevent.DeltaTime = (mevent.StartTime - pauseTime);
+                    newevents.Add(mevent);
+                    foundEventAfterPause = true;
+                }
+                else {
+                    newevents.Add(mevent);
+                }
+            }
+        }
+        return newlist;
+    }
+
+
+    /** Write this Midi file to the given filename.
+     * If options is not null, apply those options to the midi events
+     * before performing the write.
+     * Return true if the file was saved successfully, else false.
+     */
+    public bool ChangeSound(string destfile, MidiOptions options) {
+        return Write(destfile, options);
+    }
+
+    public bool Write(string destfile, MidiOptions options) {
+        try {
+            FileStream stream;
+            stream = new FileStream(destfile, FileMode.Create);
+            bool result = Write(stream, options);
+            stream.Close();
+            return result;
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
+    /** Write this Midi file to the given stream.
+     * If options is not null, apply those options to the midi events
+     * before performing the write.
+     * Return true if the file was saved successfully, else false.
+     */
+    public bool Write(Stream stream, MidiOptions options) {
+        List<MidiEvent>[] newevents = events;
+        if (options != null) {
+            newevents = ApplyOptionsToEvents(options);
+        }
+        return WriteEvents(stream, newevents, trackmode, quarternote);
+    }
+
+
+    /* Apply the following sound options to the midi events:
+     * - The tempo (the microseconds per pulse)
+     * - The instruments per track
+     * - The note number (transpose value)
+     * - The tracks to include
+     * Return the modified list of midi events.
+     */
+    private List<MidiEvent>[]
+    ApplyOptionsToEvents(MidiOptions options) {
+        int i;
+        if (trackPerChannel) {
+            return ApplyOptionsPerChannel(options);
+        }
+
+        /* A midifile can contain tracks with notes and tracks without notes.
+         * The options.tracks and options.instruments are for tracks with notes.
+         * So the track numbers in 'options' may not match correctly if the
+         * midi file has tracks without notes. Re-compute the instruments, and 
+         * tracks to keep.
+         */
+        int num_tracks = events.Length;
+        int[] instruments = new int[num_tracks];
+        bool[] keeptracks = new bool[num_tracks];
+        for (i = 0; i < num_tracks; i++) {
+            instruments[i] = 0;
+            keeptracks[i] = true;
+        }
+        for (int tracknum = 0; tracknum < tracks.Count; tracknum++) {
+            MidiTrack track = tracks[tracknum];
+            int realtrack = track.Number;
+            instruments[realtrack] = options.instruments[tracknum];
+            if (options.tracks[tracknum] == false || 
+                options.mute[tracknum] == true) {
+                keeptracks[realtrack] = false;
+            }
+        }
+
+        List<MidiEvent>[] newevents = CloneMidiEvents(events);
+
+        /* Set the tempo at the beginning of each track */
+        for (int tracknum = 0; tracknum < newevents.Length; tracknum++) {
+            MidiEvent mevent = CreateTempoEvent(options.tempo);
+            newevents[tracknum].Insert(0, mevent);
+        }
+
+        /* Change the note number (transpose), instrument, and tempo */
+        for (int tracknum = 0; tracknum < newevents.Length; tracknum++) {
+            foreach (MidiEvent mevent in newevents[tracknum]) {
+                int num = mevent.Notenumber + options.transpose;
+                if (num < 0)
+                    num = 0;
+                if (num > 127)
+                    num = 127;
+                mevent.Notenumber = (byte)num;
+                if (!options.useDefaultInstruments) {
+                    mevent.Instrument = (byte)instruments[tracknum];
+                }
+                mevent.Tempo = options.tempo;
+            }
+        }
