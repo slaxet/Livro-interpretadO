@@ -1166,3 +1166,121 @@ public class MidiFile {
      *  Return the midi tracks with the changes applied.
      */
     public List<MidiTrack> ChangeMidiNotes(MidiOptions options) {
+        List<MidiTrack> newtracks = new List<MidiTrack>();
+
+        for (int track = 0; track < tracks.Count; track++) {
+            if (options.tracks[track]) {
+                newtracks.Add(tracks[track].Clone() );
+            }
+        }
+
+        /* To make the sheet music look nicer, we round the start times
+         * so that notes close together appear as a single chord.  We
+         * also extend the note durations, so that we have longer notes
+         * and fewer rest symbols.
+         */
+        TimeSignature time = timesig;
+        if (options.time != null) {
+            time = options.time;
+        }
+        MidiFile.RoundStartTimes(newtracks, options.combineInterval, timesig);
+        MidiFile.RoundDurations(newtracks, time.Quarter);
+
+        if (options.twoStaffs) {
+            newtracks = MidiFile.CombineToTwoTracks(newtracks, timesig.Measure);
+        }
+        if (options.shifttime != 0) {
+            MidiFile.ShiftTime(newtracks, options.shifttime);
+        }
+        if (options.transpose != 0) {
+            MidiFile.Transpose(newtracks, options.transpose);
+        }
+
+        return newtracks;
+    }
+
+
+    /** Shift the starttime of the notes by the given amount.
+     * This is used by the Shift Notes menu to shift notes left/right.
+     */
+    public static void
+    ShiftTime(List<MidiTrack> tracks, int amount)
+    {
+        foreach (MidiTrack track in tracks) {
+            foreach (MidiNote note in track.Notes) {
+                note.StartTime += amount;
+            }
+        }
+    }
+
+    /** Shift the note keys up/down by the given amount */
+    public static void
+    Transpose(List<MidiTrack> tracks, int amount)
+    {
+        foreach (MidiTrack track in tracks) {
+            foreach (MidiNote note in track.Notes) {
+                note.Number += amount;
+                if (note.Number < 0) {
+                    note.Number = 0;
+                }
+            }
+        }
+    }
+
+   
+    /* Find the highest and lowest notes that overlap this interval (starttime to endtime).
+     * This method is used by SplitTrack to determine which staff (top or bottom) a note
+     * should go to.
+     *
+     * For more accurate SplitTrack() results, we limit the interval/duration of this note 
+     * (and other notes) to one measure. We care only about high/low notes that are
+     * reasonably close to this note.
+     */
+    private static void
+    FindHighLowNotes(List<MidiNote> notes, int measurelen, int startindex, 
+                     int starttime, int endtime, ref int high, ref int low) {
+
+        int i = startindex;
+        if (starttime + measurelen < endtime) {
+            endtime = starttime + measurelen;
+        }
+
+        while (i < notes.Count && notes[i].StartTime < endtime) {
+            if (notes[i].EndTime < starttime) {
+                i++;
+                continue;
+            }
+            if (notes[i].StartTime + measurelen < starttime) {
+                i++;
+                continue;
+            }
+            if (high < notes[i].Number) {
+                high = notes[i].Number;
+            }
+            if (low > notes[i].Number) {
+                low = notes[i].Number;
+            }
+            i++;
+        }
+    }
+
+    /* Find the highest and lowest notes that start at this exact start time */
+    private static void
+    FindExactHighLowNotes(List<MidiNote> notes, int startindex, int starttime,
+                          ref int high, ref int low) {
+
+        int i = startindex;
+
+        while (notes[i].StartTime < starttime) {
+            i++;
+        }
+
+        while (i < notes.Count && notes[i].StartTime == starttime) {
+            if (high < notes[i].Number) {
+                high = notes[i].Number;
+            }
+            if (low > notes[i].Number) {
+                low = notes[i].Number;
+            }
+            i++;
+        }
