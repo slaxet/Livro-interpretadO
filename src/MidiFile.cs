@@ -1401,3 +1401,124 @@ public class MidiFile {
     public static MidiTrack CombineToSingleTrack(List<MidiTrack> tracks)
     {
         /* Add all notes into one track */
+        MidiTrack result = new MidiTrack(1);
+
+        if (tracks.Count == 0) {
+            return result;
+        }
+        else if (tracks.Count == 1) {
+            MidiTrack track = tracks[0];
+            foreach (MidiNote note in track.Notes) {
+                result.AddNote(note);
+            }
+            return result;
+        }
+
+        int[] noteindex = new int[64];
+        int[] notecount = new int[64];
+
+        for (int tracknum = 0; tracknum < tracks.Count; tracknum++) {
+            noteindex[tracknum] = 0;
+            notecount[tracknum] = tracks[tracknum].Notes.Count;
+        }
+        MidiNote prevnote = null;
+        while (true) {
+            MidiNote lowestnote = null;
+            int lowestTrack = -1;
+            for (int tracknum = 0; tracknum < tracks.Count; tracknum++) {
+                MidiTrack track = tracks[tracknum];
+                if (noteindex[tracknum] >= notecount[tracknum]) {
+                    continue;
+                }
+                MidiNote note = track.Notes[ noteindex[tracknum] ];
+                if (lowestnote == null) {
+                    lowestnote = note;
+                    lowestTrack = tracknum;
+                }
+                else if (note.StartTime < lowestnote.StartTime) {
+                    lowestnote = note;
+                    lowestTrack = tracknum;
+                }
+                else if (note.StartTime == lowestnote.StartTime && note.Number < lowestnote.Number) {
+                    lowestnote = note;
+                    lowestTrack = tracknum;
+                }
+            }
+            if (lowestnote == null) {
+                /* We've finished the merge */
+                break;
+            }
+            noteindex[lowestTrack]++;
+            if ((prevnote != null) && (prevnote.StartTime == lowestnote.StartTime) &&
+                (prevnote.Number == lowestnote.Number) ) {
+
+                /* Don't add duplicate notes, with the same start time and number */        
+                if (lowestnote.Duration > prevnote.Duration) {
+                    prevnote.Duration = lowestnote.Duration;
+                }
+            }
+            else {
+                result.AddNote(lowestnote);
+                prevnote = lowestnote;
+            }
+        }
+    
+        return result;
+    }
+
+
+    /** Combine the notes in all the tracks given into two MidiTracks,
+     * and return them.
+     * 
+     * This function is intended for piano songs, when we want to display
+     * a left-hand track and a right-hand track.  The lower notes go into 
+     * the left-hand track, and the higher notes go into the right hand 
+     * track.
+     */
+    public static List<MidiTrack> CombineToTwoTracks(List<MidiTrack> tracks, int measurelen)
+    {
+        MidiTrack single = CombineToSingleTrack(tracks);
+        List<MidiTrack> result = SplitTrack(single, measurelen);
+
+        List<MidiEvent> lyrics = new List<MidiEvent>();
+        foreach (MidiTrack track in tracks) {
+            if (track.Lyrics != null) {
+                lyrics.AddRange(track.Lyrics);
+            }
+        }
+        if (lyrics.Count > 0) {
+            lyrics.Sort(lyrics[0]);
+            result[0].Lyrics = lyrics;
+        } 
+
+        return result;
+    }
+
+
+    /** Check that the MidiNote start times are in increasing order.
+     * This is for debugging purposes.
+     */
+    private static void CheckStartTimes(List<MidiTrack> tracks) {
+        foreach (MidiTrack track in tracks) {
+            int prevtime = -1;
+            foreach (MidiNote note in track.Notes) {
+                if (note.StartTime < prevtime) {
+                    throw new System.ArgumentException("start times not in increasing order");
+                }
+                prevtime = note.StartTime;
+            }
+        }
+    }
+
+
+    /** In Midi Files, time is measured in pulses.  Notes that have
+     * pulse times that are close together (like within 10 pulses)
+     * will sound like they're the same chord.  We want to draw
+     * these notes as a single chord, it makes the sheet music much
+     * easier to read.  We don't want to draw notes that are close
+     * together as two separate chords.
+     *
+     * The SymbolSpacing class only aligns notes that have exactly the same
+     * start times.  Notes with slightly different start times will
+     * appear in separate vertical columns.  This isn't what we want.
+     * We want to align notes with approximately the same start times.
