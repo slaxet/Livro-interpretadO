@@ -1522,3 +1522,113 @@ public class MidiFile {
      * start times.  Notes with slightly different start times will
      * appear in separate vertical columns.  This isn't what we want.
      * We want to align notes with approximately the same start times.
+     * So, this function is used to assign the same starttime for notes
+     * that are close together (timewise).
+     */
+    public static void
+    RoundStartTimes(List<MidiTrack> tracks, int millisec, TimeSignature time) {
+        /* Get all the starttimes in all tracks, in sorted order */
+        List<int> starttimes = new List<int>();
+        foreach (MidiTrack track in tracks) {
+            foreach (MidiNote note in track.Notes) {
+                starttimes.Add( note.StartTime );
+            }
+        }
+        starttimes.Sort();
+
+        /* Notes within "millisec" milliseconds apart will be combined. */
+        int interval = time.Quarter * millisec * 1000 / time.Tempo;
+
+        /* If two starttimes are within interval millisec, make them the same */
+        for (int i = 0; i < starttimes.Count - 1; i++) {
+            if (starttimes[i+1] - starttimes[i] <= interval) {
+                starttimes[i+1] = starttimes[i];
+            }
+        }
+
+        CheckStartTimes(tracks);
+
+        /* Adjust the note starttimes, so that it matches one of the starttimes values */
+        foreach (MidiTrack track in tracks) {
+            int i = 0;
+
+            foreach (MidiNote note in track.Notes) {
+                while (i < starttimes.Count &&
+                       note.StartTime - interval > starttimes[i]) {
+                    i++;
+                }
+
+                if (note.StartTime > starttimes[i] &&
+                    note.StartTime - starttimes[i] <= interval) {
+
+                    note.StartTime = starttimes[i];
+                }
+            }
+            track.Notes.Sort(track.Notes[0]);
+        }
+    }
+
+
+    /** We want note durations to span up to the next note in general.
+     * The sheet music looks nicer that way.  In contrast, sheet music
+     * with lots of 16th/32nd notes separated by small rests doesn't
+     * look as nice.  Having nice looking sheet music is more important
+     * than faithfully representing the Midi File data.
+     *
+     * Therefore, this function rounds the duration of MidiNotes up to
+     * the next note where possible.
+     */
+    public static void
+    RoundDurations(List<MidiTrack> tracks, int quarternote) {
+
+        foreach (MidiTrack track in tracks ) {
+            MidiNote prevNote = null;
+            for (int i = 0; i < track.Notes.Count-1; i++) {
+                MidiNote note1 = track.Notes[i];
+                if (prevNote == null) {
+                    prevNote = note1;
+                }
+
+                /* Get the next note that has a different start time */
+                MidiNote note2 = note1;
+                for (int j = i+1; j < track.Notes.Count; j++) {
+                    note2 = track.Notes[j];
+                    if (note1.StartTime < note2.StartTime) {
+                        break;
+                    }
+                }
+                int maxduration = note2.StartTime - note1.StartTime;
+
+                int dur = 0;
+                if (quarternote <= maxduration)
+                    dur = quarternote;
+                else if (quarternote/2 <= maxduration)
+                    dur = quarternote/2;
+                else if (quarternote/3 <= maxduration)
+                    dur = quarternote/3;
+                else if (quarternote/4 <= maxduration)
+                    dur = quarternote/4;
+
+
+                if (dur < note1.Duration) {
+                    dur = note1.Duration;
+                }
+
+                /* Special case: If the previous note's duration
+                 * matches this note's duration, we can make a notepair.
+                 * So don't expand the duration in that case.
+                 */
+                if ((prevNote.StartTime + prevNote.Duration == note1.StartTime) &&
+                    (prevNote.Duration == note1.Duration)) {
+
+                    dur = note1.Duration;
+                }
+                note1.Duration = dur;
+                if (track.Notes[i+1].StartTime != note1.StartTime) {
+                    prevNote = note1;
+                }
+            }
+        }
+    }
+
+    /** Split the given track into multiple tracks, separating each
