@@ -1284,3 +1284,120 @@ public class MidiFile {
             }
             i++;
         }
+    }
+
+
+ 
+    /* Split the given MidiTrack into two tracks, top and bottom.
+     * The highest notes will go into top, the lowest into bottom.
+     * This function is used to split piano songs into left-hand (bottom)
+     * and right-hand (top) tracks.
+     */
+    public static List<MidiTrack> SplitTrack(MidiTrack track, int measurelen) {
+        List<MidiNote> notes = track.Notes;
+        int count = notes.Count;
+
+        MidiTrack top = new MidiTrack(1);
+        MidiTrack bottom = new MidiTrack(2);
+        List<MidiTrack> result = new List<MidiTrack>(2);
+        result.Add(top); result.Add(bottom);
+
+        if (count == 0)
+            return result;
+
+        int prevhigh  = 76; /* E5, top of treble staff */
+        int prevlow   = 45; /* A3, bottom of bass staff */
+        int startindex = 0;
+
+        foreach (MidiNote note in notes) {
+            int high, low, highExact, lowExact;
+            
+            int number = note.Number;
+            high = low = highExact = lowExact = number;
+
+            while (notes[startindex].EndTime < note.StartTime) {
+                startindex++;
+            }
+
+            /* I've tried several algorithms for splitting a track in two,
+             * and the one below seems to work the best:
+             * - If this note is more than an octave from the high/low notes
+             *   (that start exactly at this start time), choose the closest one.
+             * - If this note is more than an octave from the high/low notes
+             *   (in this note's time duration), choose the closest one.
+             * - If the high and low notes (that start exactly at this starttime)
+             *   are more than an octave apart, choose the closest note.
+             * - If the high and low notes (that overlap this starttime)
+             *   are more than an octave apart, choose the closest note.
+             * - Else, look at the previous high/low notes that were more than an 
+             *   octave apart.  Choose the closeset note.
+             */
+            FindHighLowNotes(notes, measurelen, startindex, note.StartTime, note.EndTime, 
+                             ref high, ref low);
+            FindExactHighLowNotes(notes, startindex, note.StartTime,
+                                  ref highExact, ref lowExact);
+
+            if (highExact - number > 12 || number - lowExact > 12) {
+                if (highExact - number <= number - lowExact) {
+                    top.AddNote(note);
+                }
+                else {
+                    bottom.AddNote(note);
+                }
+            } 
+            else if (high - number > 12 || number - low > 12) {
+                if (high - number <= number - low) {
+                    top.AddNote(note);
+                }
+                else {
+                    bottom.AddNote(note);
+                }
+            } 
+            else if (highExact - lowExact > 12) {
+                if (highExact - number <= number - lowExact) {
+                    top.AddNote(note);
+                }
+                else {
+                    bottom.AddNote(note);
+                }
+            }
+            else if (high - low > 12) {
+                if (high - number <= number - low) {
+                    top.AddNote(note);
+                }
+                else {
+                    bottom.AddNote(note);
+                }
+            }
+            else {
+                if (prevhigh - number <= number - prevlow) {
+                    top.AddNote(note);
+                }
+                else {
+                    bottom.AddNote(note);
+                }
+            }
+
+            /* The prevhigh/prevlow are set to the last high/low
+             * that are more than an octave apart.
+             */
+            if (high - low > 12) {
+                prevhigh = high;
+                prevlow = low;
+            }
+        }
+
+        top.Notes.Sort(track.Notes[0]);
+        bottom.Notes.Sort(track.Notes[0]);
+
+        return result;
+    }
+
+
+    /** Combine the notes in the given tracks into a single MidiTrack. 
+     *  The individual tracks are already sorted.  To merge them, we
+     *  use a mergesort-like algorithm.
+     */
+    public static MidiTrack CombineToSingleTrack(List<MidiTrack> tracks)
+    {
+        /* Add all notes into one track */
