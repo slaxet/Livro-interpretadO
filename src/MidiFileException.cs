@@ -13,3 +13,10 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text;
+
+
+namespace MidiSheetMusic {
+
+/** @class MidiFileException
+ * A MidiFileException is thrown 
