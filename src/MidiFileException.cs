@@ -19,4 +19,6 @@ using System.Text;
 namespace MidiSheetMusic {
 
 /** @class MidiFileException
- * A MidiFileException is thrown 
+ * A MidiFileException is thrown when an error occurs
+ * while parsing the Midi File.  The constructor takes
+ * the file offset (in byte
