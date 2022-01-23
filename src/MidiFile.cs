@@ -1745,3 +1745,28 @@ public class MidiFile {
         foreach(MidiTrack track in tracks) {
             result += track.ToString();
         }
+        return result;
+    }
+
+    /* Command-line program to print out a parsed Midi file. Used for debugging.
+     * To run:
+     * - Change Main2 to Main
+     * - csc MidiNote.cs MidiEvent.cs MidiTrack.cs MidiFileReader.cs MidiOptions.cs
+     *   MidiFile.cs MidiException.cs TimeSignature.cs
+     * - MidiFile.exe file.mid
+     *
+     */
+    public static void Main2(string[] arg) {
+        if (arg.Length == 0) {
+            Console.WriteLine("Usage: MidiFile <filename>");
+            return;
+        }
+
+        MidiFile f = new MidiFile(arg[0]);
+        Console.Write(f.ToString());
+    }
+
+}  /* End class MidiFile */
+
+
+}  /* End namespace MidiSheetMusic */
