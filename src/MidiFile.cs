@@ -1632,3 +1632,116 @@ public class MidiFile {
     }
 
     /** Split the given track into multiple tracks, separating each
+     * channel into a separate track.
+     */
+    private static List<MidiTrack> 
+    SplitChannels(MidiTrack origtrack, List<MidiEvent> events) {
+
+        /* Find the instrument used for each channel */
+        int[] channelInstruments = new int[16];
+        foreach (MidiEvent mevent in events) {
+            if (mevent.EventFlag == EventProgramChange) {
+                channelInstruments[mevent.Channel] = mevent.Instrument;
+            }
+        }
+        channelInstruments[9] = 128; /* Channel 9 = Percussion */
+
+        List<MidiTrack> result = new List<MidiTrack>();
+        foreach (MidiNote note in origtrack.Notes) {
+            bool foundchannel = false;
+            foreach (MidiTrack track in result) {
+                if (note.Channel == track.Notes[0].Channel) {
+                    foundchannel = true;
+                    track.AddNote(note); 
+                }
+            }
+            if (!foundchannel) {
+                MidiTrack track = new MidiTrack(result.Count + 1);
+                track.AddNote(note);
+                track.Instrument = channelInstruments[note.Channel];
+                result.Add(track);
+            }
+        }
+        return result;
+    }
+
+
+    /** Guess the measure length.  We assume that the measure
+     * length must be between 0.5 seconds and 4 seconds.
+     * Take all the note start times that fall between 0.5 and 
+     * 4 seconds, and return the starttimes.
+     */
+    public List<int> 
+    GuessMeasureLength() {
+        List<int> result = new List<int>();
+
+        int pulses_per_second = (int) (1000000.0 / timesig.Tempo * timesig.Quarter);
+        int minmeasure = pulses_per_second / 2;  /* The minimum measure length in pulses */
+        int maxmeasure = pulses_per_second * 4;  /* The maximum measure length in pulses */
+
+        /* Get the start time of the first note in the midi file. */
+        int firstnote = timesig.Measure * 5;
+        foreach (MidiTrack track in tracks) {
+            if (firstnote > track.Notes[0].StartTime) {
+                firstnote = track.Notes[0].StartTime;
+            }
+        }
+
+        /* interval = 0.06 seconds, converted into pulses */
+        int interval = timesig.Quarter * 60000 / timesig.Tempo;
+
+        foreach (MidiTrack track in tracks) {
+            int prevtime = 0;
+            foreach (MidiNote note in track.Notes) {
+                if (note.StartTime - prevtime <= interval)
+                    continue;
+
+                prevtime = note.StartTime;
+
+                int time_from_firstnote = note.StartTime - firstnote;
+
+                /* Round the time down to a multiple of 4 */
+                time_from_firstnote = time_from_firstnote / 4 * 4;
+                if (time_from_firstnote < minmeasure)
+                    continue;
+                if (time_from_firstnote > maxmeasure)
+                    break;
+
+                if (!result.Contains(time_from_firstnote)) {
+                    result.Add(time_from_firstnote);
+                }
+            }
+        }
+        result.Sort();
+        return result;
+    }
+
+    /** Return the last start time */
+    public int EndTime() {
+        int lastStart = 0;
+        foreach (MidiTrack track in tracks) {
+            if (track.Notes.Count == 0) {
+                continue;
+            }
+            int last = track.Notes[ track.Notes.Count-1 ].StartTime;
+            lastStart = Math.Max(last, lastStart);
+        }
+        return lastStart;
+    }
+
+    /** Return true if this midi file has lyrics */
+    public bool HasLyrics() {
+        foreach (MidiTrack track in tracks) {
+            if (track.Lyrics != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public override string ToString() {
+        string result = "Midi File tracks=" + tracks.Count + " quarter=" + quarternote + "\n";
+        result += Time.ToString() + "\n";
+        foreach(MidiTrack track in tracks) {
+            result += track.ToString();
+        }
