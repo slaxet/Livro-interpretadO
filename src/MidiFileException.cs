@@ -24,4 +24,11 @@ namespace MidiSheetMusic {
  * the file offset (in bytes) where the error occurred,
  * and a string describing the error.
  */
-public class MidiFileException : System.Exceptio
+public class MidiFileException : System.Exception {
+    public MidiFileException (string s, int offset) :
+        base(s + " at offset " + offset) {
+    }
+}
+
+}
+
