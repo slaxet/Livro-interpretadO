@@ -115,3 +115,59 @@ public class MidiFileReader {
 
     /** Read a 32-bit int from the file */
     public int ReadInt() {
+        checkRead(4);
+        int x = (int)( (data[parse_offset] << 24) | (data[parse_offset+1] << 16) |
+                       (data[parse_offset+2] << 8) | data[parse_offset+3] );
+        parse_offset += 4;
+        return x;
+    }
+
+    /** Read an ascii string with the given length */
+    public string ReadAscii(int len) {
+        checkRead(len);
+        string s = ASCIIEncoding.ASCII.GetString(data, parse_offset, len);
+        parse_offset += len;
+        return s;
+    }
+
+    /** Read a variable-length integer (1 to 4 bytes). The integer ends
+     * when you encounter a byte that doesn't have the 8th bit set
+     * (a byte less than 0x80).
+     */
+    public int ReadVarlen() {
+        uint result = 0;
+        byte b;
+
+        b = ReadByte();
+        result = (uint)(b & 0x7f);
+
+        for (int i = 0; i < 3; i++) {
+            if ((b & 0x80) != 0) {
+                b = ReadByte();
+                result = (uint)( (result << 7) + (b & 0x7f) );
+            }
+            else {
+                break;
+            }
+        }
+        return (int)result;
+    }
+
+    /** Skip over the given number of bytes */ 
+    public void Skip(int amount) {
+        checkRead(amount);
+        parse_offset += amount;
+    }
+
+    /** Return the current parse offset */
+    public int GetOffset() {
+        return parse_offset;
+    }
+
+    /** Return the raw midi file byte data */
+    public byte[] GetData() {
+        return data;
+    }
+}
+
+} 
