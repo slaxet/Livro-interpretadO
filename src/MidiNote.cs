@@ -12,4 +12,13 @@
 
 using System;
 using System.IO;
-using System.Collection
+using System.Collections.Generic;
+using System.Text;
+
+
+namespace MidiSheetMusic {
+
+/** @class MidiNote
+ * A MidiNote contains
+ *
+ * starttime - Th
