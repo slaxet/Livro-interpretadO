@@ -21,4 +21,5 @@ namespace MidiSheetMusic {
 /** @class MidiNote
  * A MidiNote contains
  *
- * starttime - Th
+ * starttime - The time (measured in pulses) when the note is pressed.
+ * channel   - The channel the note is from. 
