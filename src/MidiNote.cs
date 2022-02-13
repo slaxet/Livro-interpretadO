@@ -22,4 +22,6 @@ namespace MidiSheetMusic {
  * A MidiNote contains
  *
  * starttime - The time (measured in pulses) when the note is pressed.
- * channel   - The channel the note is from. 
+ * channel   - The channel the note is from.  This is used when matching
+ *             NoteOff events with the corresponding NoteOn event.
+ *             The c
