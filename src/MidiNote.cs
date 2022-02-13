@@ -24,4 +24,6 @@ namespace MidiSheetMusic {
  * starttime - The time (measured in pulses) when the note is pressed.
  * channel   - The channel the note is from.  This is used when matching
  *             NoteOff events with the corresponding NoteOn event.
- *             The c
+ *             The channels for the NoteOn and NoteOff events must be
+ *             the same.
+ * notenumber - The note nu
