@@ -30,4 +30,6 @@ namespace MidiSheetMusic {
  * duration  - The time duration (measured in pulses) after which the 
  *             note is released.
  *
- * A MidiNote is created when we encounter a NoteOff event.  The
+ * A MidiNote is created when we encounter a NoteOff event.  The duration
+ * is initially unknown (set to 0).  When the corresponding NoteOff event
+ * is found, the duration i
