@@ -27,4 +27,7 @@ namespace MidiSheetMusic {
  *             The channels for the NoteOn and NoteOff events must be
  *             the same.
  * notenumber - The note number, from 0 to 127.  Middle C is 60.
- * duration  - The time duration (measured in pulses) after which the
+ * duration  - The time duration (measured in pulses) after which the 
+ *             note is released.
+ *
+ * A MidiNote is created when we encounter a NoteOff event.  The
