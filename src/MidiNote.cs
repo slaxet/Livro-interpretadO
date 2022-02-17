@@ -32,4 +32,7 @@ namespace MidiSheetMusic {
  *
  * A MidiNote is created when we encounter a NoteOff event.  The duration
  * is initially unknown (set to 0).  When the corresponding NoteOff event
- * is found, the duration i
+ * is found, the duration is set by the method NoteOff().
+ */
+public class MidiNote : IComparer<MidiNote> {
+    private int starttime;
