@@ -35,4 +35,6 @@ namespace MidiSheetMusic {
  * is found, the duration is set by the method NoteOff().
  */
 public class MidiNote : IComparer<MidiNote> {
-    private int starttime;
+    private int starttime;   /** The start time, in pulses */
+    private int channel;     /** The channel */
+    private in
