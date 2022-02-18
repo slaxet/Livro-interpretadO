@@ -37,4 +37,5 @@ namespace MidiSheetMusic {
 public class MidiNote : IComparer<MidiNote> {
     private int starttime;   /** The start time, in pulses */
     private int channel;     /** The channel */
-    private in
+    private int notenumber;  /** The note, from 0 to 127. Middle C is 60 */
+    private int duration;    /** The durat
