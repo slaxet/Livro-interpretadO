@@ -44,4 +44,8 @@ public class MidiNote : IComparer<MidiNote> {
     /* Create a new MidiNote.  This is called when a NoteOn event is
      * encountered in the MidiFile.
      */
-    public MidiNote(int starttime, int channel, int notenumber, int duration
+    public MidiNote(int starttime, int channel, int notenumber, int duration) {
+        this.starttime = starttime;
+        this.channel = channel;
+        this.notenumber = notenumber;
+    
