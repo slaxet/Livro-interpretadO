@@ -48,4 +48,10 @@ public class MidiNote : IComparer<MidiNote> {
         this.starttime = starttime;
         this.channel = channel;
         this.notenumber = notenumber;
-    
+        this.duration = duration;
+    }
+
+
+    public int StartTime {
+        get { return starttime; }
+     
