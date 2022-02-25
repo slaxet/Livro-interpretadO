@@ -59,3 +59,11 @@ public class MidiNote : IComparer<MidiNote> {
 
     public int EndTime {
         get { return starttime + duration; }
+    }
+
+    public int Channel {
+        get { return channel; }
+        set { channel = value; }
+    }
+
+    public 
