@@ -66,4 +66,10 @@ public class MidiNote : IComparer<MidiNote> {
         set { channel = value; }
     }
 
-    public 
+    public int Number {
+        get { return notenumber; }
+        set { notenumber = value; }
+    }
+
+    public int Duration {
+        
