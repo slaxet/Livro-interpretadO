@@ -72,4 +72,8 @@ public class MidiNote : IComparer<MidiNote> {
     }
 
     public int Duration {
-        
+        get { return duration; }
+        set { duration = value; }
+    }
+
+    /* A NoteOff event occurs for this not
