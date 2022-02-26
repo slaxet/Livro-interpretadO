@@ -79,4 +79,8 @@ public class MidiNote : IComparer<MidiNote> {
     /* A NoteOff event occurs for this note at the given time.
      * Calculate the note duration based on the noteoff event.
      */
-    public void NoteOff(int 
+    public void NoteOff(int endtime) {
+        duration = endtime - starttime;
+    }
+
+    /** Compare two MidiNotes based on their start times
