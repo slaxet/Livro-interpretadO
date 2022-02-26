@@ -83,4 +83,7 @@ public class MidiNote : IComparer<MidiNote> {
         duration = endtime - starttime;
     }
 
-    /** Compare two MidiNotes based on their start times
+    /** Compare two MidiNotes based on their start times.
+     *  If the start times are equal, compare by their numbers.
+     */
+    public int Compare(MidiNote x
