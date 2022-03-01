@@ -101,4 +101,5 @@ public class MidiNote : IComparer<MidiNote> {
     public override 
     string ToString() {
         string[] scale = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
-        return string.Format("MidiNote channel={0} number={1} {
+        return string.Format("MidiNote channel={0} number={1} {2} start={3} duration={4}",
+                             channel, notenumber, scale[(notenumber + 3) % 12]
