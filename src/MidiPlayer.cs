@@ -1,0 +1,24 @@
+
+/*
+ * Copyright (c) 2011-2012 Madhav Vaidyanathan
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License version 2.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ */
+using System;
+using System.IO;
+using System.Text;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Diagnostics;
+
+namespace MidiSheetMusic {
+
+/** @class MidiPlayer
+ *
