@@ -89,4 +89,10 @@ public class MidiNote : IComparer<MidiNote> {
     public int Compare(MidiNote x, MidiNote y) {
         if (x.StartTime == y.StartTime)
             return x.Number - y.Number;
-        els
+        else
+            return x.StartTime - y.StartTime;
+    }
+
+
+    public MidiNote Clone() {
+        return new MidiNote(start
