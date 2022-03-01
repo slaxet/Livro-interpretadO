@@ -95,4 +95,9 @@ public class MidiNote : IComparer<MidiNote> {
 
 
     public MidiNote Clone() {
-        return new MidiNote(start
+        return new MidiNote(starttime, channel, notenumber, duration);
+    }
+
+    public override 
+    string ToString() {
+        string[] scale = { "A", "A#"
