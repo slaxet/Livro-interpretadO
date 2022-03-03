@@ -367,3 +367,117 @@ public class MidiPlayer : Panel  {
             timidity = new Process();
             timidity.StartInfo = info;
             timidity.Start();
+        }
+        catch (Exception e) {
+            timidity = null;
+        }
+    }
+
+    /** On Windows, we use the Win32 C function mciSendString()
+     *  for playing the music.
+     */
+    private void PlaySoundWindows(string filename) {
+        string cmd = "open \"sequencer!" + filename + "\" alias midisheet";
+        int ret = mciSendString(cmd, "", 0, 0);
+        // mciGetErrorString(ret, errormsg, 256);
+        ret = mciSendString("play midisheet", "", 0, 0);
+        // mciGetErrorString(ret, errormsg, 256);
+    }
+
+    /** Stop playing the MIDI music */
+    private void StopSound() {
+        if (Type.GetType("Mono.Runtime") != null)
+            StopSoundMono();
+        else 
+            StopSoundWindows();
+    }
+
+    /** Stop playing the music on Windows */
+    private void StopSoundWindows() {
+        int ret = mciSendString("stop midisheet", "", 0, 0);
+        // mciGetErrorString(ret, errormsg, 256);
+        ret = mciSendString("close midisheet", "", 0, 0);
+        // mciGetErrorString(ret, errormsg, 256);
+    }
+
+    /** Stop playing the music on Linux */
+    private void StopSoundMono() {
+        if (timidity != null) {
+            timidity.Kill();
+            timidity.Dispose();
+            timidity = null;
+        }
+    }
+
+
+    /** The Linux Timidity MIDI player skips leading silence, and starts
+     * playing the first note immediately.  We have to deal with this
+     * by 'deleting' the silence time from the start/current pulse times.
+     */
+    private void SkipLeadingSilence() {
+
+        /* Find how much silence there is between the 'pause time' and
+         * the first note played after the pause time.
+         */
+        int silence = -1;
+        for (int tracknum = 0; tracknum < midifile.Tracks.Count; tracknum++) {
+            MidiTrack track = midifile.Tracks[tracknum];
+            if (!options.tracks[tracknum]) {
+                continue;
+            }
+            foreach (MidiNote m in track.Notes) {
+                if (m.StartTime < options.pauseTime) {
+                    continue;
+                }
+                if (silence == -1 || silence > m.StartTime - options.pauseTime) {
+                    silence = m.StartTime - options.pauseTime;
+                }
+            }
+        }
+
+        if (silence > 0) {
+            startPulseTime += silence;
+            currentPulseTime += silence;
+            prevPulseTime += silence;
+        }
+    }
+
+    /** The callback for the play/pause button (a single button).
+     *  If we're stopped or pause, then play the midi file.
+     *  If we're currently playing, then initiate a pause.
+     *  (The actual pause is done when the timer is invoked).
+     */
+    private void PlayPause(object sender, EventArgs args) {
+        if (midifile == null || sheet == null || numberTracks() == 0) {
+            return;
+        }
+        else if (playstate == initStop || playstate == initPause) {
+            return;
+        }
+        else if (playstate == playing) {
+            playstate = initPause;
+            return;
+        }
+        else if (playstate == stopped || playstate == paused) {
+            /* The startPulseTime is the pulse time of the midi file when
+             * we first start playing the music.  It's used during shading.
+             */
+            if (options.playMeasuresInLoop) {
+                /* If we're playing measures in a loop, make sure the
+                 * currentPulseTime is somewhere inside the loop measures.
+                 */
+                int measure = (int)(currentPulseTime / midifile.Time.Measure);
+                if ((measure < options.playMeasuresInLoopStart) ||
+                    (measure > options.playMeasuresInLoopEnd)) {
+                    currentPulseTime = options.playMeasuresInLoopStart * midifile.Time.Measure;
+                }
+                startPulseTime = currentPulseTime;
+                options.pauseTime = (int)(currentPulseTime - options.shifttime);
+            }
+            else if (playstate == paused) {
+                startPulseTime = currentPulseTime;
+                options.pauseTime = (int)(currentPulseTime - options.shifttime);
+            }
+            else {
+                options.pauseTime = 0;
+                startPulseTime = options.shifttime;
