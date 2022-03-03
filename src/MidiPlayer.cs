@@ -264,3 +264,106 @@ public class MidiPlayer : Panel  {
 
             /* We have to wait some time (200 msec) for the sheet music
              * to scroll and redraw, before we can re-shade.
+             */
+            Timer redrawTimer = new Timer();
+            redrawTimer.Interval = 200;
+            redrawTimer.Tick += new EventHandler(ReShade);
+            redrawTimer.Enabled = true;
+            redrawTimer.Start();
+        }
+        else {
+            this.Stop(null, null);
+            midifile = file;
+            options = opt;
+            sheet = s;
+        }
+        this.DeleteSoundFile();
+    }
+
+    /** If we're paused, reshade the sheet music and piano. */
+    private void ReShade(object sender, EventArgs args) {
+        if (playstate == paused) {
+            sheet.ShadeNotes((int)currentPulseTime, (int)-10, false);
+            piano.ShadeNotes((int)currentPulseTime, (int)prevPulseTime);
+        }
+        Timer redrawTimer = (Timer) sender;
+        redrawTimer.Stop();
+        redrawTimer.Dispose();
+    }
+
+
+    /** Delete the temporary midi sound file */
+    public void DeleteSoundFile() {
+        if (tempSoundFile == "") {
+            return;
+        }
+        try {
+            FileInfo soundfile = new FileInfo(tempSoundFile);
+            soundfile.Delete();
+        }
+        catch (IOException e) {
+        }
+        tempSoundFile = ""; 
+    }
+
+    /** Return the number of tracks selected in the MidiOptions.
+     *  If the number of tracks is 0, there is no sound to play.
+     */
+    private int numberTracks() {
+        int count = 0;
+        for (int i = 0; i < options.tracks.Length; i++) {
+            if (options.tracks[i] && !options.mute[i]) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    /** Create a new midi file with all the MidiOptions incorporated.
+     *  Save the new file to TEMP/<originalfile>.MSM.mid, and store
+     *  this temporary filename in tempSoundFile.
+     */ 
+    private void CreateMidiFile() {
+        double inverse_tempo = 1.0 / midifile.Time.Tempo;
+        double inverse_tempo_scaled = inverse_tempo * speedBar.Value / 100.0;
+        options.tempo = (int)(1.0 / inverse_tempo_scaled);
+        pulsesPerMsec = midifile.Time.Quarter * (1000.0 / options.tempo);
+
+        string filename = Path.GetFileName(midifile.FileName).Replace(".mid", "") + ".MSM.mid";
+        tempSoundFile = System.IO.Path.GetTempPath() + "/" + filename;
+
+        /* If the filename is > 127 chars, the sound won't play */
+        if (tempSoundFile.Length > 127) {
+            tempSoundFile = System.IO.Path.GetTempPath() + "/MSM.mid";
+        }
+
+        if (midifile.ChangeSound(tempSoundFile, options) == false) {
+            /* Failed to write to tempSoundFile */
+            tempSoundFile = ""; 
+        }
+    }
+
+
+    /** Play the sound for the given MIDI file */
+    private void PlaySound(string filename) {
+        if (Type.GetType("Mono.Runtime") != null)
+            PlaySoundMono(filename);
+        else 
+            PlaySoundWindows(filename);
+    }
+
+    /** On Linux Mono, we spawn the timidity command to play the
+     *  midi file for us.
+     */
+    private void PlaySoundMono(string filename) {
+        try {
+            ProcessStartInfo info = new ProcessStartInfo();
+            info.CreateNoWindow = true;
+            info.RedirectStandardOutput = true;
+            info.RedirectStandardInput = true;
+            info.UseShellExecute = false;
+            info.FileName = "/usr/bin/timidity";
+            info.Arguments = "\"" + filename + "\"";
+            timidity = new Process();
+            timidity.StartInfo = info;
+            timidity.Start();
