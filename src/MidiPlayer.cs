@@ -164,3 +164,103 @@ public class MidiPlayer : Panel  {
         stopButton.ImageAlign = ContentAlignment.MiddleCenter;
         stopButton.Size = new Size(buttonheight, buttonheight);
         stopButton.Location = new Point(playButton.Location.X + playButton.Width + buttonheight/2,
+                                        playButton.Location.Y);
+        stopButton.Click += new EventHandler(Stop);
+        tip = new ToolTip();
+        tip.SetToolTip(stopButton, "Stop");
+
+        /* Create the fastFwd button */        
+        fastFwdButton = new Button();
+        fastFwdButton.Parent = this;
+        fastFwdButton.Image = fastFwdImage;
+        fastFwdButton.ImageAlign = ContentAlignment.MiddleCenter;
+        fastFwdButton.Size = new Size(buttonheight, buttonheight);
+        fastFwdButton.Location = new Point(stopButton.Location.X + stopButton.Width + buttonheight/2,                      
+                                          stopButton.Location.Y);
+        fastFwdButton.Click += new EventHandler(FastForward);
+        tip = new ToolTip();
+        tip.SetToolTip(fastFwdButton, "Fast Forward");
+
+
+
+        /* Create the Speed bar */
+        Label speedLabel = new Label();
+        speedLabel.Parent = this;
+        speedLabel.Text = "Speed: ";
+        speedLabel.TextAlign = ContentAlignment.MiddleRight;
+        speedLabel.Height = buttonheight;
+        speedLabel.Width = buttonheight*2;
+        speedLabel.Location = new Point(fastFwdButton.Location.X + fastFwdButton.Width + buttonheight/2,
+                                        fastFwdButton.Location.Y);
+
+        speedBar = new TrackBar();
+        speedBar.Parent = this;
+        speedBar.Minimum = 1;
+        speedBar.Maximum = 100;
+        speedBar.TickFrequency = 10;
+        speedBar.TickStyle = TickStyle.BottomRight;
+        speedBar.LargeChange = 10;
+        speedBar.Value = 100;
+        speedBar.Width = buttonheight * 5;
+        speedBar.Location = new Point(speedLabel.Location.X + speedLabel.Width + 2,
+                                      speedLabel.Location.Y);
+        tip = new ToolTip();
+        tip.SetToolTip(speedBar, "Adjust the speed");
+
+        /* Create the Volume bar */
+        Label volumeLabel = new Label();
+        volumeLabel.Parent = this;
+        volumeLabel.Image = volumeImage;
+        volumeLabel.ImageAlign = ContentAlignment.MiddleRight;
+        volumeLabel.Height = buttonheight;
+        volumeLabel.Width = buttonheight*2;
+        volumeLabel.Location = new Point(speedBar.Location.X + speedBar.Width + buttonheight/2,
+                                         speedBar.Location.Y);
+
+        volumeBar = new TrackBar();
+        volumeBar.Parent = this;
+        volumeBar.Minimum = 1;
+        volumeBar.Maximum = 100;
+        volumeBar.TickFrequency = 10;
+        volumeBar.TickStyle = TickStyle.BottomRight;
+        volumeBar.LargeChange = 10;
+        volumeBar.Value = 100;
+        volumeBar.Width = buttonheight * 5;
+        volumeBar.Location = new Point(volumeLabel.Location.X + volumeLabel.Width + 2,
+                                       volumeLabel.Location.Y);
+        volumeBar.Scroll += new EventHandler(ChangeVolume);
+        tip = new ToolTip();
+        tip.SetToolTip(volumeBar, "Adjust the volume");
+
+        Height = buttonheight*2;
+
+        /* Initialize the timer used for playback, but don't start
+         * the timer yet (enabled = false).
+         */
+        timer = new Timer();
+        timer.Enabled = false;
+        timer.Interval = 100;  /* 100 millisec */
+        timer.Tick += new EventHandler(TimerCallback);
+
+        tempSoundFile = "";
+    }
+
+    public void SetPiano(Piano p) {
+        piano = p;
+    }
+
+    /** The MidiFile and/or SheetMusic has changed. Stop any playback sound,
+     *  and store the current midifile and sheet music.
+     */
+    public void SetMidiFile(MidiFile file, MidiOptions opt, SheetMusic s) {
+
+        /* If we're paused, and using the same midi file, redraw the
+         * highlighted notes.
+         */
+        if ((file == midifile && midifile != null && playstate == paused)) {
+            options = opt;
+            sheet = s;
+            sheet.ShadeNotes((int)currentPulseTime, (int)-10, false);
+
+            /* We have to wait some time (200 msec) for the sheet music
+             * to scroll and redraw, before we can re-shade.
