@@ -481,3 +481,127 @@ public class MidiPlayer : Panel  {
             else {
                 options.pauseTime = 0;
                 startPulseTime = options.shifttime;
+                currentPulseTime = options.shifttime;
+                prevPulseTime = options.shifttime - midifile.Time.Quarter;
+            }
+
+            if (Type.GetType("Mono.Runtime") != null) {
+                SkipLeadingSilence();
+            }
+
+            CreateMidiFile();
+            playstate = playing;
+            Volume.SetVolume(volumeBar.Value);
+            PlaySound(tempSoundFile);
+            startTime = DateTime.Now.TimeOfDay;
+            timer.Start(); 
+            playButton.Image = pauseImage;
+            playTip.SetToolTip(playButton, "Pause");
+            sheet.ShadeNotes((int)currentPulseTime, (int)prevPulseTime, true);
+            piano.ShadeNotes((int)currentPulseTime, (int)prevPulseTime);
+            return;
+        }
+    }
+
+    /** The callback for the Stop button.
+     *  If playing, initiate a stop and wait for the timer to finish.
+     *  Then do the actual stop.
+     */
+    public void Stop(object sender, EventArgs args) {
+        if (midifile == null || sheet == null || playstate == stopped) {
+            return;
+        }
+
+        if (playstate == initPause || playstate == initStop || playstate == playing) {
+            /* Wait for timer to finish */
+            playstate = initStop;
+            System.Threading.Thread.Sleep(300); 
+            DoStop();
+        }
+        else if (playstate == paused) {
+            DoStop();
+        }
+    }
+
+    /** Perform the actual stop, by stopping the sound,
+     *  removing any shading, and clearing the state.
+     */
+    void DoStop() { 
+        playstate = stopped;
+        StopSound();
+
+        /* Remove all shading by redrawing the music */
+        sheet.Invalidate();
+        piano.Invalidate();
+
+        startPulseTime = 0;
+        currentPulseTime = 0;
+        prevPulseTime = 0;
+        playButton.Image = playImage;
+        playTip.SetToolTip(playButton, "Play");
+        return;
+    }
+
+    /** Rewind the midi music back one measure.
+     *  The music must be in the paused state.
+     *  When we resume in playPause, we start at the currentPulseTime.
+     *  So to rewind, just decrease the currentPulseTime,
+     *  and re-shade the sheet music.
+     */
+    private void Rewind(object sender, EventArgs evt) {
+        if (midifile == null || sheet == null || playstate != paused) {
+            return;
+        }
+        /* Remove any highlighted notes */
+        sheet.ShadeNotes(-10, (int)currentPulseTime, false);
+        piano.ShadeNotes(-10, (int)currentPulseTime);
+   
+        prevPulseTime = currentPulseTime; 
+        currentPulseTime -= midifile.Time.Measure;
+        if (currentPulseTime < options.shifttime) {
+            currentPulseTime = options.shifttime;
+        }
+        sheet.ShadeNotes((int)currentPulseTime, (int)prevPulseTime, false);
+        piano.ShadeNotes((int)currentPulseTime, (int)prevPulseTime);
+    }
+    
+    /** Fast forward the midi music by one measure.
+     *  The music must be in the paused/stopped state.
+     *  When we resume in playPause, we start at the currentPulseTime.
+     *  So to fast forward, just increase the currentPulseTime,
+     *  and re-shade the sheet music.
+     */
+    private void FastForward(object sender, EventArgs evt) {
+        if (midifile == null || sheet == null) {
+            return;
+        }
+        if (playstate != paused && playstate != stopped) {
+            return;
+        }
+        playstate = paused;
+
+        /* Remove any highlighted notes */
+        sheet.ShadeNotes(-10, (int)currentPulseTime, false);
+        piano.ShadeNotes(-10, (int)currentPulseTime);
+   
+        prevPulseTime = currentPulseTime; 
+        currentPulseTime += midifile.Time.Measure;
+        if (currentPulseTime > midifile.TotalPulses) {
+            currentPulseTime -= midifile.Time.Measure;
+        }
+        sheet.ShadeNotes((int)currentPulseTime, (int)prevPulseTime, false);
+        piano.ShadeNotes((int)currentPulseTime, (int)prevPulseTime);
+    }
+
+
+    /** The callback for the timer. If the midi is still playing, 
+     *  update the currentPulseTime and shade the sheet music.  
+     *  If a stop or pause has been initiated (by someone clicking
+     *  the stop or pause button), then stop the timer.
+     */
+    void TimerCallback(object sender, EventArgs args) {
+        if (midifile == null || sheet == null) {
+            timer.Stop();
+            playstate = stopped;
+            return;
+        }
