@@ -605,3 +605,89 @@ public class MidiPlayer : Panel  {
             playstate = stopped;
             return;
         }
+        else if (playstate == stopped || playstate == paused) {
+            /* This case should never happen */
+            timer.Stop();
+            return;
+        }
+        else if (playstate == initStop) {
+            timer.Stop();
+            return;
+        }
+        else if (playstate == playing) {
+            TimeSpan diff = DateTime.Now.TimeOfDay.Subtract(startTime);
+            long msec = diff.Minutes * 60 * 1000 + 
+                        diff.Seconds * 1000 + diff.Milliseconds;
+            prevPulseTime = currentPulseTime;
+            currentPulseTime = startPulseTime + msec * pulsesPerMsec;
+
+            /* If we're playing in a loop, stop and restart */
+            if (options.playMeasuresInLoop) {
+                double nearEndTime = currentPulseTime + pulsesPerMsec*10;
+                int measure = (int)(nearEndTime / midifile.Time.Measure);
+                if (measure > options.playMeasuresInLoopEnd) {
+                    RestartPlayMeasuresInLoop();
+                    return;
+                }
+            }
+
+            /* Stop if we've reached the end of the song */
+            if (currentPulseTime > midifile.TotalPulses) {
+                timer.Stop();
+                DoStop();
+                return;
+            }
+
+            sheet.ShadeNotes((int)currentPulseTime, (int)prevPulseTime, true);
+            piano.ShadeNotes((int)currentPulseTime, (int)prevPulseTime);
+            return;
+        }
+        else if (playstate == initPause) {
+            timer.Stop();
+            TimeSpan diff = DateTime.Now.TimeOfDay.Subtract(startTime);
+            long msec = diff.Minutes * 60 * 1000 + 
+                        diff.Seconds * 1000 + diff.Milliseconds;
+
+            StopSound();
+
+            prevPulseTime = currentPulseTime;
+            currentPulseTime = startPulseTime + msec * pulsesPerMsec;
+            sheet.ShadeNotes((int)currentPulseTime, (int)prevPulseTime, false);
+            piano.ShadeNotes((int)currentPulseTime, (int)prevPulseTime);
+            playstate = paused;
+            playButton.Image = playImage;
+            playTip.SetToolTip(playButton, "Play");
+            return;
+        }
+    }
+
+    /** The "Play Measures in a Loop" feature is enabled, and we've reached
+     *  the last measure. Stop the sound, unshade the music, and then
+     *  start playing again.
+     */
+    private void RestartPlayMeasuresInLoop() {
+        timer.Stop();
+        playstate = stopped;
+        StopSound();
+
+        sheet.ShadeNotes(-10, (int)prevPulseTime, false);
+        piano.ShadeNotes(-10, (int)prevPulseTime);
+        currentPulseTime = -1;
+        prevPulseTime = 0;
+        System.Threading.Thread.Sleep(300);
+
+        PlayPause(null, null);
+    }
+
+    /** Callback for volume bar.  Adjust the volume if the midi sound
+     *  is currently playing.
+     */
+    private void ChangeVolume(object sender, EventArgs args) {
+        if (playstate == playing) {
+            Volume.SetVolume(volumeBar.Value);
+        }
+    }
+
+}
+
+}
