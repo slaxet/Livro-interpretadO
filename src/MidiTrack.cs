@@ -123,3 +123,30 @@ public class MidiTrack {
             }
         }
     }
+
+    /** Return a deep copy clone of this MidiTrack. */
+    public MidiTrack Clone() {
+        MidiTrack track = new MidiTrack(Number);
+        track.instrument = instrument;
+        foreach (MidiNote note in notes) {
+            track.notes.Add( note.Clone() );
+        }
+        if (lyrics != null) {
+            track.lyrics = new List<MidiEvent>();
+            foreach (MidiEvent ev in lyrics) {
+                track.lyrics.Add(ev);
+            }
+        }
+        return track;
+    }
+    public override string ToString() {
+        string result = "Track number=" + tracknum + " instrument=" + instrument + "\n";
+        foreach (MidiNote n in notes) {
+           result = result + n + "\n";
+        }
+        result += "End Track\n";
+        return result;
+    }
+}
+
+}
