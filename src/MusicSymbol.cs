@@ -12,4 +12,12 @@
 
 using System;
 using System.IO;
-using System.Collections.Gen
+using System.Collections.Generic;
+using System.Text;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+
+namespace MidiSheetMusic {
+
+
+/** @class MusicSym
