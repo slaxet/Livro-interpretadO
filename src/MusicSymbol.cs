@@ -20,4 +20,6 @@ using System.Drawing.Drawing2D;
 namespace MidiSheetMusic {
 
 
-/** @class MusicSym
+/** @class MusicSymbol
+ * The MusicSymbol class represents music symbols that can be displayed
+ * on a staff.  This includes:
