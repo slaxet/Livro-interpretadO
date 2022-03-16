@@ -25,4 +25,6 @@ namespace MidiSheetMusic {
  * on a staff.  This includes:
  *  - Accidental symbols: sharp, flat, natural
  *  - Chord symbols: single notes or chords
- *  - Rest symbols
+ *  - Rest symbols: whole, half, quarter, eighth
+ *  - Bar symbols, the vertical bars which delimit measures.
+ *  - Treble and Bass cle
