@@ -23,3 +23,6 @@ namespace MidiSheetMusic {
 /** @class MusicSymbol
  * The MusicSymbol class represents music symbols that can be displayed
  * on a staff.  This includes:
+ *  - Accidental symbols: sharp, flat, natural
+ *  - Chord symbols: single notes or chords
+ *  - Rest symbols
