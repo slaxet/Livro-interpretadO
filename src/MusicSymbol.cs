@@ -27,4 +27,10 @@ namespace MidiSheetMusic {
  *  - Chord symbols: single notes or chords
  *  - Rest symbols: whole, half, quarter, eighth
  *  - Bar symbols, the vertical bars which delimit measures.
- *  - Treble and Bass cle
+ *  - Treble and Bass clef symbols
+ *  - Blank symbols, used for aligning notes in different staffs
+ */
+
+public abstract class MusicSymbol {
+
+    /** Get 
