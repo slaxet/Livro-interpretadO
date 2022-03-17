@@ -34,4 +34,8 @@ namespace MidiSheetMusic {
 public abstract class MusicSymbol {
 
     /** Get the time (in pulses) this symbol occurs at.
-     * This is used to determine the measure this symbol belon
+     * This is used to determine the measure this symbol belongs to.
+     */
+    public abstract int StartTime { get; }
+
+    /** Get the minimum width (in pixels) needed to draw t
