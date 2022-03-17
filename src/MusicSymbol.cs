@@ -33,4 +33,5 @@ namespace MidiSheetMusic {
 
 public abstract class MusicSymbol {
 
-    /** Get 
+    /** Get the time (in pulses) this symbol occurs at.
+     * This is used to determine the measure this symbol belon
