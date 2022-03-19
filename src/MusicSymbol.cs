@@ -38,4 +38,7 @@ public abstract class MusicSymbol {
      */
     public abstract int StartTime { get; }
 
-    /** Get the minimum width (in pixels) needed to draw t
+    /** Get the minimum width (in pixels) needed to draw this symbol */
+    public abstract int MinWidth { get; }
+
+    /** Get/Set the width (in pixels) of this symbol. T
