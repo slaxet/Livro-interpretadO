@@ -54,4 +54,7 @@ public abstract class MusicSymbol {
     /** Get the number of pixels this symbol extends below the staff. Used
      *  to determine the minimum height needed for the staff (Staff.FindBounds).
      */
-    public abstract int BelowStaff { get; 
+    public abstract int BelowStaff { get; }
+
+    /** Draw the symbol.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
