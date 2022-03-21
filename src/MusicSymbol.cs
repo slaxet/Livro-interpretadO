@@ -52,4 +52,6 @@ public abstract class MusicSymbol {
     public abstract int AboveStaff { get; }
 
     /** Get the number of pixels this symbol extends below the staff. Used
-     *  to determine the minimum heigh
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+    public abstract int BelowStaff { get; 
