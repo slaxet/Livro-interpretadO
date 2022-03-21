@@ -41,4 +41,7 @@ public abstract class MusicSymbol {
     /** Get the minimum width (in pixels) needed to draw this symbol */
     public abstract int MinWidth { get; }
 
-    /** Get/Set the width (in pixels) of this symbol. T
+    /** Get/Set the width (in pixels) of this symbol. The width is set
+     * in SheetMusic.AlignSymbols() to vertically align symbols.
+     */
+    public abstract int Width { get; s
