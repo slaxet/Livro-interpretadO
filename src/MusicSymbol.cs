@@ -51,3 +51,5 @@ public abstract class MusicSymbol {
      */
     public abstract int AboveStaff { get; }
 
+    /** Get the number of pixels this symbol extends below the staff. Used
+     *  to determine the minimum heigh
