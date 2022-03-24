@@ -18,4 +18,7 @@ using System.Collections.Generic;
 namespace MidiSheetMusic {
 
 /** @class NoteColorDialog 
- * The Not
+ * The NoteColorDialog is used to choose what color to display for each of
+ * the 12 notes in a scale, as well as the shade color.
+ */
+public
