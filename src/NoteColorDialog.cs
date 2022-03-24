@@ -21,4 +21,7 @@ namespace MidiSheetMusic {
  * The NoteColorDialog is used to choose what color to display for each of
  * the 12 notes in a scale, as well as the shade color.
  */
-public
+public class NoteColorDialog {
+
+    private Color[] colors;      /** The 12 colors used for each note in the note scale */
+ 
