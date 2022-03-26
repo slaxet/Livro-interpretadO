@@ -28,3 +28,5 @@ public class NoteColorDialog {
     private Color shadeColor;    /** The color used for shading notes during playback */
     private Color shade2Color;   /** The color used for shading the left hand piano. */
     private Button shadeButton;  /** The button used to select the shade color */
+    private Button shade2Button; /** The button used to select the shade2 color */
+    private Form dialog
