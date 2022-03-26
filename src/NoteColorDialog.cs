@@ -25,4 +25,5 @@ public class NoteColorDialog {
 
     private Color[] colors;      /** The 12 colors used for each note in the note scale */
     private Button[] buttons;    /** The 12 buttons used to select the colors. */
-    private Color shadeColor; 
+    private Color shadeColor;    /** The color used for shading notes during playback */
+    private Color shade2Color;   /** The color used fo
