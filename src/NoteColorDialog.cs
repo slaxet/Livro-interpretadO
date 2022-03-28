@@ -29,4 +29,8 @@ public class NoteColorDialog {
     private Color shade2Color;   /** The color used for shading the left hand piano. */
     private Button shadeButton;  /** The button used to select the shade color */
     private Button shade2Button; /** The button used to select the shade2 color */
-    private Form dialog
+    private Form dialog;         /** The dialog box */
+
+
+    /** Create a new NoteColorDialog.  Call the ShowDialog() method
+     * to display t
