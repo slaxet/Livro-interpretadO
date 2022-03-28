@@ -37,4 +37,7 @@ public class NoteColorDialog {
      */
     public NoteColorDialog() {
         /* Create the dialog box */
-        dialog = ne
+        dialog = new Form();
+        Font font = dialog.Font;
+        dialog.Font = new Font(font.FontFamily, font.Size * 1.4f);
+ 
