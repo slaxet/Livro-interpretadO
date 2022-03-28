@@ -33,4 +33,8 @@ public class NoteColorDialog {
 
 
     /** Create a new NoteColorDialog.  Call the ShowDialog() method
-     * to display t
+     * to display the dialog.
+     */
+    public NoteColorDialog() {
+        /* Create the dialog box */
+        dialog = ne
