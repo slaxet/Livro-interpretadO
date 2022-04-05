@@ -40,4 +40,7 @@ public class NoteColorDialog {
         dialog = new Form();
         Font font = dialog.Font;
         dialog.Font = new Font(font.FontFamily, font.Size * 1.4f);
- 
+        int unit = dialog.Font.Height * 4/3;
+        int xstart = unit * 2;
+        int ystart = unit * 2;
+     
