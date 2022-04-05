@@ -47,4 +47,7 @@ public class NoteColorDialog {
         int maxwidth = 0;
 
         dialog.Text = "Choose Note Colors";
-        
+        dialog.MaximizeBox = false;
+        dialog.MinimizeBox = false;
+        dialog.ShowInTaskbar = false;
+        dialog.Icon
