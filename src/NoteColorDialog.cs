@@ -43,4 +43,8 @@ public class NoteColorDialog {
         int unit = dialog.Font.Height * 4/3;
         int xstart = unit * 2;
         int ystart = unit * 2;
-     
+        int labelheight = unit * 3/2;
+        int maxwidth = 0;
+
+        dialog.Text = "Choose Note Colors";
+        
