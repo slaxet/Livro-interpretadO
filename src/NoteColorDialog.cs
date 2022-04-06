@@ -50,4 +50,7 @@ public class NoteColorDialog {
         dialog.MaximizeBox = false;
         dialog.MinimizeBox = false;
         dialog.ShowInTaskbar = false;
-        dialog.Icon
+        dialog.Icon = new Icon(GetType(), "NotePair.ico");
+
+        /* Initialize the colors */
+        shadeColor = Color.FromArgb(210, 2
