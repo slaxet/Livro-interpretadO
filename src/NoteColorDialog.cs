@@ -53,4 +53,7 @@ public class NoteColorDialog {
         dialog.Icon = new Icon(GetType(), "NotePair.ico");
 
         /* Initialize the colors */
-        shadeColor = Color.FromArgb(210, 2
+        shadeColor = Color.FromArgb(210, 205, 220);
+        shade2Color = Color.FromArgb(150, 200, 220);
+        colors = new Color[12];
+        colors[0] = Col
