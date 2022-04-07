@@ -56,4 +56,7 @@ public class NoteColorDialog {
         shadeColor = Color.FromArgb(210, 205, 220);
         shade2Color = Color.FromArgb(150, 200, 220);
         colors = new Color[12];
-        colors[0] = Col
+        colors[0] = Color.FromArgb(180, 0, 0);
+        colors[1] = Color.FromArgb(230, 0, 0);
+        colors[2] = Color.FromArgb(220, 128, 0);
+    
