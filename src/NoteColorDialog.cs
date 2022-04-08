@@ -66,4 +66,7 @@ public class NoteColorDialog {
         colors[7] = Color.FromArgb(0, 180, 180);
         colors[8] = Color.FromArgb(0, 0, 120);
         colors[9] = Color.FromArgb(0, 0, 180);
-        c
+        colors[10] = Color.FromArgb(88, 0, 147);
+        colors[11] = Color.FromArgb(129, 0, 215);
+
+        buttons = 
