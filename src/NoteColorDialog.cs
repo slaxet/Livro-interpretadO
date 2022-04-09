@@ -69,4 +69,7 @@ public class NoteColorDialog {
         colors[10] = Color.FromArgb(88, 0, 147);
         colors[11] = Color.FromArgb(129, 0, 215);
 
-        buttons = 
+        buttons = new Button[12];
+
+        string[] names = { "A", "A#", "B", "C", "C#", "D", 
+                           "D#"
