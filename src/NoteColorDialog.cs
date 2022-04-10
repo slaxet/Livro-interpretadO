@@ -72,4 +72,7 @@ public class NoteColorDialog {
         buttons = new Button[12];
 
         string[] names = { "A", "A#", "B", "C", "C#", "D", 
-                           "D#"
+                           "D#", "E", "F", "F#", "G", "G#" };
+
+        /* Create the first column, note labels A thru D */
+        for (int
