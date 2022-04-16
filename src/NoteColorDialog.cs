@@ -75,4 +75,7 @@ public class NoteColorDialog {
                            "D#", "E", "F", "F#", "G", "G#" };
 
         /* Create the first column, note labels A thru D */
-        for (int
+        for (int i = 0; i < 6; i++) {
+            Label note = new Label();
+            note.Parent = dialog;
+            note.Text = names[i];
