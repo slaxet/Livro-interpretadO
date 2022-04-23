@@ -79,3 +79,6 @@ public class NoteColorDialog {
             Label note = new Label();
             note.Parent = dialog;
             note.Text = names[i];
+            note.Location = new Point(xstart, ystart + i * labelheight);
+            note.AutoSize = true;
+            max
