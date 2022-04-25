@@ -81,4 +81,7 @@ public class NoteColorDialog {
             note.Text = names[i];
             note.Location = new Point(xstart, ystart + i * labelheight);
             note.AutoSize = true;
-            max
+            maxwidth = Math.Max(maxwidth, note.Width);
+        }
+
+        /* Create the second column, the colors *
