@@ -84,4 +84,7 @@ public class NoteColorDialog {
             maxwidth = Math.Max(maxwidth, note.Width);
         }
 
-        /* Create the second column, the colors *
+        /* Create the second column, the colors */
+        xstart += maxwidth * 4/3;
+        for (int i = 0; i < 6; i++) {
+            buttons[i] = new But
