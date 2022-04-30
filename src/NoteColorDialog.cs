@@ -91,4 +91,5 @@ public class NoteColorDialog {
             buttons[i].Parent = dialog;
             buttons[i].Text = "";
             buttons[i].Tag = i;
-  
+            buttons[i].Location = new Point(xstart, ystart + i * labelheight);
+            buttons[i].Size = new 
