@@ -92,4 +92,6 @@ public class NoteColorDialog {
             buttons[i].Text = "";
             buttons[i].Tag = i;
             buttons[i].Location = new Point(xstart, ystart + i * labelheight);
-            buttons[i].Size = new 
+            buttons[i].Size = new Size(maxwidth*3/2, labelheight-4);
+            buttons[i].ForeColor = buttons[i].BackColor = colors[i];
+            buttons
