@@ -94,4 +94,7 @@ public class NoteColorDialog {
             buttons[i].Location = new Point(xstart, ystart + i * labelheight);
             buttons[i].Size = new Size(maxwidth*3/2, labelheight-4);
             buttons[i].ForeColor = buttons[i].BackColor = colors[i];
-            buttons
+            buttons[i].Click += new EventHandler(SetNoteColor);
+        }
+
+        /* Create the third column, note labels D# thru
