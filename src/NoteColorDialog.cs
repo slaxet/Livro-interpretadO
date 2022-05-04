@@ -105,4 +105,8 @@ public class NoteColorDialog {
             note.Text = names[i];
             note.Location = new Point(xstart, (i - 6) * labelheight + ystart);
             note.AutoSize = true;
-            maxwidth = Math.Max(maxwidth, note.Width)
+            maxwidth = Math.Max(maxwidth, note.Width);
+        }
+
+        /* Create the fourth column, the colors */
+        xstart += maxwidth * 4/3
