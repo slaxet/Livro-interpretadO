@@ -103,4 +103,6 @@ public class NoteColorDialog {
             Label note = new Label();
             note.Parent = dialog;
             note.Text = names[i];
-            note.Location = new Point(xstart, (i - 6) *
+            note.Location = new Point(xstart, (i - 6) * labelheight + ystart);
+            note.AutoSize = true;
+            maxwidth = Math.Max(maxwidth, note.Width)
