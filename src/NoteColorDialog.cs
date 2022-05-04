@@ -101,4 +101,6 @@ public class NoteColorDialog {
         xstart += maxwidth * 2;
         for (int i = 6; i < 12; i++) {
             Label note = new Label();
-          
+            note.Parent = dialog;
+            note.Text = names[i];
+            note.Location = new Point(xstart, (i - 6) *
