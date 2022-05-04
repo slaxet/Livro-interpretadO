@@ -97,4 +97,8 @@ public class NoteColorDialog {
             buttons[i].Click += new EventHandler(SetNoteColor);
         }
 
-        /* Create the third column, note labels D# thru
+        /* Create the third column, note labels D# thru G# */
+        xstart += maxwidth * 2;
+        for (int i = 6; i < 12; i++) {
+            Label note = new Label();
+          
