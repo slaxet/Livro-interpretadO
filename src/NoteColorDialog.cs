@@ -113,4 +113,6 @@ public class NoteColorDialog {
         for (int i = 6; i < 12; i++) {
             buttons[i] = new Button();
             buttons[i].Parent = dialog;
-  
+            buttons[i].Text = "";
+            buttons[i].Tag = i;
+            buttons[i].Location = new Point(xst
