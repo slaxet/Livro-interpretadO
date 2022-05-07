@@ -109,4 +109,8 @@ public class NoteColorDialog {
         }
 
         /* Create the fourth column, the colors */
-        xstart += maxwidth * 4/3
+        xstart += maxwidth * 4/3 ;
+        for (int i = 6; i < 12; i++) {
+            buttons[i] = new Button();
+            buttons[i].Parent = dialog;
+  
