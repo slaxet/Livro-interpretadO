@@ -118,4 +118,9 @@ public class NoteColorDialog {
             buttons[i].Location = new Point(xstart, (i - 6) * labelheight + ystart);
             buttons[i].Size = new Size(maxwidth*3/2, labelheight-4);
             buttons[i].ForeColor = buttons[i].BackColor = colors[i];
-            buttons[i].Click += new EventH
+            buttons[i].Click += new EventHandler(SetNoteColor);
+        }
+
+        /* Create the shade color Buttons */
+        xstart = unit*2;
+        Label label
