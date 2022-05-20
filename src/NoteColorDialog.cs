@@ -123,4 +123,7 @@ public class NoteColorDialog {
 
         /* Create the shade color Buttons */
         xstart = unit*2;
-        Label label
+        Label label = new Label();
+        label.Parent = dialog;
+        label.Text = "Right Shade";
+        label.Location =
