@@ -128,4 +128,8 @@ public class NoteColorDialog {
         label.Text = "Right Shade";
         label.Location = new Point(xstart, 6 * labelheight + ystart);
         label.Size = new Size(maxwidth * 4, labelheight);
-        label.TextAlign
+        label.TextAlign = ContentAlignment.MiddleRight;
+
+        shadeButton = new Button();
+        shadeButton.Parent = dialog;
+        shadeButton.
