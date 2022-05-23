@@ -132,4 +132,6 @@ public class NoteColorDialog {
 
         shadeButton = new Button();
         shadeButton.Parent = dialog;
-        shadeButton.
+        shadeButton.Text = "";
+        shadeButton.Location = new Point(buttons[11].Location.X, label.Location.Y);
+        s
