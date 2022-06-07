@@ -139,4 +139,8 @@ public class NoteColorDialog {
         shadeButton.Click += new EventHandler(SetNoteColor);
 
 
-        /* Create the shade2 color Butto
+        /* Create the shade2 color Buttons */
+        label = new Label();
+        label.Parent = dialog;
+        label.Text = "Left Shade";
+       
