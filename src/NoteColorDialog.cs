@@ -148,4 +148,6 @@ public class NoteColorDialog {
         label.TextAlign = ContentAlignment.MiddleRight;
 
         shade2Button = new Button();
- 
+        shade2Button.Parent = dialog;
+        shade2Button.Text = "";
+        shade2Button.Location = new Point
