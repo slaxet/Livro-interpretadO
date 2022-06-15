@@ -144,4 +144,8 @@ public class NoteColorDialog {
         label.Parent = dialog;
         label.Text = "Left Shade";
         label.Location = new Point(xstart, 7 * labelheight + ystart);
-        label.Size = new Size(m
+        label.Size = new Size(maxwidth * 4, labelheight);
+        label.TextAlign = ContentAlignment.MiddleRight;
+
+        shade2Button = new Button();
+ 
