@@ -157,4 +157,7 @@ public class NoteColorDialog {
 
 
         /* Create the OK and Cancel buttons */
-        xstart =
+        xstart = unit * 2;
+        Button ok = new Button();
+        ok.Parent = dialog;
+        ok.Text = "O
