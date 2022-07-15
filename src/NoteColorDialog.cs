@@ -160,4 +160,6 @@ public class NoteColorDialog {
         xstart = unit * 2;
         Button ok = new Button();
         ok.Parent = dialog;
-        ok.Text = "O
+        ok.Text = "OK";
+        ok.Location = new Point(xstart, 9 * labelheight + ystart);
+        ok.DialogResult = DialogResult.OK
