@@ -162,4 +162,8 @@ public class NoteColorDialog {
         ok.Parent = dialog;
         ok.Text = "OK";
         ok.Location = new Point(xstart, 9 * labelheight + ystart);
-        ok.DialogResult = DialogResult.OK
+        ok.DialogResult = DialogResult.OK;
+
+        Button cancel = new Button();
+        cancel.Parent = dialog;
+        cancel.Text = "Can
