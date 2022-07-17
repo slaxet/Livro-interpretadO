@@ -168,4 +168,6 @@ public class NoteColorDialog {
         cancel.Parent = dialog;
         cancel.Text = "Cancel";
         cancel.Location = new Point(xstart + ok.Width + unit, 9 * labelheight + ystart);
-        cancel
+        cancel.DialogResult = DialogResult.Cancel;
+
+        dialog.Size = new Size(cancel.Location.X
