@@ -171,4 +171,8 @@ public class NoteColorDialog {
         cancel.DialogResult = DialogResult.Cancel;
 
         dialog.Size = new Size(cancel.Location.X + cancel.Size.Width + 40,
-                               cancel.Location.Y + cancel.Size.Height + 80)
+                               cancel.Location.Y + cancel.Size.Height + 80);
+    }
+
+    /** Display the NoteColorDialog.
+     * Save the old colors for restoring, in case "Cancel
