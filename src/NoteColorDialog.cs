@@ -177,4 +177,7 @@ public class NoteColorDialog {
     /** Display the NoteColorDialog.
      * Save the old colors for restoring, in case "Cancel" is clicked.
      * Return DialogResult.OK if "OK" was clicked.
-     * Return DialogResult.Cancel if "
+     * Return DialogResult.Cancel if "Cancel" was clicked.
+     */
+    public DialogResult ShowDialog() {
+        Color[] oldcolors = new C
