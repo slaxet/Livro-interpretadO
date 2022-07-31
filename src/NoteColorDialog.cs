@@ -184,4 +184,6 @@ public class NoteColorDialog {
         for (int i = 0; i < 12; i++) {
             oldcolors[i] = colors[i];
         }
-        Color 
+        Color oldShadeColor = shadeColor;
+        Color oldShade2Color = shade2Color;
+        DialogResult result = dialog.ShowDia
