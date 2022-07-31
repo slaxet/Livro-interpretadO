@@ -180,4 +180,8 @@ public class NoteColorDialog {
      * Return DialogResult.Cancel if "Cancel" was clicked.
      */
     public DialogResult ShowDialog() {
-        Color[] oldcolors = new C
+        Color[] oldcolors = new Color[12];
+        for (int i = 0; i < 12; i++) {
+            oldcolors[i] = colors[i];
+        }
+        Color 
