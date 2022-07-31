@@ -186,4 +186,7 @@ public class NoteColorDialog {
         }
         Color oldShadeColor = shadeColor;
         Color oldShade2Color = shade2Color;
-        DialogResult result = dialog.ShowDia
+        DialogResult result = dialog.ShowDialog();
+        if (result == DialogResult.Cancel) {
+            /* Restore the old colors */
+            for (int i = 0; i < 
