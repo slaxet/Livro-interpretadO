@@ -191,4 +191,7 @@ public class NoteColorDialog {
             /* Restore the old colors */
             for (int i = 0; i < 12; i++) {
                 colors[i] = oldcolors[i];
-                buttons[i].ForeColor = oldcolors[i]
+                buttons[i].ForeColor = oldcolors[i];
+                buttons[i].BackColor = oldcolors[i];
+            }
+            shadeColor = oldShadeCol
