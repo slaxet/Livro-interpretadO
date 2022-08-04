@@ -194,4 +194,10 @@ public class NoteColorDialog {
                 buttons[i].ForeColor = oldcolors[i];
                 buttons[i].BackColor = oldcolors[i];
             }
-            shadeColor = oldShadeCol
+            shadeColor = oldShadeColor;
+            shade2Color = oldShade2Color;
+        }
+        return result; 
+    }
+
+    public void Dis
