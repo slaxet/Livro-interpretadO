@@ -200,4 +200,9 @@ public class NoteColorDialog {
         return result; 
     }
 
-    public void Dis
+    public void Dispose() {
+        dialog.Dispose();
+    }
+
+    /** The Button event handler. Open a Color Chooser dialog, and set the
+     * b
