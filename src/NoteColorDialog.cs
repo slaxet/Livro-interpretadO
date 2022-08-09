@@ -205,4 +205,7 @@ public class NoteColorDialog {
     }
 
     /** The Button event handler. Open a Color Chooser dialog, and set the
-     * b
+     * button color to the color chosen.
+     */
+    private void SetNoteColor(object obj, EventArgs args) {
+  
