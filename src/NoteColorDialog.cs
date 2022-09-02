@@ -208,4 +208,7 @@ public class NoteColorDialog {
      * button color to the color chosen.
      */
     private void SetNoteColor(object obj, EventArgs args) {
-  
+        Button b = (Button) obj;
+        ColorDialog cd = new ColorDialog();
+        cd.Color = b.ForeColor;
+     
