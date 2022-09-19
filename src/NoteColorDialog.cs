@@ -211,4 +211,6 @@ public class NoteColorDialog {
         Button b = (Button) obj;
         ColorDialog cd = new ColorDialog();
         cd.Color = b.ForeColor;
-     
+        if (cd.ShowDialog() == DialogResult.OK) {
+            if (b == shadeButton) {
+                shadeColor = cd.Colo
