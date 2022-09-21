@@ -218,4 +218,8 @@ public class NoteColorDialog {
             }
             else if (b == shade2Button) {
                 shade2Color = cd.Color;
-                shade2Button.BackColo
+                shade2Button.BackColor = shade2Button.ForeColor = cd.Color;
+            }
+            else {
+                int index = (int)b.Tag;
+          
