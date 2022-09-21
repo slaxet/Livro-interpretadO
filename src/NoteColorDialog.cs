@@ -216,4 +216,6 @@ public class NoteColorDialog {
                 shadeColor = cd.Color;
                 shadeButton.BackColor = shadeButton.ForeColor = cd.Color;
             }
-            else if (
+            else if (b == shade2Button) {
+                shade2Color = cd.Color;
+                shade2Button.BackColo
