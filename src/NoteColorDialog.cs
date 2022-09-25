@@ -222,4 +222,7 @@ public class NoteColorDialog {
             }
             else {
                 int index = (int)b.Tag;
-          
+                colors[index] = cd.Color;
+                b.BackColor = b.ForeColor = cd.Color;
+            }
+  
