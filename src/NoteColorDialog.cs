@@ -225,4 +225,8 @@ public class NoteColorDialog {
                 colors[index] = cd.Color;
                 b.BackColor = b.ForeColor = cd.Color;
             }
-  
+        }
+        cd.Dispose();
+    }
+
+    /** Get the colors used for each note.  There are 12 colors
