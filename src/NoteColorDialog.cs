@@ -230,3 +230,10 @@ public class NoteColorDialog {
     }
 
     /** Get the colors used for each note.  There are 12 colors
+     * in the array.
+     */
+    public Color[] Colors {
+        get { return colors; }
+    }
+
+    /** Get the sh
