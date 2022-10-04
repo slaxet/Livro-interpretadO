@@ -236,4 +236,9 @@ public class NoteColorDialog {
         get { return colors; }
     }
 
-    /** Get the sh
+    /** Get the shade color selected */
+    public Color ShadeColor {
+        get { return shadeColor; }
+    }
+
+    /** Get the shade2 color s
