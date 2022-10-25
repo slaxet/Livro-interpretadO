@@ -17,4 +17,9 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace M
+namespace MidiSheetMusic {
+
+
+/* @class RestSymbol
+ * A Rest symbol represents a rest - whole, half, quarter, or eighth.
+ * The Rest symbol h
