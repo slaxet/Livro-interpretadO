@@ -22,4 +22,8 @@ namespace MidiSheetMusic {
 
 /* @class RestSymbol
  * A Rest symbol represents a rest - whole, half, quarter, or eighth.
- * The Rest symbol h
+ * The Rest symbol has a starttime and a duration, just like a regular
+ * note.
+ */
+public class RestSymbol : MusicSymbol {
+    pr
