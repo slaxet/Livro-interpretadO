@@ -26,4 +26,5 @@ namespace MidiSheetMusic {
  * note.
  */
 public class RestSymbol : MusicSymbol {
-    pr
+    private int starttime;          /** The starttime of the rest */
+    private NoteDuration duration; 
