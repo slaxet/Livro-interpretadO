@@ -27,4 +27,5 @@ namespace MidiSheetMusic {
  */
 public class RestSymbol : MusicSymbol {
     private int starttime;          /** The starttime of the rest */
-    private NoteDuration duration; 
+    private NoteDuration duration;  /** The rest duration (eighth, quarter, half, whole) */
+    private int width;              /** The width in pix
