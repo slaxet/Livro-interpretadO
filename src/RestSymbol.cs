@@ -31,4 +31,10 @@ public class RestSymbol : MusicSymbol {
     private int width;              /** The width in pixels */
 
     /** Create a new rest symbol with the given start time and duration */
-    public RestSymbol(int s
+    public RestSymbol(int start, NoteDuration dur) {
+        starttime = start;
+        duration = dur; 
+        width = MinWidth;
+    }
+
+    /** Get the 
