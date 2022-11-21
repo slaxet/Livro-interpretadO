@@ -40,4 +40,8 @@ public class RestSymbol : MusicSymbol {
     /** Get the time (in pulses) this symbol occurs at.
      * This is used to determine the measure this symbol belongs to.
      */
-  
+    public override int StartTime { 
+        get { return starttime; }
+    }
+
+    /** Get/Set the width (in pix
