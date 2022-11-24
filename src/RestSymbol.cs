@@ -44,4 +44,6 @@ public class RestSymbol : MusicSymbol {
         get { return starttime; }
     }
 
-    /** Get/Set the width (in pix
+    /** Get/Set the width (in pixels) of this symbol. The width is set
+     * in SheetMusic.AlignSymbols() to vertically align symbols.
+     *
