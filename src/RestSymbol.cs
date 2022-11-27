@@ -46,4 +46,10 @@ public class RestSymbol : MusicSymbol {
 
     /** Get/Set the width (in pixels) of this symbol. The width is set
      * in SheetMusic.AlignSymbols() to vertically align symbols.
-     *
+     */
+    public override int Width {
+        get { return width; }
+        set { width = value; }
+    }
+
+    /** Get the minimum wid
