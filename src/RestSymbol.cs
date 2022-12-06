@@ -54,4 +54,9 @@ public class RestSymbol : MusicSymbol {
 
     /** Get the minimum width (in pixels) needed to draw this symbol */
     public override int MinWidth {
-        get { return 2 * SheetMusic.NoteHei
+        get { return 2 * SheetMusic.NoteHeight + 
+              SheetMusic.NoteHeight/2;
+        }
+    }
+
+    /** Get the number of pixels this symbol extends above th
