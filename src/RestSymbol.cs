@@ -59,4 +59,7 @@ public class RestSymbol : MusicSymbol {
         }
     }
 
-    /** Get the number of pixels this symbol extends above th
+    /** Get the number of pixels this symbol extends above the staff. Used
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+    pu
