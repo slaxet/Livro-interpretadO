@@ -73,4 +73,7 @@ public class RestSymbol : MusicSymbol {
         get { return 0; }
     }
 
-    /** Draw the symb
+    /** Draw the symbol.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    
