@@ -67,4 +67,10 @@ public class RestSymbol : MusicSymbol {
     }
 
     /** Get the number of pixels this symbol extends below the staff. Used
-     *  to determine the minimum height needed for the staff (Staff.Fin
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+    public override int BelowStaff { 
+        get { return 0; }
+    }
+
+    /** Draw the symb
