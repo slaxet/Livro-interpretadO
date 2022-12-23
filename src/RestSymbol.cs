@@ -76,4 +76,6 @@ public class RestSymbol : MusicSymbol {
     /** Draw the symbol.
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
-    
+    public override 
+    void Draw(Graphics g, Pen pen, int ytop) {
+        /* Align the rest symbol to the right *
