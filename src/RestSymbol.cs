@@ -80,4 +80,8 @@ public class RestSymbol : MusicSymbol {
     void Draw(Graphics g, Pen pen, int ytop) {
         /* Align the rest symbol to the right */
         g.TranslateTransform(Width - MinWidth, 0);
-        g.TranslateTransform(SheetMusic.NoteHeight/2, 0)
+        g.TranslateTransform(SheetMusic.NoteHeight/2, 0);
+
+        if (duration == NoteDuration.Whole) {
+            DrawWhole(g, pen, ytop);
+        }
