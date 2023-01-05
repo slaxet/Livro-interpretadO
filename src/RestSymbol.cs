@@ -85,3 +85,7 @@ public class RestSymbol : MusicSymbol {
         if (duration == NoteDuration.Whole) {
             DrawWhole(g, pen, ytop);
         }
+        else if (duration == NoteDuration.Half) {
+            DrawHalf(g, pen, ytop);
+        }
+        else if (duration ==
