@@ -91,4 +91,7 @@ public class RestSymbol : MusicSymbol {
         else if (duration == NoteDuration.Quarter) {
             DrawQuarter(g, pen, ytop);
         }
-        else if (duration == No
+        else if (duration == NoteDuration.Eighth) {
+            DrawEighth(g, pen, ytop);
+        }
+        g.TranslateTransform(-She
