@@ -99,4 +99,7 @@ public class RestSymbol : MusicSymbol {
     }
 
 
-    /** Draw a whole rest symbol, a rectangle below a 
+    /** Draw a whole rest symbol, a rectangle below a staff line.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    public void 
