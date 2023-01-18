@@ -102,4 +102,7 @@ public class RestSymbol : MusicSymbol {
     /** Draw a whole rest symbol, a rectangle below a staff line.
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
-    public void 
+    public void DrawWhole(Graphics g, Pen pen, int ytop) {
+        int y = ytop + SheetMusic.NoteHeight;
+
+        g.Fill
