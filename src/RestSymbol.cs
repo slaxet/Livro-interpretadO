@@ -94,4 +94,9 @@ public class RestSymbol : MusicSymbol {
         else if (duration == NoteDuration.Eighth) {
             DrawEighth(g, pen, ytop);
         }
-        g.TranslateTransform(-She
+        g.TranslateTransform(-SheetMusic.NoteHeight/2, 0);
+        g.TranslateTransform(-(Width - MinWidth), 0);
+    }
+
+
+    /** Draw a whole rest symbol, a rectangle below a 
