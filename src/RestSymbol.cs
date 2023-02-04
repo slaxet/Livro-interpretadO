@@ -105,4 +105,8 @@ public class RestSymbol : MusicSymbol {
     public void DrawWhole(Graphics g, Pen pen, int ytop) {
         int y = ytop + SheetMusic.NoteHeight;
 
-        g.Fill
+        g.FillRectangle(Brushes.Black, 0, y, 
+                        SheetMusic.NoteWidth, SheetMusic.NoteHeight/2);
+    }
+
+   
