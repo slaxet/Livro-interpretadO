@@ -109,4 +109,5 @@ public class RestSymbol : MusicSymbol {
                         SheetMusic.NoteWidth, SheetMusic.NoteHeight/2);
     }
 
-   
+    /** Draw a half rest symbol, a rectangle above a staff line.
+     * @param ytop The ylocation (in pixels) 
