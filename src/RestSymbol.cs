@@ -110,4 +110,7 @@ public class RestSymbol : MusicSymbol {
     }
 
     /** Draw a half rest symbol, a rectangle above a staff line.
-     * @param ytop The ylocation (in pixels) 
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    public void DrawHalf(Graphics g, Pen pen, int ytop) {
+        int y = ytop + SheetMu
