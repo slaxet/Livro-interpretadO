@@ -113,4 +113,7 @@ public class RestSymbol : MusicSymbol {
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
     public void DrawHalf(Graphics g, Pen pen, int ytop) {
-        int y = ytop + SheetMu
+        int y = ytop + SheetMusic.NoteHeight + SheetMusic.NoteHeight/2;
+
+        g.FillRectangle(Brushes.Black, 0, y, 
+           
