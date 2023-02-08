@@ -116,4 +116,8 @@ public class RestSymbol : MusicSymbol {
         int y = ytop + SheetMusic.NoteHeight + SheetMusic.NoteHeight/2;
 
         g.FillRectangle(Brushes.Black, 0, y, 
-           
+                        SheetMusic.NoteWidth, SheetMusic.NoteHeight/2);
+    }
+
+    /** Draw a quarter rest symbol.
+ 
