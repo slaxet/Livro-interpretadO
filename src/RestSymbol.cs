@@ -122,4 +122,7 @@ public class RestSymbol : MusicSymbol {
     /** Draw a quarter rest symbol.
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
-    public void DrawQu
+    public void DrawQuarter(Graphics g, Pen pen, int ytop) {
+        pen.EndCap = LineCap.Flat;
+
+        int y = ytop + Sh
