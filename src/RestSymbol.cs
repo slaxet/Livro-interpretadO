@@ -125,4 +125,7 @@ public class RestSymbol : MusicSymbol {
     public void DrawQuarter(Graphics g, Pen pen, int ytop) {
         pen.EndCap = LineCap.Flat;
 
-        int y = ytop + Sh
+        int y = ytop + SheetMusic.NoteHeight/2;
+        int x = 2;
+        int xend = x + 2*SheetMusic.NoteHeight/3;
+        pen.Width = 1;
