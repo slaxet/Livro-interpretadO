@@ -142,4 +142,7 @@ public class RestSymbol : MusicSymbol {
         pen.Width = SheetMusic.LineSpace/2;
         if (SheetMusic.NoteHeight == 6) {
             g.DrawLine(pen, xend, y + 1 + 3*SheetMusic.NoteHeight/4,
-                            x/2, y + 1 + 
+                            x/2, y + 1 + 3*SheetMusic.NoteHeight/4);
+        }
+        else {  /* NoteHeight == 8 */
+            g.DrawLine(pen, xend, y
