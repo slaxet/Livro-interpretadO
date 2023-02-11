@@ -151,4 +151,8 @@ public class RestSymbol : MusicSymbol {
 
         pen.Width = 1;
         g.DrawLine(pen, 0, y + 2*SheetMusic.NoteHeight/3 + 1, 
-                        xend -
+                        xend - 1, y + 3*SheetMusic.NoteHeight/2);
+    }
+
+    /** Draw an eighth rest symbol.
+     * @param ytop The ylocation (
