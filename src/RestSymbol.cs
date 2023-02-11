@@ -149,4 +149,6 @@ public class RestSymbol : MusicSymbol {
                             x/2, y + 3*SheetMusic.NoteHeight/4);
         }
 
-  
+        pen.Width = 1;
+        g.DrawLine(pen, 0, y + 2*SheetMusic.NoteHeight/3 + 1, 
+                        xend -
