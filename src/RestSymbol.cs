@@ -157,4 +157,7 @@ public class RestSymbol : MusicSymbol {
     /** Draw an eighth rest symbol.
      * @param ytop The ylocation (in pixels) where the top of the staff starts.
      */
-    public void DrawEighth(Graphics g, Pen p
+    public void DrawEighth(Graphics g, Pen pen, int ytop) {
+        int y = ytop + SheetMusic.NoteHeight - 1;
+        g.FillEllipse(Brushes.Black, 0, y+1, 
+            
