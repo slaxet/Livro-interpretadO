@@ -155,4 +155,6 @@ public class RestSymbol : MusicSymbol {
     }
 
     /** Draw an eighth rest symbol.
-     * @param ytop The ylocation (
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    public void DrawEighth(Graphics g, Pen p
