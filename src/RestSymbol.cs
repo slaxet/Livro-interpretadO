@@ -162,4 +162,5 @@ public class RestSymbol : MusicSymbol {
         g.FillEllipse(Brushes.Black, 0, y+1, 
                       SheetMusic.LineSpace-1, SheetMusic.LineSpace-1);
         pen.Width = 1;
-        g.DrawLine(pen, (SheetMu
+        g.DrawLine(pen, (SheetMusic.LineSpace-2)/2, y + SheetMusic.LineSpace-1,
+                        3*SheetMusic.LineSpace/2, y + SheetMusic.
