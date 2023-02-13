@@ -160,4 +160,6 @@ public class RestSymbol : MusicSymbol {
     public void DrawEighth(Graphics g, Pen pen, int ytop) {
         int y = ytop + SheetMusic.NoteHeight - 1;
         g.FillEllipse(Brushes.Black, 0, y+1, 
-            
+                      SheetMusic.LineSpace-1, SheetMusic.LineSpace-1);
+        pen.Width = 1;
+        g.DrawLine(pen, (SheetMu
