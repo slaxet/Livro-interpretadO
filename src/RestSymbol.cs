@@ -169,4 +169,5 @@ public class RestSymbol : MusicSymbol {
     }
 
     public override string ToString() {
-      
+        return string.Format("RestSymbol starttime={0} duration={1} width={2}",
+                             starttime, dura
