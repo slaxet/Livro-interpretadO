@@ -165,4 +165,8 @@ public class RestSymbol : MusicSymbol {
         g.DrawLine(pen, (SheetMusic.LineSpace-2)/2, y + SheetMusic.LineSpace-1,
                         3*SheetMusic.LineSpace/2, y + SheetMusic.LineSpace/2);
         g.DrawLine(pen, 3*SheetMusic.LineSpace/2, y + SheetMusic.LineSpace/2,
-                  
+                        3*SheetMusic.LineSpace/4, y + SheetMusic.NoteHeight*2);
+    }
+
+    public override string ToString() {
+      
