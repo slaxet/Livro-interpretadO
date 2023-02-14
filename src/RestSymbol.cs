@@ -163,4 +163,6 @@ public class RestSymbol : MusicSymbol {
                       SheetMusic.LineSpace-1, SheetMusic.LineSpace-1);
         pen.Width = 1;
         g.DrawLine(pen, (SheetMusic.LineSpace-2)/2, y + SheetMusic.LineSpace-1,
-                        3*SheetMusic.LineSpace/2, y + SheetMusic.
+                        3*SheetMusic.LineSpace/2, y + SheetMusic.LineSpace/2);
+        g.DrawLine(pen, 3*SheetMusic.LineSpace/2, y + SheetMusic.LineSpace/2,
+                  
