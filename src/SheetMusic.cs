@@ -93,3 +93,112 @@ public class SheetMusic {
         MidiFile file = new MidiFile(filename);
         init(file, options); 
     }
+
+    /** Create a new SheetMusic control, using the given raw midi byte[] data.
+     *  The options can be null.
+     */
+    public SheetMusic(byte[] data, string title, MidiOptions options) {
+        MidiFile file = new MidiFile(data, title);
+        init(file, options); 
+    }
+
+
+    /** Create a new SheetMusic control.
+     * MidiFile is the parsed midi file to display.
+     * SheetMusic Options are the menu options that were selected.
+     *
+     * - Apply all the Menu Options to the MidiFile tracks.
+     * - Calculate the key signature
+     * - For each track, create a list of MusicSymbols (notes, rests, bars, etc)
+     * - Vertically align the music symbols in all the tracks
+     * - Partition the music notes into horizontal staffs
+     */
+    public void init(MidiFile file, MidiOptions options) {
+        if (options == null) {
+            options = new MidiOptions(file);
+        }
+        zoom = 1.0f;
+        filename = file.FileName;
+
+        SetColors(options.colors, options.shadeColor, options.shade2Color);
+        pen = new Pen(Color.Black, 1);
+
+        List<MidiTrack> tracks = file.ChangeMidiNotes(options);
+        SetNoteSize(options.largeNoteSize);
+        scrollVert = options.scrollVert;
+        showNoteLetters= options.showNoteLetters;
+        TimeSignature time = file.Time; 
+        if (options.time != null) {
+            time = options.time;
+        }
+        if (options.key == -1) {
+            mainkey = GetKeySignature(tracks);
+        }
+        else {
+            mainkey = new KeySignature(options.key);
+        }
+
+        numtracks = tracks.Count;
+
+        int lastStart = file.EndTime() + options.shifttime;
+
+        /* Create all the music symbols (notes, rests, vertical bars, and
+         * clef changes).  The symbols variable contains a list of music 
+         * symbols for each track.  The list does not include the left-side 
+         * Clef and key signature symbols.  Those can only be calculated 
+         * when we create the staffs.
+         */
+        List<MusicSymbol>[] symbols = new List<MusicSymbol> [ numtracks ];
+        for (int tracknum = 0; tracknum < numtracks; tracknum++) {
+            MidiTrack track = tracks[tracknum];
+            ClefMeasures clefs = new ClefMeasures(track.Notes, time.Measure);
+            List<ChordSymbol> chords = CreateChords(track.Notes, mainkey, time, clefs);
+            symbols[tracknum] = CreateSymbols(chords, clefs, time, lastStart);
+        }
+
+        List<LyricSymbol>[] lyrics = null;
+        if (options.showLyrics) {
+            lyrics = GetLyrics(tracks);
+        }
+
+        /* Vertically align the music symbols */
+        SymbolWidths widths = new SymbolWidths(symbols, lyrics);
+        // SymbolWidths widths = new SymbolWidths(symbols);
+        AlignSymbols(symbols, widths);
+
+        staffs = CreateStaffs(symbols, mainkey, options, time.Measure);
+        CreateAllBeamedChords(symbols, time);
+        if (lyrics != null) {
+            AddLyricsToStaffs(staffs, lyrics);
+        }
+
+        /* After making chord pairs, the stem directions can change,
+         * which affects the staff height.  Re-calculate the staff height.
+         */
+        foreach (Staff staff in staffs) {
+            staff.CalculateHeight();
+        }
+
+        //BackColor = Color.White;
+
+        SetZoom(1.0f);
+    }
+
+
+    /** Get the best key signature given the midi notes in all the tracks. */
+    private KeySignature GetKeySignature(List<MidiTrack> tracks) {
+        List<int> notenums = new List<int>();
+        foreach (MidiTrack track in tracks) {
+            foreach (MidiNote note in track.Notes) {
+                notenums.Add(note.Number);
+            }
+        }
+        return KeySignature.Guess(notenums);
+    }
+
+
+    /** Create the chord symbols for a single track.
+     * @param midinotes  The Midinotes in the track.
+     * @param key        The Key Signature, for determining sharps/flats.
+     * @param time       The Time Signature, for determining the measures.
+     * @param clefs      The clefs to use for each measure.
