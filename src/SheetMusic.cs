@@ -202,3 +202,113 @@ public class SheetMusic {
      * @param key        The Key Signature, for determining sharps/flats.
      * @param time       The Time Signature, for determining the measures.
      * @param clefs      The clefs to use for each measure.
+     * @ret An array of ChordSymbols
+     */
+    private
+    List<ChordSymbol> CreateChords(List<MidiNote> midinotes, 
+                                   KeySignature key,
+                                   TimeSignature time,
+                                   ClefMeasures clefs) {
+
+        int i = 0;
+        List<ChordSymbol> chords = new List<ChordSymbol>();
+        List<MidiNote> notegroup = new List<MidiNote>(12);
+        int len = midinotes.Count; 
+
+        while (i < len) {
+
+            int starttime = midinotes[i].StartTime;
+            Clef clef = clefs.GetClef(starttime);
+
+            /* Group all the midi notes with the same start time
+             * into the notes list.
+             */
+            notegroup.Clear();
+            notegroup.Add(midinotes[i]);
+            i++;
+            while (i < len && midinotes[i].StartTime == starttime) {
+                notegroup.Add(midinotes[i]);
+                i++;
+            }
+
+            /* Create a single chord from the group of midi notes with
+             * the same start time.
+             */
+            ChordSymbol chord = new ChordSymbol(notegroup, key, time, clef, this);
+            chords.Add(chord);
+        }
+
+        return chords;
+    }
+
+    /** Given the chord symbols for a track, create a new symbol list
+     * that contains the chord symbols, vertical bars, rests, and clef changes.
+     * Return a list of symbols (ChordSymbol, BarSymbol, RestSymbol, ClefSymbol)
+     */
+    private List<MusicSymbol> 
+    CreateSymbols(List<ChordSymbol> chords, ClefMeasures clefs,
+                  TimeSignature time, int lastStart) {
+
+        List<MusicSymbol> symbols = new List<MusicSymbol>();
+        symbols = AddBars(chords, time, lastStart);
+        symbols = AddRests(symbols, time);
+        symbols = AddClefChanges(symbols, clefs, time);
+
+        return symbols;
+    }
+
+    /** Add in the vertical bars delimiting measures. 
+     *  Also, add the time signature symbols.
+     */
+    private
+    List<MusicSymbol> AddBars(List<ChordSymbol> chords, TimeSignature time,
+                              int lastStart) {
+
+        List<MusicSymbol> symbols = new List<MusicSymbol>();
+
+        TimeSigSymbol timesig = new TimeSigSymbol(time.Numerator, time.Denominator);
+        symbols.Add(timesig);
+
+        /* The starttime of the beginning of the measure */
+        int measuretime = 0;
+
+        int i = 0;
+        while (i < chords.Count) {
+            if (measuretime <= chords[i].StartTime) {
+                symbols.Add(new BarSymbol(measuretime) );
+                measuretime += time.Measure;
+            }
+            else {
+                symbols.Add(chords[i]);
+                i++;
+            }
+        }
+
+        /* Keep adding bars until the last StartTime (the end of the song) */
+        while (measuretime < lastStart) {
+            symbols.Add(new BarSymbol(measuretime) );
+            measuretime += time.Measure;
+        }
+
+        /* Add the final vertical bar to the last measure */
+        symbols.Add(new BarSymbol(measuretime) );
+        return symbols;
+    }
+
+    /** Add rest symbols between notes.  All times below are 
+     * measured in pulses.
+     */
+    private
+    List<MusicSymbol> AddRests(List<MusicSymbol> symbols, TimeSignature time) {
+        int prevtime = 0;
+
+        List<MusicSymbol> result = new List<MusicSymbol>( symbols.Count );
+
+        foreach (MusicSymbol symbol in symbols) {
+            int starttime = symbol.StartTime;
+            RestSymbol[] rests = GetRests(time, prevtime, starttime);
+            if (rests != null) {
+                foreach (RestSymbol r in rests) {
+                    result.Add(r);
+                }
+            }
