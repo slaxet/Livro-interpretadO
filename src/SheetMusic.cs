@@ -312,3 +312,107 @@ public class SheetMusic {
                     result.Add(r);
                 }
             }
+
+            result.Add(symbol);
+
+            /* Set prevtime to the end time of the last note/symbol. */
+            if (symbol is ChordSymbol) {
+                ChordSymbol chord = (ChordSymbol)symbol;
+                prevtime = Math.Max( chord.EndTime, prevtime );
+            }
+            else {
+                prevtime = Math.Max(starttime, prevtime);
+            }
+        }
+        return result;
+    }
+
+    /** Return the rest symbols needed to fill the time interval between
+     * start and end.  If no rests are needed, return nil.
+     */
+    private
+    RestSymbol[] GetRests(TimeSignature time, int start, int end) {
+        RestSymbol[] result;
+        RestSymbol r1, r2;
+
+        if (end - start < 0)
+            return null;
+
+        NoteDuration dur = time.GetNoteDuration(end - start);
+        switch (dur) {
+            case NoteDuration.Whole:
+            case NoteDuration.Half:
+            case NoteDuration.Quarter:
+            case NoteDuration.Eighth:
+                r1 = new RestSymbol(start, dur);
+                result = new RestSymbol[]{ r1 };
+                return result;
+
+            case NoteDuration.DottedHalf:
+                r1 = new RestSymbol(start, NoteDuration.Half);
+                r2 = new RestSymbol(start + time.Quarter*2, 
+                                    NoteDuration.Quarter);
+                result = new RestSymbol[]{ r1, r2 };
+                return result;
+
+            case NoteDuration.DottedQuarter:
+                r1 = new RestSymbol(start, NoteDuration.Quarter);
+                r2 = new RestSymbol(start + time.Quarter, 
+                                    NoteDuration.Eighth);
+                result = new RestSymbol[]{ r1, r2 };
+                return result; 
+
+            case NoteDuration.DottedEighth:
+                r1 = new RestSymbol(start, NoteDuration.Eighth);
+                r2 = new RestSymbol(start + time.Quarter/2, 
+                                    NoteDuration.Sixteenth);
+                result = new RestSymbol[]{ r1, r2 };
+                return result;
+
+            default:
+                return null;
+        }
+    }
+
+    /** The current clef is always shown at the beginning of the staff, on
+     * the left side.  However, the clef can also change from measure to 
+     * measure. When it does, a Clef symbol must be shown to indicate the 
+     * change in clef.  This function adds these Clef change symbols.
+     * This function does not add the main Clef Symbol that begins each
+     * staff.  That is done in the Staff() contructor.
+     */
+    private
+    List<MusicSymbol> AddClefChanges(List<MusicSymbol> symbols,
+                                     ClefMeasures clefs,
+                                     TimeSignature time) {
+
+        List<MusicSymbol> result = new List<MusicSymbol>( symbols.Count );
+        Clef prevclef = clefs.GetClef(0);
+        foreach (MusicSymbol symbol in symbols) {
+            /* A BarSymbol indicates a new measure */
+            if (symbol is BarSymbol) {
+                Clef clef = clefs.GetClef(symbol.StartTime);
+                if (clef != prevclef) {
+                    result.Add(new ClefSymbol(clef, symbol.StartTime-1, true));
+                }
+                prevclef = clef;
+            }
+            result.Add(symbol);
+        }
+        return result;
+    }
+           
+
+    /** Notes with the same start times in different staffs should be
+     * vertically aligned.  The SymbolWidths class is used to help 
+     * vertically align symbols.
+     *
+     * First, each track should have a symbol for every starttime that
+     * appears in the Midi File.  If a track doesn't have a symbol for a
+     * particular starttime, then add a "blank" symbol for that time.
+     *
+     * Next, make sure the symbols for each start time all have the same
+     * width, across all tracks.  The SymbolWidths class stores
+     * - The symbol width for each starttime, for each track
+     * - The maximum symbol width for a given starttime, across all tracks.
+     *
