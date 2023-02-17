@@ -511,3 +511,110 @@ public class SheetMusic {
                     }
                 }
                 i++;
+            }
+            if (i >= symbols.Count - numChords) {
+                chordIndexes[0] = -1;
+                return false;
+            }
+            chordIndexes[0] = i;
+            bool foundChords = true;
+            for (int chordIndex = 1; chordIndex < numChords; chordIndex++) {
+                i++;
+                int remaining = numChords - 1 - chordIndex;
+                while ((i < symbols.Count - remaining) && (symbols[i] is BlankSymbol)) {
+                    horizDistance += symbols[i].Width;
+                    i++;
+                }
+                if (i >= symbols.Count - remaining) {
+                    return false;
+                }
+                if (!(symbols[i] is ChordSymbol)) {
+                    foundChords = false;
+                    break;
+                }
+                chordIndexes[chordIndex] = i;
+                horizDistance += symbols[i].Width;
+            }
+            if (foundChords) {
+                return true;
+            }
+
+            /* Else, start searching again from index i */
+        }
+    }
+
+
+    /** Connect chords of the same duration with a horizontal beam.
+     *  numChords is the number of chords per beam (2, 3, 4, or 6).
+     *  if startBeat is true, the first chord must start on a quarter note beat.
+     */
+    private static void
+    CreateBeamedChords(List<MusicSymbol>[] allsymbols, TimeSignature time,
+                       int numChords, bool startBeat) {
+        int[] chordIndexes = new int[numChords];
+        ChordSymbol[] chords = new ChordSymbol[numChords];
+
+        foreach (List<MusicSymbol> symbols in allsymbols) {
+            int startIndex = 0;
+            while (true) {
+                int horizDistance = 0;
+                bool found = FindConsecutiveChords(symbols, time,
+                                                   startIndex,
+                                                   chordIndexes,
+                                                   ref horizDistance);
+                if (!found) {
+                    break;
+                }
+                for (int i = 0; i < numChords; i++) {
+                    chords[i] = (ChordSymbol)symbols[ chordIndexes[i] ];
+                }
+
+                if (ChordSymbol.CanCreateBeam(chords, time, startBeat)) {
+                    ChordSymbol.CreateBeam(chords, horizDistance);
+                    startIndex = chordIndexes[numChords-1] + 1;
+                }
+                else {
+                    startIndex = chordIndexes[0] + 1;
+                }
+
+                /* What is the value of startIndex here?
+                 * If we created a beam, we start after the last chord.
+                 * If we failed to create a beam, we start after the first chord.
+                 */
+            }
+        }
+    }
+
+
+    /** Connect chords of the same duration with a horizontal beam.
+     *
+     *  We create beams in the following order:
+     *  - 6 connected 8th note chords, in 3/4, 6/8, or 6/4 time
+     *  - Triplets that start on quarter note beats
+     *  - 3 connected chords that start on quarter note beats (12/8 time only)
+     *  - 4 connected chords that start on quarter note beats (4/4 or 2/4 time only)
+     *  - 2 connected chords that start on quarter note beats
+     *  - 2 connected chords that start on any beat
+     */ 
+    private static void
+    CreateAllBeamedChords(List<MusicSymbol>[] allsymbols, TimeSignature time) {
+        if ((time.Numerator == 3 && time.Denominator == 4) ||
+            (time.Numerator == 6 && time.Denominator == 8) ||
+            (time.Numerator == 6 && time.Denominator == 4) ) {
+
+            CreateBeamedChords(allsymbols, time, 6, true);
+        }
+        CreateBeamedChords(allsymbols, time, 3, true);
+        CreateBeamedChords(allsymbols, time, 4, true);
+        CreateBeamedChords(allsymbols, time, 2, true);
+        CreateBeamedChords(allsymbols, time, 2, false);
+    }
+
+    /** Get the width (in pixels) needed to display the key signature */
+    public static int
+    KeySignatureWidth(KeySignature key) {
+        ClefSymbol clefsym = new ClefSymbol(Clef.Treble, 0, false);
+        int result = clefsym.MinWidth;
+        AccidSymbol[] keys = key.GetSymbols(Clef.Treble);
+        foreach (AccidSymbol symbol in keys) {
+            result += symbol.MinWidth;
