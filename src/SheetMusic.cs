@@ -618,3 +618,108 @@ public class SheetMusic {
         AccidSymbol[] keys = key.GetSymbols(Clef.Treble);
         foreach (AccidSymbol symbol in keys) {
             result += symbol.MinWidth;
+        }
+        return result + SheetMusic.LeftMargin + 5;
+    }
+
+
+    /** Given MusicSymbols for a track, create the staffs for that track.
+     *  Each Staff has a maxmimum width of PageWidth (800 pixels).
+     *  Also, measures should not span multiple Staffs.
+     */
+    private List<Staff> 
+    CreateStaffsForTrack(List<MusicSymbol> symbols, int measurelen, 
+                         KeySignature key, MidiOptions options,
+                         int track, int totaltracks) {
+        int keysigWidth = KeySignatureWidth(key);
+        int startindex = 0;
+        List<Staff> thestaffs = new List<Staff>(symbols.Count / 50);
+
+        while (startindex < symbols.Count) {
+            /* startindex is the index of the first symbol in the staff.
+             * endindex is the index of the last symbol in the staff.
+             */
+            int endindex = startindex;
+            int width = keysigWidth;
+            int maxwidth;
+
+            /* If we're scrolling vertically, the maximum width is PageWidth. */
+            if (scrollVert) {
+                maxwidth = SheetMusic.PageWidth;
+            }
+            else {
+                maxwidth = 2000000;
+            }
+
+            while (endindex < symbols.Count &&
+                   width + symbols[endindex].Width < maxwidth) {
+
+                width += symbols[endindex].Width;
+                endindex++;
+            }
+            endindex--;
+
+            /* There's 3 possibilities at this point:
+             * 1. We have all the symbols in the track.
+             *    The endindex stays the same.
+             *
+             * 2. We have symbols for less than one measure.
+             *    The endindex stays the same.
+             *
+             * 3. We have symbols for 1 or more measures.
+             *    Since measures cannot span multiple staffs, we must
+             *    make sure endindex does not occur in the middle of a
+             *    measure.  We count backwards until we come to the end
+             *    of a measure.
+             */
+
+            if (endindex == symbols.Count - 1) {
+                /* endindex stays the same */
+            }
+            else if (symbols[startindex].StartTime / measurelen ==
+                     symbols[endindex].StartTime / measurelen) {
+                /* endindex stays the same */
+            }
+            else {
+                int endmeasure = symbols[endindex+1].StartTime/measurelen;
+                while (symbols[endindex].StartTime / measurelen == 
+                       endmeasure) {
+                    endindex--;
+                }
+            }
+            int range = endindex + 1 - startindex;
+            if (scrollVert) {
+                width = SheetMusic.PageWidth;
+            }
+            Staff staff = new Staff(symbols.GetRange(startindex, range),
+                                    key, options, track, totaltracks);
+            thestaffs.Add(staff);
+            startindex = endindex + 1;
+        }
+        return thestaffs;
+    }
+
+
+    /** Given all the MusicSymbols for every track, create the staffs
+     * for the sheet music.  There are two parts to this:
+     *
+     * - Get the list of staffs for each track.
+     *   The staffs will be stored in trackstaffs as:
+     *
+     *   trackstaffs[0] = { Staff0, Staff1, Staff2, ... } for track 0
+     *   trackstaffs[1] = { Staff0, Staff1, Staff2, ... } for track 1
+     *   trackstaffs[2] = { Staff0, Staff1, Staff2, ... } for track 2
+     *
+     * - Store the Staffs in the staffs list, but interleave the
+     *   tracks as follows:
+     *
+     *   staffs = { Staff0 for track 0, Staff0 for track1, Staff0 for track2,
+     *              Staff1 for track 0, Staff1 for track1, Staff1 for track2,
+     *              Staff2 for track 0, Staff2 for track1, Staff2 for track2,
+     *              ... } 
+     */
+    private List<Staff> 
+    CreateStaffs(List<MusicSymbol>[] allsymbols, KeySignature key, 
+                 MidiOptions options, int measurelen) {
+
+        List<Staff>[] trackstaffs = new List<Staff>[ allsymbols.Length ];
