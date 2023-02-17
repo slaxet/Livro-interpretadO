@@ -416,3 +416,98 @@ public class SheetMusic {
      * - The symbol width for each starttime, for each track
      * - The maximum symbol width for a given starttime, across all tracks.
      *
+     * The method SymbolWidths.GetExtraWidth() returns the extra width
+     * needed for a track to match the maximum symbol width for a given
+     * starttime.
+     */
+    private
+    void AlignSymbols(List<MusicSymbol>[] allsymbols, SymbolWidths widths) {
+
+        for (int track = 0; track < allsymbols.Length; track++) {
+            List<MusicSymbol> symbols = allsymbols[track];
+            List<MusicSymbol> result = new List<MusicSymbol>();
+
+            int i = 0;
+
+            /* If a track doesn't have a symbol for a starttime,
+             * add a blank symbol.
+             */
+            foreach (int start in widths.StartTimes) {
+
+                /* BarSymbols are not included in the SymbolWidths calculations */
+                while (i < symbols.Count && (symbols[i] is BarSymbol) &&
+                    symbols[i].StartTime <= start) {
+                    result.Add(symbols[i]);
+                    i++;
+                }
+
+                if (i < symbols.Count && symbols[i].StartTime == start) {
+
+                    while (i < symbols.Count && 
+                           symbols[i].StartTime == start) {
+
+                        result.Add(symbols[i]);
+                        i++;
+                    }
+                }
+                else {
+                    result.Add(new BlankSymbol(start, 0));
+                }
+            }
+
+            /* For each starttime, increase the symbol width by
+             * SymbolWidths.GetExtraWidth().
+             */
+            i = 0;
+            while (i < result.Count) {
+                if (result[i] is BarSymbol) {
+                    i++;
+                    continue;
+                }
+                int start = result[i].StartTime;
+                int extra = widths.GetExtraWidth(track, start);
+                result[i].Width += extra;
+
+                /* Skip all remaining symbols with the same starttime. */
+                while (i < result.Count && result[i].StartTime == start) {
+                    i++;
+                }
+            } 
+            allsymbols[track] = result;
+        }
+    }
+
+    private static bool IsChord(MusicSymbol symbol) {
+        return symbol is ChordSymbol;
+    }
+
+
+    /** Find 2, 3, 4, or 6 chord symbols that occur consecutively (without any
+     *  rests or bars in between).  There can be BlankSymbols in between.
+     *
+     *  The startIndex is the index in the symbols to start looking from.
+     *
+     *  Store the indexes of the consecutive chords in chordIndexes.
+     *  Store the horizontal distance (pixels) between the first and last chord.
+     *  If we failed to find consecutive chords, return false.
+     */
+    private static bool
+    FindConsecutiveChords(List<MusicSymbol> symbols, TimeSignature time,
+                          int startIndex, int[] chordIndexes, 
+                          ref int horizDistance) {
+
+        int i = startIndex;
+        int numChords = chordIndexes.Length;
+
+        while (true) {
+            horizDistance = 0;
+
+            /* Find the starting chord */
+            while (i < symbols.Count - numChords) {
+                if (symbols[i] is ChordSymbol) {
+                    ChordSymbol c = (ChordSymbol) symbols[i];
+                    if (c.Stem != null) {
+                        break;
+                    }
+                }
+                i++;
