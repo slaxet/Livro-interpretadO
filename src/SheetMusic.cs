@@ -848,3 +848,131 @@ public class SheetMusic {
     public Brush Shade2Brush {
         get { return shade2Brush; }
     }
+
+    /** Get whether to show note letters or not */
+    public int ShowNoteLetters {
+        get { return showNoteLetters; }
+    }
+
+    /** Get the main key signature */
+    public KeySignature MainKey {
+        get { return mainkey; }
+    }
+
+
+    /** Set the size of the notes, large or small.  Smaller notes means
+     * more notes per staff.
+     */
+    public static void SetNoteSize(bool largenotes) {
+        if (largenotes)
+            LineSpace = 7;
+        else
+            LineSpace = 5;
+
+        StaffHeight = LineSpace*4 + LineWidth*5;
+        NoteHeight = LineSpace + LineWidth;
+        NoteWidth = 3 * LineSpace / 2;
+        LetterFont = new Font("Arial", 8, FontStyle.Bold);
+    }
+
+
+    /** Draw the SheetMusic.
+     * Scale the graphics by the current zoom factor.
+     * Get the vertical start and end points of the clip area.
+     * Only draw Staffs which lie inside the clip area.
+     */
+	/*
+    protected override void OnPaint(PaintEventArgs e) {
+        Rectangle clip = 
+          new Rectangle((int) (e.ClipRectangle.X / zoom),
+                        (int) (e.ClipRectangle.Y / zoom),
+                        (int) (e.ClipRectangle.Width / zoom),
+                        (int) (e.ClipRectangle.Height / zoom));
+
+        Graphics g = e.Graphics;
+        g.ScaleTransform(zoom, zoom);
+        // g.PageScale = zoom; 
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        int ypos = 0;
+        foreach (Staff staff in staffs) {
+            if ((ypos + staff.Height < clip.Y) || (ypos > clip.Y + clip.Height))  {
+                // Staff is not in the clip, don't need to draw it 
+            }
+            else {
+                g.TranslateTransform(0, ypos);
+                staff.Draw(g, clip, pen);
+                g.TranslateTransform(0, -ypos);
+            }
+
+            ypos += staff.Height;
+        }
+        g.ScaleTransform(1.0f/zoom, 1.0f/zoom);
+    }*/
+
+    /** Write the MIDI filename at the top of the page */
+    private void DrawTitle(Graphics g) {
+        int leftmargin = 20;
+        int topmargin = 20;
+        string title = Path.GetFileName(filename);
+        title = title.Replace(".mid", "").Replace("_", " ");
+        Font font = new Font("Arial", 10, FontStyle.Bold);
+        g.TranslateTransform(leftmargin, topmargin);
+        g.DrawString(title, font, Brushes.Black, 0, 0);
+        g.TranslateTransform(-leftmargin, -topmargin);
+        font.Dispose();
+    }
+
+    /** Print the given page of the sheet music. 
+     * Page numbers start from 1.
+     * A staff should fit within a single page, not be split across two pages.
+     * If the sheet music has exactly 2 tracks, then two staffs should
+     * fit within a single page, and not be split across two pages.
+     */
+    public void DoPrint(Graphics g, int pagenumber)
+    {
+        int leftmargin = 20;
+        int topmargin = 20;
+        int rightmargin = 20;
+        int bottommargin = 20;
+
+        float scale = (g.VisibleClipBounds.Width - leftmargin - rightmargin) / PageWidth;
+        g.PageScale = scale;
+
+        int viewPageHeight = (int)( (g.VisibleClipBounds.Height - topmargin - bottommargin) / scale);
+
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        g.FillRectangle(Brushes.White, 0, 0, 
+                        g.VisibleClipBounds.Width,
+                        g.VisibleClipBounds.Height);
+
+        Rectangle clip = new Rectangle(0, 0, PageWidth, PageHeight);
+
+        int ypos = TitleHeight;
+        int pagenum = 1;
+        int staffnum = 0;
+
+        if (numtracks == 2 && (staffs.Count % 2) == 0) {
+            /* Skip the staffs until we reach the given page number */
+            while (staffnum + 1 < staffs.Count && pagenum < pagenumber) {
+                int heights = staffs[staffnum].Height + staffs[staffnum+1].Height;
+                if (ypos + heights >= viewPageHeight) {
+                    pagenum++;
+                    ypos = 0;
+                }
+                else {
+                    ypos += heights;
+                    staffnum += 2;
+                }
+            }
+            /* Print the staffs until the height reaches viewPageHeight */
+            if (pagenum == 1) {
+                DrawTitle(g);
+                ypos = TitleHeight;
+            }
+            else {
+                ypos = 0;
+            }
+            for (; staffnum + 1 < staffs.Count; staffnum += 2) {
+                int heights = staffs[staffnum].Height + staffs[staffnum+1].Height;
+
+                if (ypos + heights >= viewPageHeight)
