@@ -976,3 +976,119 @@ public class SheetMusic {
                 int heights = staffs[staffnum].Height + staffs[staffnum+1].Height;
 
                 if (ypos + heights >= viewPageHeight)
+                    break;
+
+                g.TranslateTransform(leftmargin, topmargin + ypos);
+                staffs[staffnum].Draw(g, clip, pen);
+                g.TranslateTransform(-leftmargin, -(topmargin + ypos));
+                ypos += staffs[staffnum].Height;
+                g.TranslateTransform(leftmargin, topmargin + ypos);
+                staffs[staffnum + 1].Draw(g, clip, pen);
+                g.TranslateTransform(-leftmargin, -(topmargin + ypos));
+                ypos += staffs[staffnum + 1].Height;
+            }
+        }
+
+        else {
+            /* Skip the staffs until we reach the given page number */
+            while (staffnum < staffs.Count && pagenum < pagenumber) {
+                if (ypos + staffs[staffnum].Height >= viewPageHeight) {
+                    pagenum++;
+                    ypos = 0;
+                }
+                else {
+                    ypos += staffs[staffnum].Height;
+                    staffnum++;
+                }
+            }
+
+            /* Print the staffs until the height reaches viewPageHeight */
+            if (pagenum == 1) {
+                DrawTitle(g);
+                ypos = TitleHeight;
+            }
+            else {
+                ypos = 0;
+            }
+            for (; staffnum < staffs.Count; staffnum++) {
+                if (ypos + staffs[staffnum].Height >= viewPageHeight)
+                    break;
+
+                g.TranslateTransform(leftmargin, topmargin + ypos);
+                staffs[staffnum].Draw(g, clip, pen);
+                g.TranslateTransform(-leftmargin, -(topmargin + ypos));
+                ypos += staffs[staffnum].Height;
+            }
+        }
+
+        /* Draw the page number */
+        Font font = new Font("Arial", 10, FontStyle.Bold);
+        g.DrawString("" + pagenumber, font, Brushes.Black, 
+                     PageWidth-leftmargin, topmargin + viewPageHeight - 12);
+        font.Dispose();
+    }
+
+    /**
+     * Return the number of pages needed to print this sheet music.
+     * A staff should fit within a single page, not be split across two pages.
+     * If the sheet music has exactly 2 tracks, then two staffs should
+     * fit within a single page, and not be split across two pages.
+     */
+    public int GetTotalPages() {
+        int num = 1;
+        int currheight = TitleHeight;
+
+        if (numtracks == 2 && (staffs.Count % 2) == 0) {
+            for (int i = 0; i < staffs.Count; i += 2) {
+                int heights = staffs[i].Height + staffs[i+1].Height;
+                if (currheight + heights > PageHeight) {
+                    num++;
+                    currheight = heights;
+                }
+                else {
+                    currheight += heights;
+                }
+            }
+        }
+        else {
+            foreach (Staff staff in staffs) {
+                if (currheight + staff.Height > PageHeight) {
+                    num++;
+                    currheight = staff.Height;
+                }
+                else {
+                    currheight += staff.Height;
+                }
+            }
+        }
+        return num;
+    }
+
+    /** Shade all the chords played at the given pulse time.
+     *  Loop through all the staffs and call staff.Shade().
+     *  If scrollGradually is true, scroll gradually (smooth scrolling)
+     *  to the shaded notes.
+     */
+	/*
+    public void ShadeNotes(int currentPulseTime, int prevPulseTime, bool scrollGradually) {
+        Graphics g = CreateGraphics();
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        g.ScaleTransform(zoom, zoom);
+        int ypos = 0;
+
+        int x_shade = 0;
+        int y_shade = 0;
+
+        foreach (Staff staff in staffs) {
+            g.TranslateTransform(0, ypos);
+            staff.ShadeNotes(g, shadeBrush, pen, 
+                             currentPulseTime, prevPulseTime, ref x_shade);
+            g.TranslateTransform(0, -ypos);
+            ypos += staff.Height;
+            if (currentPulseTime >= staff.EndTime) {
+                y_shade += staff.Height;
+            }
+        }
+        g.ScaleTransform(1.0f/zoom, 1.0f/zoom);
+        g.Dispose();
+        x_shade = (int)(x_shade * zoom);
