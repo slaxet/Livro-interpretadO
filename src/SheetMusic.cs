@@ -723,3 +723,128 @@ public class SheetMusic {
                  MidiOptions options, int measurelen) {
 
         List<Staff>[] trackstaffs = new List<Staff>[ allsymbols.Length ];
+        int totaltracks = trackstaffs.Length;
+
+        for (int track = 0; track < totaltracks; track++) {
+            List<MusicSymbol> symbols = allsymbols[ track ];
+            trackstaffs[track] = CreateStaffsForTrack(symbols, measurelen, key, options, track, totaltracks);
+        }
+
+        /* Update the EndTime of each Staff. EndTime is used for playback */
+        foreach (List<Staff> list in trackstaffs) {
+            for (int i = 0; i < list.Count-1; i++) {
+                list[i].EndTime = list[i+1].StartTime;
+            }
+        }
+
+        /* Interleave the staffs of each track into the result array. */
+        int maxstaffs = 0;
+        for (int i = 0; i < trackstaffs.Length; i++) {
+            if (maxstaffs < trackstaffs[i].Count) {
+                maxstaffs = trackstaffs[i].Count;
+            }
+        }
+        List<Staff> result = new List<Staff>(maxstaffs * trackstaffs.Length);
+        for (int i = 0; i < maxstaffs; i++) {
+            foreach (List<Staff> list in trackstaffs) {
+                if (i < list.Count) {
+                    result.Add(list[i]);
+                }
+            }
+        }
+        return result;
+    }
+
+    /** Get the lyrics for each track */
+    private static List<LyricSymbol>[]
+    GetLyrics(List<MidiTrack> tracks) {
+        bool hasLyrics = false;
+        List<LyricSymbol>[] result = new List<LyricSymbol>[tracks.Count];
+        for (int tracknum = 0; tracknum < tracks.Count; tracknum++) {
+            MidiTrack track = tracks[tracknum];
+            if (track.Lyrics == null) {
+                continue;
+            }
+            hasLyrics = true;
+            result[tracknum] = new List<LyricSymbol>();
+            foreach (MidiEvent ev in track.Lyrics) {
+                String text = UTF8Encoding.UTF8.GetString(ev.Value, 0, ev.Value.Length);
+                LyricSymbol sym = new LyricSymbol(ev.StartTime, text);
+                result[tracknum].Add(sym);
+            }
+        }
+        if (!hasLyrics) {
+            return null;
+        }
+        else {
+            return result;
+        }
+    }
+
+    /** Add the lyric symbols to the corresponding staffs */
+    static void
+    AddLyricsToStaffs(List<Staff> staffs, List<LyricSymbol>[] tracklyrics) {
+        foreach (Staff staff in staffs) {
+            List<LyricSymbol> lyrics = tracklyrics[staff.Track];
+            staff.AddLyrics(lyrics);
+        }
+    }
+
+
+    /** Set the zoom level to display at (1.0 == 100%).
+     * Recalculate the SheetMusic width and height based on the
+     * zoom level.  Then redraw the SheetMusic. 
+     */
+    public void SetZoom(float value) {
+        zoom = value;
+        float width = 0;
+        float height = 0;
+        foreach (Staff staff in staffs) {
+            width = Math.Max(width, staff.Width * zoom);
+            height += (staff.Height * zoom);
+        }
+        // Width = (int)(width + 2);
+        // Height = ((int)height) + LeftMargin;
+        //this.Invalidate();
+    }
+
+    /** Change the note colors for the sheet music, and redraw. */
+    private void SetColors(Color[] newcolors, Color newshade, Color newshade2) {
+        if (NoteColors == null) {
+            NoteColors = new Color[12];
+            for (int i = 0; i < 12; i++) {
+                NoteColors[i] = Color.Black;
+            }
+        }
+        if (newcolors != null) {
+            for (int i = 0; i < 12; i++) {
+                NoteColors[i] = newcolors[i];
+            }
+        }
+        else {
+            for (int i = 0; i < 12; i++) {
+                NoteColors[i] = Color.Black;
+            }
+        }
+        if (shadeBrush != null) {
+            shadeBrush.Dispose(); 
+            shade2Brush.Dispose(); 
+        }
+        shadeBrush = new SolidBrush(newshade);
+        shade2Brush = new SolidBrush(newshade2);
+    }
+
+    /** Get the color for a given note number */
+    public Color NoteColor(int number) {
+        return NoteColors[ NoteScale.FromNumber(number) ];
+    }
+
+    /** Get the shade brush */
+    public Brush ShadeBrush {
+        get { return shadeBrush; }
+    }
+
+    /** Get the shade2 brush */
+    public Brush Shade2Brush {
+        get { return shade2Brush; }
+    }
