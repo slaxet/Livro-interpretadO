@@ -1092,3 +1092,69 @@ public class SheetMusic {
         g.ScaleTransform(1.0f/zoom, 1.0f/zoom);
         g.Dispose();
         x_shade = (int)(x_shade * zoom);
+        y_shade -= NoteHeight;
+        y_shade = (int)(y_shade * zoom);
+        if (currentPulseTime >= 0) {
+            ScrollToShadedNotes(x_shade, y_shade, scrollGradually);
+        }
+    }
+    */
+
+    /** Scroll the sheet music so that the shaded notes are visible.
+      * If scrollGradually is true, scroll gradually (smooth scrolling)
+      * to the shaded notes.
+      */
+	/*
+    void ScrollToShadedNotes(int x_shade, int y_shade, bool scrollGradually) {
+        Panel scrollview = (Panel) this.Parent;
+        Point scrollPos = scrollview.AutoScrollPosition;
+
+        // The scroll position is in negative coordinates for some reason
+        scrollPos.X = -scrollPos.X;
+        scrollPos.Y = -scrollPos.Y;
+        Point newPos = scrollPos;
+
+        if (scrollVert) {
+            int scrollDist = (int)(y_shade - scrollPos.Y);
+
+            if (scrollGradually) {
+                if (scrollDist > (zoom * StaffHeight * 8))
+                    scrollDist = scrollDist/2;
+                else if (scrollDist > (NoteHeight * 3 * zoom))
+                    scrollDist = (int)(NoteHeight * 3 * zoom);
+            }
+            newPos = new Point(scrollPos.X, scrollPos.Y + scrollDist);
+        }
+        else {
+            int x_view = scrollPos.X + 40 * scrollview.Width/100;
+            int xmax   = scrollPos.X + 65 * scrollview.Width/100;
+            int scrollDist = x_shade - x_view;
+
+            if (scrollGradually) {
+                if (x_shade > xmax) 
+                    scrollDist = (x_shade - x_view)/3;
+                else if (x_shade > x_view)
+                    scrollDist = (x_shade - x_view)/6;
+            }
+
+            newPos = new Point(scrollPos.X + scrollDist, scrollPos.Y);
+            if (newPos.X < 0) {
+                newPos.X = 0;
+            }
+        }
+        scrollview.AutoScrollPosition = newPos;
+    }
+    */
+
+    public override string ToString() {
+        string result = "SheetMusic staffs=" + staffs.Count + "\n";
+        foreach (Staff staff in staffs) {
+            result += staff.ToString();
+        }
+        result += "End SheetMusic\n";
+        return result;
+    }
+
+}
+
+}
