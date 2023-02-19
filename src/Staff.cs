@@ -61,3 +61,109 @@ public class Staff {
      * to check whether to display measure numbers or not.
      */
     public Staff(List<MusicSymbol> symbols, KeySignature key, 
+                 MidiOptions options,
+                 int tracknum, int totaltracks)  {
+
+        keysigWidth = SheetMusic.KeySignatureWidth(key);
+        this.tracknum = tracknum;
+        this.totaltracks = totaltracks;
+        showMeasures = (options.showMeasures && tracknum == 0);
+        measureLength = options.time.Measure;
+        Clef clef = FindClef(symbols);
+
+        clefsym = new ClefSymbol(clef, 0, false);
+        keys = key.GetSymbols(clef);
+        this.symbols = symbols;
+        CalculateWidth(options.scrollVert);
+        CalculateHeight();
+        CalculateStartEndTime();
+        FullJustify();
+    }
+
+    /** Return the width of the staff */
+    public int Width {
+        get { return width; }
+    }
+
+    /** Return the height of the staff */
+    public int Height {
+        get { return height; }
+    }
+
+    /** Return the track number of this staff (starting from 0 */
+    public int Track {
+        get { return tracknum; }
+    }
+
+    /** Return the starting time of the staff, the start time of
+     *  the first symbol.  This is used during playback, to 
+     *  automatically scroll the music while playing.
+     */
+    public int StartTime {
+        get { return starttime; }
+    }
+
+    /** Return the ending time of the staff, the endtime of
+     *  the last symbol.  This is used during playback, to 
+     *  automatically scroll the music while playing.
+     */
+    public int EndTime {
+        get { return endtime; }
+        set { endtime = value; }
+    }
+
+    /** Find the initial clef to use for this staff.  Use the clef of
+     * the first ChordSymbol.
+     */
+    private Clef FindClef(List<MusicSymbol> list) {
+        foreach (MusicSymbol m in list) {
+            if (m is ChordSymbol) {
+                ChordSymbol c = (ChordSymbol) m;
+                return c.Clef;
+            }
+        }
+        return Clef.Treble;
+    }
+
+    /** Calculate the height of this staff.  Each MusicSymbol contains the
+     * number of pixels it needs above and below the staff.  Get the maximum
+     * values above and below the staff.
+     */
+    public void CalculateHeight() {
+        int above = 0;
+        int below = 0;
+
+        foreach (MusicSymbol s in symbols) {
+            above = Math.Max(above, s.AboveStaff);
+            below = Math.Max(below, s.BelowStaff);
+        }
+        above = Math.Max(above, clefsym.AboveStaff);
+        below = Math.Max(below, clefsym.BelowStaff);
+        ytop = above + SheetMusic.NoteHeight;
+        height = SheetMusic.NoteHeight*5 + ytop + below;
+        if (showMeasures || lyrics != null) {
+            height += SheetMusic.NoteHeight * 3/2;
+        }
+
+        /* Add some extra vertical space between the last track
+         * and first track.
+         */
+        if (tracknum == totaltracks-1)
+            height += SheetMusic.NoteHeight * 3;
+    }
+
+    /** Calculate the width of this staff */
+    private void CalculateWidth(bool scrollVert) {
+        if (scrollVert) {
+            width = SheetMusic.PageWidth;
+            return;
+        }
+        width = keysigWidth;
+        foreach (MusicSymbol s in symbols) {
+            width += s.Width;
+        }
+    }
+
+
+    /** Calculate the start and end time of this staff. */
+    private void CalculateStartEndTime() {
