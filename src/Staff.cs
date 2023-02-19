@@ -167,3 +167,110 @@ public class Staff {
 
     /** Calculate the start and end time of this staff. */
     private void CalculateStartEndTime() {
+        starttime = endtime = 0;
+        if (symbols.Count == 0) {
+            return;
+        }
+        starttime = symbols[0].StartTime;
+        foreach (MusicSymbol m in symbols) {
+            if (endtime < m.StartTime) {
+                endtime = m.StartTime;
+            }
+            if (m is ChordSymbol) {
+                ChordSymbol c = (ChordSymbol) m;
+                if (endtime < c.EndTime) {
+                    endtime = c.EndTime;
+                }
+            }
+        }
+    }
+
+
+    /** Full-Justify the symbols, so that they expand to fill the whole staff. */
+    private void FullJustify() {
+        if (width != SheetMusic.PageWidth)
+            return;
+
+        int totalwidth = keysigWidth;
+        int totalsymbols = 0;
+        int i = 0;
+
+        while (i < symbols.Count) {
+            int start = symbols[i].StartTime;
+            totalsymbols++;
+            totalwidth += symbols[i].Width;
+            i++;
+            while (i < symbols.Count && symbols[i].StartTime == start) {
+                totalwidth += symbols[i].Width;
+                i++;
+            }
+        }
+
+        int extrawidth = (SheetMusic.PageWidth - totalwidth - 1) / totalsymbols;
+        if (extrawidth > SheetMusic.NoteHeight*2) {
+            extrawidth = SheetMusic.NoteHeight*2;
+        }
+        i = 0;
+        while (i < symbols.Count) {
+            int start = symbols[i].StartTime;
+            symbols[i].Width += extrawidth;
+            i++;
+            while (i < symbols.Count && symbols[i].StartTime == start) {
+                i++;
+            }
+        }
+    }
+
+
+    /** Add the lyric symbols that occur within this staff.
+     *  Set the x-position of the lyric symbol. 
+     */
+    public void AddLyrics(List<LyricSymbol> tracklyrics) {
+        if (tracklyrics == null) {
+            return;
+        }
+        lyrics = new List<LyricSymbol>();
+        int xpos = 0;
+        int symbolindex = 0;
+        foreach (LyricSymbol lyric in tracklyrics) {
+            if (lyric.StartTime < starttime) {
+                continue;
+            }
+            if (lyric.StartTime > endtime) {
+                break;
+            }
+            /* Get the x-position of this lyric */
+            while (symbolindex < symbols.Count && 
+                   symbols[symbolindex].StartTime < lyric.StartTime) {
+                xpos += symbols[symbolindex].Width;
+                symbolindex++;
+            }
+            lyric.X = xpos;
+            if (symbolindex < symbols.Count &&
+                (symbols[symbolindex] is BarSymbol)) {
+                lyric.X += SheetMusic.NoteWidth;
+            }
+            lyrics.Add(lyric); 
+        }
+        if (lyrics.Count == 0) {
+            lyrics = null;
+        }
+    }
+
+
+    /** Draw the lyrics */
+    private void DrawLyrics(Graphics g, Pen pen) {
+        /* Skip the left side Clef symbol and key signature */
+        int xpos = keysigWidth;
+        int ypos = height - SheetMusic.NoteHeight * 2;
+
+        foreach (LyricSymbol lyric in lyrics) {
+            g.DrawString(lyric.Text,
+                         SheetMusic.LetterFont,
+                         Brushes.Black, 
+                         xpos + lyric.X, ypos);
+        }
+    }
+
+    /** Draw the measure numbers for each measure */
+    private void DrawMeasureNumbers(Graphics g, Pen pen) {
