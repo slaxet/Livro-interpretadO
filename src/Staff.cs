@@ -503,3 +503,24 @@ public class Staff {
             xpos += curr.Width;
         }
     }
+
+    public override string ToString() {
+        string result = "Staff clef=" + clefsym.ToString() + "\n";
+        result += "  Keys:\n";
+        foreach (AccidSymbol a in keys) {
+            result += "    " + a.ToString() + "\n";
+        }
+        result += "  Symbols:\n";
+        foreach (MusicSymbol s in keys) {
+            result += "    " + s.ToString() + "\n";
+        }
+        foreach (MusicSymbol m in symbols) {
+            result += "    " + m.ToString() + "\n";
+        }
+        result += "End Staff\n";
+        return result;
+    }
+
+}
+
+}
