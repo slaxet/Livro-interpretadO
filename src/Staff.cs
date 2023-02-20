@@ -274,3 +274,106 @@ public class Staff {
 
     /** Draw the measure numbers for each measure */
     private void DrawMeasureNumbers(Graphics g, Pen pen) {
+
+        /* Skip the left side Clef symbol and key signature */
+        int xpos = keysigWidth;
+        int ypos = height - SheetMusic.NoteHeight * 3/2;
+
+        foreach (MusicSymbol s in symbols) {
+            if (s is BarSymbol) {
+                int measure = 1 + s.StartTime / measureLength;
+                g.DrawString("" + measure, 
+                             SheetMusic.LetterFont,
+                             Brushes.Black, 
+                             xpos + SheetMusic.NoteWidth, 
+                             ypos);
+            }
+            xpos += s.Width;
+        }
+    }
+
+    /** Draw the lyrics */
+
+
+    /** Draw the five horizontal lines of the staff */
+    private void DrawHorizLines(Graphics g, Pen pen) {
+        int line = 1;
+        int y = ytop - SheetMusic.LineWidth;
+        pen.Width = 1;
+        for (line = 1; line <= 5; line++) {
+            g.DrawLine(pen, SheetMusic.LeftMargin, y, 
+                            width-1, y);
+            y += SheetMusic.LineWidth + SheetMusic.LineSpace;
+        }
+        pen.Color = Color.Black;
+
+    }
+
+    /** Draw the vertical lines at the far left and far right sides. */
+    private void DrawEndLines(Graphics g, Pen pen) {
+        pen.Width = 1;
+
+        /* Draw the vertical lines from 0 to the height of this staff,
+         * including the space above and below the staff, with two exceptions:
+         * - If this is the first track, don't start above the staff.
+         *   Start exactly at the top of the staff (ytop - LineWidth)
+         * - If this is the last track, don't end below the staff.
+         *   End exactly at the bottom of the staff.
+         */
+        int ystart, yend;
+        if (tracknum == 0)
+            ystart = ytop - SheetMusic.LineWidth;
+        else
+            ystart = 0;
+
+        if (tracknum == (totaltracks-1))
+            yend = ytop + 4 * SheetMusic.NoteHeight;
+        else
+            yend = height;
+
+        g.DrawLine(pen, SheetMusic.LeftMargin, ystart,
+                        SheetMusic.LeftMargin, yend);
+
+        g.DrawLine(pen, width-1, ystart, width-1, yend);
+
+    }
+
+    /** Draw this staff. Only draw the symbols inside the clip area */
+    public void Draw(Graphics g, Rectangle clip, Pen pen) {
+        int xpos = SheetMusic.LeftMargin + 5;
+
+        /* Draw the left side Clef symbol */
+        g.TranslateTransform(xpos, 0);
+        clefsym.Draw(g, pen, ytop);
+        g.TranslateTransform(-xpos, 0);
+        xpos += clefsym.Width;
+
+        /* Draw the key signature */
+        foreach (AccidSymbol a in keys) {
+            g.TranslateTransform(xpos, 0);
+            a.Draw(g, pen, ytop);
+            g.TranslateTransform(-xpos, 0);
+            xpos += a.Width;
+        }
+       
+        /* Draw the actual notes, rests, bars.  Draw the symbols one 
+         * after another, using the symbol width to determine the
+         * x position of the next symbol.
+         *
+         * For fast performance, only draw symbols that are in the clip area.
+         */
+        foreach (MusicSymbol s in symbols) {
+            if ((xpos <= clip.X + clip.Width + 50) && (xpos + s.Width + 50 >= clip.X)) {
+                g.TranslateTransform(xpos, 0);
+                s.Draw(g, pen, ytop);
+                g.TranslateTransform(-xpos, 0);
+            }
+            xpos += s.Width;
+        }
+        DrawHorizLines(g, pen);
+        DrawEndLines(g, pen);
+
+        if (showMeasures) {
+            DrawMeasureNumbers(g, pen);
+        }
+        if (lyrics != null) {
