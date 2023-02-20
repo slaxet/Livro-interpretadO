@@ -377,3 +377,129 @@ public class Staff {
             DrawMeasureNumbers(g, pen);
         }
         if (lyrics != null) {
+            DrawLyrics(g, pen);
+        }
+
+    }
+
+
+    /** Shade all the chords played in the given time.
+     *  Un-shade any chords shaded in the previous pulse time.
+     *  Store the x coordinate location where the shade was drawn.
+     */
+    public void ShadeNotes(Graphics g, SolidBrush shadeBrush, Pen pen,
+                           int currentPulseTime, int prevPulseTime, ref int x_shade) {
+
+        /* If there's nothing to unshade, or shade, return */
+        if ((starttime > prevPulseTime || endtime < prevPulseTime) &&
+            (starttime > currentPulseTime || endtime < currentPulseTime)) {
+            return;
+        }
+
+        /* Skip the left side Clef symbol and key signature */
+        int xpos = keysigWidth;
+
+        MusicSymbol curr = null;
+        ChordSymbol prevChord = null;
+        int prev_xpos = 0;
+
+        /* Loop through the symbols. 
+         * Unshade symbols where start <= prevPulseTime < end
+         * Shade symbols where start <= currentPulseTime < end
+         */ 
+        for (int i = 0; i < symbols.Count; i++) {
+            curr = symbols[i];
+            if (curr is BarSymbol) {
+                xpos += curr.Width;
+                continue;
+            }
+
+            int start = curr.StartTime;
+            int end = 0;
+            if (i+2 < symbols.Count && symbols[i+1] is BarSymbol) {
+                end = symbols[i+2].StartTime;
+            }
+            else if (i+1 < symbols.Count) {
+                end = symbols[i+1].StartTime;
+            }
+            else {
+                end = endtime;
+            }
+
+
+            /* If we've past the previous and current times, we're done. */
+            if ((start > prevPulseTime) && (start > currentPulseTime)) {
+                if (x_shade == 0) {
+                    x_shade = xpos;
+                }
+
+                return;
+            }
+            /* If shaded notes are the same, we're done */
+            if ((start <= currentPulseTime) && (currentPulseTime < end) &&
+                (start <= prevPulseTime) && (prevPulseTime < end)) {
+
+                x_shade = xpos;
+                return;
+            }
+
+            bool redrawLines = false;
+
+            /* If symbol is in the previous time, draw a white background */
+            if ((start <= prevPulseTime) && (prevPulseTime < end)) {
+                g.TranslateTransform(xpos-2, -2);
+                g.FillRectangle(Brushes.White, 0, 0, curr.Width+4, this.Height+4);
+                g.TranslateTransform(-(xpos-2), 2);
+                g.TranslateTransform(xpos, 0);
+                curr.Draw(g, pen, ytop);
+                g.TranslateTransform(-xpos, 0);
+
+                redrawLines = true;
+            }
+
+            /* If symbol is in the current time, draw a shaded background */
+            if ((start <= currentPulseTime) && (currentPulseTime < end)) {
+                x_shade = xpos;
+                g.TranslateTransform(xpos, 0);
+                g.FillRectangle(shadeBrush, 0, 0, curr.Width, this.Height);
+                curr.Draw(g, pen, ytop);
+                g.TranslateTransform(-xpos, 0);
+                redrawLines = true;
+            }
+
+            /* If either a gray or white background was drawn, we need to redraw
+             * the horizontal staff lines, and redraw the stem of the previous chord.
+             */
+            if (redrawLines) {
+                int line = 1;
+                int y = ytop - SheetMusic.LineWidth;
+                pen.Width = 1;
+                g.TranslateTransform(xpos-2, 0);
+                for (line = 1; line <= 5; line++) {
+                    g.DrawLine(pen, 0, y, curr.Width+4, y);
+                    y += SheetMusic.LineWidth + SheetMusic.LineSpace;
+                }
+                g.TranslateTransform(-(xpos-2), 0);
+
+                if (prevChord != null) {
+                    g.TranslateTransform(prev_xpos, 0);
+                    prevChord.Draw(g, pen, ytop);
+                    g.TranslateTransform(-prev_xpos, 0);
+                }
+                if (showMeasures) {
+                    DrawMeasureNumbers(g, pen);
+                }
+                if (lyrics != null) {
+                    DrawLyrics(g, pen);
+                }
+            }
+            if (curr is ChordSymbol) {
+                ChordSymbol chord = (ChordSymbol) curr;
+                if (chord.Stem != null && !chord.Stem.Receiver) {
+                    prevChord = (ChordSymbol) curr;
+                    prev_xpos = xpos;
+                }
+            }
+            xpos += curr.Width;
+        }
+    }
