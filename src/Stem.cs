@@ -218,3 +218,117 @@ public class Stem {
                        + SheetMusic.NoteHeight/4;
 
             int ystem = ytop + topstaff.Dist(end) * SheetMusic.NoteHeight/2;
+
+            g.DrawLine(pen, xstart, y1, xstart, ystem);
+        }
+        else if (direction == Down) {
+            int y1 = ytop + topstaff.Dist(top) * SheetMusic.NoteHeight/2 
+                       + SheetMusic.NoteHeight;
+
+            if (side == LeftSide)
+                y1 = y1 - SheetMusic.NoteHeight/4;
+            else
+                y1 = y1 - SheetMusic.NoteHeight/2;
+
+            int ystem = ytop + topstaff.Dist(end) * SheetMusic.NoteHeight/2 
+                          + SheetMusic.NoteHeight;
+
+            g.DrawLine(pen, xstart, y1, xstart, ystem);
+        }
+    }
+
+    /** Draw a curvy stem tail.  This is only used for single chords, not chord pairs.
+     * @param ytop The y location (in pixels) where the top of the staff starts.
+     * @param topstaff  The note at the top of the staff.
+     */
+    private void DrawCurvyStem(Graphics g, Pen pen, int ytop, WhiteNote topstaff) {
+
+        pen.Width = 2;
+
+        int xstart = 0;
+        if (side == LeftSide)
+            xstart = SheetMusic.LineSpace/4 + 1;
+        else
+            xstart = SheetMusic.LineSpace/4 + SheetMusic.NoteWidth;
+
+        if (direction == Up) {
+            int ystem = ytop + topstaff.Dist(end) * SheetMusic.NoteHeight/2;
+
+
+            if (duration == NoteDuration.Eighth ||
+                duration == NoteDuration.DottedEighth ||
+                duration == NoteDuration.Triplet ||
+                duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawBezier(pen, 
+                             xstart, ystem,
+                             xstart, 
+                             ystem + 3*SheetMusic.LineSpace/2,
+                             xstart + SheetMusic.LineSpace*2, 
+                             ystem + SheetMusic.NoteHeight*2,
+                             xstart + SheetMusic.LineSpace/2, 
+                             ystem + SheetMusic.NoteHeight*3);
+            }
+            ystem += SheetMusic.NoteHeight;
+
+            if (duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawBezier(pen, 
+                             xstart, ystem,
+                             xstart, 
+                             ystem + 3*SheetMusic.LineSpace/2,
+                             xstart + SheetMusic.LineSpace*2, 
+                             ystem + SheetMusic.NoteHeight*2,
+                             xstart + SheetMusic.LineSpace/2, 
+                             ystem + SheetMusic.NoteHeight*3);
+            }
+
+            ystem += SheetMusic.NoteHeight;
+            if (duration == NoteDuration.ThirtySecond) {
+                g.DrawBezier(pen, 
+                             xstart, ystem,
+                             xstart, 
+                             ystem + 3*SheetMusic.LineSpace/2,
+                             xstart + SheetMusic.LineSpace*2, 
+                             ystem + SheetMusic.NoteHeight*2,
+                             xstart + SheetMusic.LineSpace/2, 
+                             ystem + SheetMusic.NoteHeight*3);
+            }
+
+        }
+
+        else if (direction == Down) {
+            int ystem = ytop + topstaff.Dist(end)*SheetMusic.NoteHeight/2 +
+                        SheetMusic.NoteHeight;
+
+            if (duration == NoteDuration.Eighth ||
+                duration == NoteDuration.DottedEighth ||
+                duration == NoteDuration.Triplet ||
+                duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawBezier(pen, 
+                             xstart, ystem,
+                             xstart, 
+                             ystem - SheetMusic.LineSpace,
+                             xstart + SheetMusic.LineSpace*2, 
+                             ystem - SheetMusic.NoteHeight*2,
+                             xstart + SheetMusic.LineSpace, 
+                             ystem - SheetMusic.NoteHeight*2 - 
+                               SheetMusic.LineSpace/2);
+            }
+            ystem -= SheetMusic.NoteHeight;
+
+            if (duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawBezier(pen, 
+                             xstart, ystem,
+                             xstart, 
+                             ystem - SheetMusic.LineSpace,
+                             xstart + SheetMusic.LineSpace*2, 
+                             ystem - SheetMusic.NoteHeight*2,
+                             xstart + SheetMusic.LineSpace, 
+                             ystem - SheetMusic.NoteHeight*2 - 
