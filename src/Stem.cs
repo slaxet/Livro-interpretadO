@@ -101,3 +101,120 @@ public class Stem {
      * needed to draw the tail of the stem.  The overlap boolean is true
      * if the notes in the chord overlap.  If the notes overlap, the
      * stem must be drawn on the right side.
+     */
+    public Stem(WhiteNote bottom, WhiteNote top, 
+                NoteDuration duration, int direction, bool overlap) {
+
+        this.top = top;
+        this.bottom = bottom;
+        this.duration = duration;
+        this.direction = direction;
+        this.notesoverlap = overlap;
+        if (direction == Up || notesoverlap)
+            side = RightSide;
+        else 
+            side = LeftSide;
+        end = CalculateEnd();
+        pair = null;
+        width_to_pair = 0;
+        receiver_in_pair = false;
+    }
+
+    /** Calculate the vertical position (white note key) where 
+     * the stem ends 
+     */
+    public WhiteNote CalculateEnd() {
+        if (direction == Up) {
+            WhiteNote w = top;
+            w = w.Add(6);
+            if (duration == NoteDuration.Sixteenth) {
+                w = w.Add(2);
+            }
+            else if (duration == NoteDuration.ThirtySecond) {
+                w = w.Add(4);
+            }
+            return w;
+        }
+        else if (direction == Down) {
+            WhiteNote w = bottom;
+            w = w.Add(-6);
+            if (duration == NoteDuration.Sixteenth) {
+                w = w.Add(-2);
+            }
+            else if (duration == NoteDuration.ThirtySecond) {
+                w = w.Add(-4);
+            }
+            return w;
+        }
+        else {
+            return null;  /* Shouldn't happen */
+        }
+    }
+
+    /** Change the direction of the stem.  This function is called by 
+     * ChordSymbol.MakePair().  When two chords are joined by a horizontal
+     * beam, their stems must point in the same direction (up or down).
+     */
+    public void ChangeDirection(int newdirection) {
+        direction = newdirection;
+        if (direction == Up || notesoverlap)
+            side = RightSide;
+        else
+            side = LeftSide;
+        end = CalculateEnd();
+    }
+
+    /** Pair this stem with another Chord.  Instead of drawing a curvy tail,
+     * this stem will now have to draw a beam to the given stem pair.  The
+     * width (in pixels) to this stem pair is passed as argument.
+     */
+    public void SetPair(Stem pair, int width_to_pair) {
+        this.pair = pair;
+        this.width_to_pair = width_to_pair;
+    }
+
+    /** Return true if this Stem is part of a horizontal beam. */
+    public bool isBeam {
+        get { return receiver_in_pair || (pair != null); }
+    }
+
+    /** Draw this stem.
+     * @param ytop The y location (in pixels) where the top of the staff starts.
+     * @param topstaff  The note at the top of the staff.
+     */
+    public void Draw(Graphics g, Pen pen, int ytop, WhiteNote topstaff) {
+        if (duration == NoteDuration.Whole)
+            return;
+
+        DrawVerticalLine(g, pen, ytop, topstaff);
+        if (duration == NoteDuration.Quarter || 
+            duration == NoteDuration.DottedQuarter || 
+            duration == NoteDuration.Half ||
+            duration == NoteDuration.DottedHalf ||
+            receiver_in_pair) {
+
+            return;
+        }
+
+        if (pair != null)
+            DrawHorizBarStem(g, pen, ytop, topstaff);
+        else
+            DrawCurvyStem(g, pen, ytop, topstaff);
+    }
+
+    /** Draw the vertical line of the stem 
+     * @param ytop The y location (in pixels) where the top of the staff starts.
+     * @param topstaff  The note at the top of the staff.
+     */
+    private void DrawVerticalLine(Graphics g, Pen pen, int ytop, WhiteNote topstaff) {
+        int xstart;
+        if (side == LeftSide)
+            xstart = SheetMusic.LineSpace/4 + 1;
+        else
+            xstart = SheetMusic.LineSpace/4 + SheetMusic.NoteWidth;
+
+        if (direction == Up) {
+            int y1 = ytop + topstaff.Dist(bottom) * SheetMusic.NoteHeight/2 
+                       + SheetMusic.NoteHeight/4;
+
+            int ystem = ytop + topstaff.Dist(end) * SheetMusic.NoteHeight/2;
