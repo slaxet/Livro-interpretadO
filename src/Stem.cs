@@ -332,3 +332,129 @@ public class Stem {
                              ystem - SheetMusic.NoteHeight*2,
                              xstart + SheetMusic.LineSpace, 
                              ystem - SheetMusic.NoteHeight*2 - 
+                               SheetMusic.LineSpace/2);
+            }
+
+            ystem -= SheetMusic.NoteHeight;
+            if (duration == NoteDuration.ThirtySecond) {
+                g.DrawBezier(pen, 
+                             xstart, ystem,
+                             xstart, 
+                             ystem - SheetMusic.LineSpace,
+                             xstart + SheetMusic.LineSpace*2, 
+                             ystem - SheetMusic.NoteHeight*2,
+                             xstart + SheetMusic.LineSpace, 
+                             ystem - SheetMusic.NoteHeight*2 - 
+                               SheetMusic.LineSpace/2);
+            }
+
+        }
+        pen.Width = 1;
+
+    }
+
+    /* Draw a horizontal beam stem, connecting this stem with the Stem pair.
+     * @param ytop The y location (in pixels) where the top of the staff starts.
+     * @param topstaff  The note at the top of the staff.
+     */
+    private void DrawHorizBarStem(Graphics g, Pen pen, int ytop, WhiteNote topstaff) {
+        pen.Width = SheetMusic.NoteHeight/2;
+
+        int xstart = 0;
+        int xstart2 = 0;
+
+        if (side == LeftSide)
+            xstart = SheetMusic.LineSpace/4 + 1;
+        else if (side == RightSide)
+            xstart = SheetMusic.LineSpace/4 + SheetMusic.NoteWidth;
+
+        if (pair.side == LeftSide)
+            xstart2 = SheetMusic.LineSpace/4 + 1;
+        else if (pair.side == RightSide)
+            xstart2 = SheetMusic.LineSpace/4 + SheetMusic.NoteWidth;
+
+
+        if (direction == Up) {
+            int xend = width_to_pair + xstart2;
+            int ystart = ytop + topstaff.Dist(end) * SheetMusic.NoteHeight/2;
+            int yend = ytop + topstaff.Dist(pair.end) * SheetMusic.NoteHeight/2;
+
+            if (duration == NoteDuration.Eighth ||
+                duration == NoteDuration.DottedEighth || 
+                duration == NoteDuration.Triplet || 
+                duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawLine(pen, xstart, ystart, xend, yend);
+            }
+            ystart += SheetMusic.NoteHeight;
+            yend += SheetMusic.NoteHeight;
+
+            /* A dotted eighth will connect to a 16th note. */
+            if (duration == NoteDuration.DottedEighth) {
+                int x = xend - SheetMusic.NoteHeight;
+                double slope = (yend - ystart) * 1.0 / (xend - xstart);
+                int y = (int)(slope * (x - xend) + yend); 
+
+                g.DrawLine(pen, x, y, xend, yend);
+            }
+
+            if (duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawLine(pen, xstart, ystart, xend, yend);
+            }
+            ystart += SheetMusic.NoteHeight;
+            yend += SheetMusic.NoteHeight;
+            
+            if (duration == NoteDuration.ThirtySecond) {
+                g.DrawLine(pen, xstart, ystart, xend, yend);
+            }
+        }
+
+        else {
+            int xend = width_to_pair + xstart2;
+            int ystart = ytop + topstaff.Dist(end) * SheetMusic.NoteHeight/2 + 
+                         SheetMusic.NoteHeight;
+            int yend = ytop + topstaff.Dist(pair.end) * SheetMusic.NoteHeight/2 
+                         + SheetMusic.NoteHeight;
+
+            if (duration == NoteDuration.Eighth ||
+                duration == NoteDuration.DottedEighth ||
+                duration == NoteDuration.Triplet ||
+                duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawLine(pen, xstart, ystart, xend, yend);
+            }
+            ystart -= SheetMusic.NoteHeight;
+            yend -= SheetMusic.NoteHeight;
+
+            /* A dotted eighth will connect to a 16th note. */
+            if (duration == NoteDuration.DottedEighth) {
+                int x = xend - SheetMusic.NoteHeight;
+                double slope = (yend - ystart) * 1.0 / (xend - xstart);
+                int y = (int)(slope * (x - xend) + yend); 
+
+                g.DrawLine(pen, x, y, xend, yend);
+            }
+
+            if (duration == NoteDuration.Sixteenth ||
+                duration == NoteDuration.ThirtySecond) {
+
+                g.DrawLine(pen, xstart, ystart, xend, yend);
+            }
+            ystart -= SheetMusic.NoteHeight;
+            yend -= SheetMusic.NoteHeight;
+            
+            if (duration == NoteDuration.ThirtySecond) {
+                g.DrawLine(pen, xstart, ystart, xend, yend);
+            }
+        }
+        pen.Width = 1;
+    }
+
+    public override string ToString() {
+        return string.Format("Stem duration={0} direction={1} top={2} bottom={3} end={4}" +
+                             " overlap={5} side={6} width_to_pair={7} receiver_in_pair={8}",
+                             duration, direction, top.ToString(), bottom.ToString(),
