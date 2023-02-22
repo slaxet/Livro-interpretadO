@@ -458,3 +458,10 @@ public class Stem {
         return string.Format("Stem duration={0} direction={1} top={2} bottom={3} end={4}" +
                              " overlap={5} side={6} width_to_pair={7} receiver_in_pair={8}",
                              duration, direction, top.ToString(), bottom.ToString(),
+                             end.ToString(), notesoverlap, side, width_to_pair, receiver_in_pair);
+    }
+
+} 
+
+
+}
