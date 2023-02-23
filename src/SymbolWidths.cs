@@ -103,3 +103,33 @@ public class SymbolWidths {
             else if (widths.ContainsKey(start)) {
                 widths[start] += w;
             }
+            else {
+                widths[start] = w;
+            }
+        }
+        return widths;
+    }
+
+    /** Given a track and a start time, return the extra width needed so that
+     * the symbols for that start time align with the other tracks.
+     */
+    public int GetExtraWidth(int track, int start) {
+        if (!widths[track].ContainsKey(start)) {
+            return maxwidths[start];
+        } else {
+            return maxwidths[start] - widths[track][start];
+        }
+    }
+
+    /** Return an array of all the start times in all the tracks */
+    public int[] StartTimes {
+        get { return starttimes; }
+    }
+
+
+
+
+}
+
+
+}
