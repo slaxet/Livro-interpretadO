@@ -153,3 +153,28 @@ public class TimeSignature {
     public int DurationToTime(NoteDuration dur) {
         int eighth = quarternote/2;
         int sixteenth = eighth/2;
+
+        switch (dur) {
+            case NoteDuration.Whole:         return quarternote * 4; 
+            case NoteDuration.DottedHalf:    return quarternote * 3; 
+            case NoteDuration.Half:          return quarternote * 2; 
+            case NoteDuration.DottedQuarter: return 3*eighth; 
+            case NoteDuration.Quarter:       return quarternote; 
+            case NoteDuration.DottedEighth:  return 3*sixteenth;
+            case NoteDuration.Eighth:        return eighth;
+            case NoteDuration.Triplet:       return quarternote/3; 
+            case NoteDuration.Sixteenth:     return sixteenth;
+            case NoteDuration.ThirtySecond:  return sixteenth/2; 
+            default:                         return 0;
+       }
+    }
+
+    public override 
+    string ToString() {
+        return string.Format("TimeSignature={0}/{1} quarter={2} tempo={3}",
+                             numerator, denominator, quarternote, tempo);
+    }
+    
+}
+
+}
