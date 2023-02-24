@@ -63,3 +63,68 @@ public class TimeSigSymbol : MusicSymbol {
             images[9] = new Bitmap(typeof(TimeSigSymbol), "nine.png");
             images[12] = new Bitmap(typeof(TimeSigSymbol), "twelve.png");
         }
+    }
+
+    /** Get the time (in pulses) this symbol occurs at. */
+    public override int StartTime {
+        get { return -1; }
+    }
+
+    /** Get the minimum width (in pixels) needed to draw this symbol */
+    public override int MinWidth {
+        get { if (candraw) 
+                  return images[2].Width * SheetMusic.NoteHeight * 2 /images[2].Height;
+              else
+                  return 0;
+            }
+    }
+
+    /** Get/Set the width (in pixels) of this symbol. The width is set
+     * in SheetMusic.AlignSymbols() to vertically align symbols.
+     */
+    public override int Width {
+       get { return width; }
+       set { width = value; }
+    }
+
+    /** Get the number of pixels this symbol extends above the staff. Used
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+    public override int AboveStaff { 
+        get {  return 0; }
+    }
+
+    /** Get the number of pixels this symbol extends below the staff. Used
+     *  to determine the minimum height needed for the staff (Staff.FindBounds).
+     */
+    public override int BelowStaff {
+        get { return 0; } 
+    }
+
+    /** Draw the symbol.
+     * @param ytop The ylocation (in pixels) where the top of the staff starts.
+     */
+    public override 
+    void Draw(Graphics g, Pen pen, int ytop) {
+        if (!candraw)
+            return;
+
+        g.TranslateTransform(Width - MinWidth, 0);
+        Image numer = images[numerator];
+        Image denom = images[denominator];
+
+        /* Scale the image width to match the height */
+        int imgheight = SheetMusic.NoteHeight * 2;
+        int imgwidth = numer.Width * imgheight / numer.Height;
+        g.DrawImage(numer, 0, ytop, imgwidth, imgheight);
+        g.DrawImage(denom, 0, ytop + SheetMusic.NoteHeight*2, imgwidth, imgheight);
+        g.TranslateTransform(-(Width - MinWidth), 0);
+    }
+
+    public override string ToString() {
+        return string.Format("TimeSigSymbol numerator={0} denominator={1}",
+                             numerator, denominator);
+    }
+}
+
+}
